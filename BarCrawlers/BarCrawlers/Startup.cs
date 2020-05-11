@@ -7,6 +7,7 @@ using BarCrawlers.Data.DBModels;
 using BarCrawlers.Services;
 using BarCrawlers.Services.Contracts;
 using BarCrawlers.Services.Mappers;
+using BarCrawlers.Services.Mappers.Contracts;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -47,7 +48,7 @@ namespace BarCrawlers
             options.UseSqlServer(Configuration.GetConnectionString("Default")).UseLoggerFactory(MyLoggerFactory));
 
             services.AddScoped<IIngredientsService, IngredientsService>();
-            services.AddScoped<IngredientMapper, IngredientMapper>();
+            services.AddScoped<IIngredientMapper, IngredientMapper>();
 
 
             services.AddIdentity<User, Role>()
