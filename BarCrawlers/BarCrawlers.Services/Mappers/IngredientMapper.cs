@@ -8,7 +8,7 @@ using System.Text;
 
 namespace BarCrawlers.Services.Mappers
 {
-    public class IngredientMapper : IEntityMapper<Ingredient, IngredientDTO>, IDTOMapper<IngredientDTO, Ingredient>
+    public class IngredientMapper : IIngredientMapper //IEntityMapper<Ingredient, IngredientDTO>, IDTOMapper<IngredientDTO, Ingredient>, IIngredientMapper
     {
         public Ingredient MapDTOToEntity(IngredientDTO dto)
         {
