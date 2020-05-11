@@ -3,6 +3,7 @@ using BarCrawlers.Data.DBModels;
 using BarCrawlers.Services.Contracts;
 using BarCrawlers.Services.DTOs;
 using BarCrawlers.Services.Mappers;
+using BarCrawlers.Services.Mappers.Contracts;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -15,10 +16,10 @@ namespace BarCrawlers.Services
     public class IngredientsService : IIngredientsService
     {
         private readonly BCcontext _context;
-        private readonly IngredientMapper _mapper;
+        private readonly IIngredientMapper _mapper;
 
         public IngredientsService(BCcontext context,
-            IngredientMapper mapper)
+            IIngredientMapper mapper)
         {
             this._context = context;
             this._mapper = mapper;
