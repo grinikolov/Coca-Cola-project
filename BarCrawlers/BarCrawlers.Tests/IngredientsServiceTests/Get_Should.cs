@@ -4,10 +4,12 @@ using BarCrawlers.Services;
 using BarCrawlers.Services.DTOs;
 using BarCrawlers.Services.Mappers;
 using BarCrawlers.Services.Mappers.Contracts;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace BarCrawlers.Tests.IngredientsServiceTests
@@ -16,10 +18,10 @@ namespace BarCrawlers.Tests.IngredientsServiceTests
     public class Get_Should
     {
         [TestMethod]
-        public void ReturnCorrectIngredient_when_Valid()
+        public async System.Threading.Tasks.Task ReturnCorrectIngredient_when_ValidAsync()
         {
             //Arrange
-            var options = Utils.GetOptions(nameof(ReturnCorrectIngredient_when_Valid));
+            var options = Utils.GetOptions(nameof(ReturnCorrectIngredient_when_ValidAsync));
             var entity = new Ingredient
             {
                 Id = Utils.MySampleGuid(),
@@ -29,14 +31,16 @@ namespace BarCrawlers.Tests.IngredientsServiceTests
 
             var mockMapper = new Mock<IIngredientMapper>();
 
-            mockMapper.Setup(x => x.MapEntityToDTO(entity))
+
+            mockMapper.Setup((x) => x.MapEntityToDTO(It.IsAny<Ingredient>()))
                 .Returns(new IngredientDTO()
                 {
                     Id = entity.Id,
                     Name = entity.Name,
                     IsAlcoholic = entity.IsAlcoholic,
                 });
-
+                
+            
             using (var arrangeContext = new BCcontext(options))
             {
                 arrangeContext.Ingredients.Add(entity);
@@ -48,11 +52,12 @@ namespace BarCrawlers.Tests.IngredientsServiceTests
             {
                 var sut = new IngredientsService(context, mockMapper.Object);
 
-                var result = sut.GetAsync(Utils.MySampleGuid()).Result;
+                var dbResult = await context.Ingredients.FirstOrDefaultAsync(x => x.Name == entity.Name);
+                var result = await sut.GetAsync(dbResult.Id);
 
-                Assert.AreEqual(entity.Id, result.Id);
-                Assert.AreEqual(entity.Name, result.Name);
-                Assert.AreEqual(entity.IsAlcoholic, result.IsAlcoholic);
+                Assert.AreEqual(dbResult.Id, result.Id);
+                Assert.AreEqual(dbResult.Name, result.Name);
+                Assert.AreEqual(dbResult.IsAlcoholic, result.IsAlcoholic);
 
             }
         }
