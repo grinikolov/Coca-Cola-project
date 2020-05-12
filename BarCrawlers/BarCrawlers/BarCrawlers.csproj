@@ -22,4 +22,11 @@
     <ProjectReference Include="..\BarCrawlers.Services\BarCrawlers.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\Magician\Controllers\" />
+    <Folder Include="Areas\Magician\Data\" />
+    <Folder Include="Areas\Magician\Models\" />
+    <Folder Include="Areas\Magician\Views\" />
+  </ItemGroup>
+
 </Project>
