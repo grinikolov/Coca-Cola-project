@@ -20,6 +20,6 @@ jobs:
     - name: Install dependencies
       run: cd BarCrawlers; dotnet restore 
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: cd BarCrawlers; dotnet build --configuration Release --no-restore
     - name: Test
-      run: dotnet test --no-restore --verbosity normal
+      run: cd BarCrawlers; dotnet test --no-restore --verbosity normal
