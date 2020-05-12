@@ -18,6 +18,5 @@ namespace BarCrawlers.Tests
         {
             return Guid.Parse("f57960f4-d779-4b1c-ace2-056ad2dbb7d4");
         }
-
     }
 }
