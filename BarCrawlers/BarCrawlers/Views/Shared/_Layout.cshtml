@@ -4,9 +4,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - BarCrawlers</title>
-    <style>
+    <style type="text/css">
         body {
             background-image: url("/img/BarBackground.jpg");
+            background-size:auto;
         }
         div {
             color: white;
@@ -14,81 +15,49 @@
         btn-primary {
             background-color:green;
         }
-
+        table {
+            background-color:white;
+        }
+        table.row {
+            cursor:pointer;
+        }
     </style>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
     <div class="row">
-        <div class="col-auto" role="complementary">
-            <nav class="float-left">
-                <div>
-                    <a href="/">
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <img src="/img/siluet.jpg" width="150" height="150">
-                        }
-                        else
-                        {
-                            <img src="/img/siluet.jpg" width="150" height="150">
-                        }
-                    </a>
-                </div>
-                <br>
-                <ul class="nav flex-column">
-                    <!-- Logo -->
-                    @*<li>
-                <div class="logo-wrapper">
-                    <a href="/">
-                        <img src="~/BO_Logo/Logo_text.svg"
-                             class="img-fluid flex-center">
-                    </a>
-                </div>
-            </li>*@
-                    <!--/. Logo -->
-                    <partial name="_LoginPartial" />
-                    @*<li role="separator" class="divider"></li>
-            <li class="nav-item">
-                <a class="nav-link btn btn-primary text-dark" asp-area="" asp-controller="Beers" asp-action="Index">Beers</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link btn btn-primary text-dark" asp-area="" asp-controller="BeerStyles" asp-action="Index">Styles</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link btn btn-primary text-dark" asp-area="" asp-controller="Brewery" asp-action="Index">Breweries</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link btn btn-primary text-dark" asp-area="" asp-controller="Countries" asp-action="Index">Countries</a>
-            </li>*@
-                </ul>
-                <!-- Search form -->
-                @*<form asp-controller="Beers" asp-action="Index">
-            <p>
-                <input type="text" name="SearchString">
-                <input type="submit" value="Search" class="btn btn-primary" />
-            </p>
-        </form>*@
-                <!--/. Search form -->
-                @*<li class="nav-item" id="Magician Panel">*@
-                @if (User.IsInRole("Magician"))
-                {
-                    <a class="nav-link btn btn-primary" asp-area="Magician" asp-action="Index"> Users Actions</a>
-                }
-                @*</li>*@
-            </nav>
-            @*<ul>
-
-            </ul>*@
-        </div>
-        @*<div>
-
-        </div>*@
-        <div class="col-md-5" role="main">
-            <main role="main" class="pb-3">
-                    @RenderBody()
-            </main>
-        </div>
+        @*<div class="container">*@
+            <div class="col-sm-2" role="complementary">
+                <nav class="float-left">
+                    <div>
+                        <a href="/">
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <img src="/img/siluet.jpg" width="150" height="150">
+                            }
+                            else
+                            {
+                                <img src="/img/siluet.jpg" width="150" height="150">
+                            }
+                        </a>
+                    </div>
+                    <br>
+                    <ul class="nav flex-column">
+                        <partial name="_LoginPartial" />
+                    </ul>
+                    @if (User.IsInRole("Magician"))
+                    {
+                        <a class="nav-link btn btn-primary" asp-area="Magician" asp-controller="User" asp-action="Index"> Users Actions</a>
+                    }
+                </nav>
+            </div>
+            <div class="col-9" role="main">
+                <main role="main" class="pb-3">
+                        @RenderBody()
+                </main>
+            </div>
+        @*</div>*@
     </div>
     @*<header>
             <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
