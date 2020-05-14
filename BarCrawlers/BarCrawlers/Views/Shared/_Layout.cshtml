@@ -11,15 +11,15 @@
         div {
             color: white;
         }
+        btn-primary {
+            background-color:green;
+        }
 
     </style>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
-<body> @*style="        background-image: url(img/BarBackground.jpg);
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-position: center center;">*@
+<body>
     <div class="row">
         <div class="col-auto" role="complementary">
             <nav class="float-left">
@@ -35,43 +35,55 @@
                         }
                     </a>
                 </div>
+                <br>
                 <ul class="nav flex-column">
                     <!-- Logo -->
                     @*<li>
-                        <div class="logo-wrapper">
-                            <a href="/">
-                                <img src="~/BO_Logo/Logo_text.svg"
-                                     class="img-fluid flex-center">
-                            </a>
-                        </div>
-                    </li>*@
+                <div class="logo-wrapper">
+                    <a href="/">
+                        <img src="~/BO_Logo/Logo_text.svg"
+                             class="img-fluid flex-center">
+                    </a>
+                </div>
+            </li>*@
                     <!--/. Logo -->
                     <partial name="_LoginPartial" />
                     @*<li role="separator" class="divider"></li>
-                    <li class="nav-item">
-                        <a class="nav-link btn btn-primary text-dark" asp-area="" asp-controller="Beers" asp-action="Index">Beers</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn btn-primary text-dark" asp-area="" asp-controller="BeerStyles" asp-action="Index">Styles</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn btn-primary text-dark" asp-area="" asp-controller="Brewery" asp-action="Index">Breweries</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn btn-primary text-dark" asp-area="" asp-controller="Countries" asp-action="Index">Countries</a>
-                    </li>*@
+            <li class="nav-item">
+                <a class="nav-link btn btn-primary text-dark" asp-area="" asp-controller="Beers" asp-action="Index">Beers</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link btn btn-primary text-dark" asp-area="" asp-controller="BeerStyles" asp-action="Index">Styles</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link btn btn-primary text-dark" asp-area="" asp-controller="Brewery" asp-action="Index">Breweries</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link btn btn-primary text-dark" asp-area="" asp-controller="Countries" asp-action="Index">Countries</a>
+            </li>*@
                 </ul>
                 <!-- Search form -->
                 @*<form asp-controller="Beers" asp-action="Index">
-                    <p>
-                        <input type="text" name="SearchString">
-                        <input type="submit" value="Search" class="btn btn-primary" />
-                    </p>
-                </form>*@
+            <p>
+                <input type="text" name="SearchString">
+                <input type="submit" value="Search" class="btn btn-primary" />
+            </p>
+        </form>*@
                 <!--/. Search form -->
+                @*<li class="nav-item" id="Magician Panel">*@
+                @if (User.IsInRole("Magician"))
+                {
+                    <a class="nav-link btn btn-primary" asp-area="Magician" asp-action="Index"> Users Actions</a>
+                }
+                @*</li>*@
             </nav>
-        </div>
+            @*<ul>
 
+            </ul>*@
+        </div>
+        @*<div>
+
+        </div>*@
         <div class="col-md-5" role="main">
             <main role="main" class="pb-3">
                     @RenderBody()
