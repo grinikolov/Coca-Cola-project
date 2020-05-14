@@ -1,0 +1,75 @@
+﻿@model IEnumerable<BarCrawlers.Areas.Magician.Models.UserViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Users</h1>
+
+<form asp-area="Magician" asp-controller="User" asp-action="Index">
+    <p>
+        User: <input type="text" name="SearchString">
+        <input type="submit" value="Search" class="btn btn-primary" />
+    </p>
+</form>
+<table class="table table-hover table-sm" id="UserTable">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ImageSrc)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EmailConfirmed)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PhoneNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PhoneNumberConfirmed)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr onclick ="window.location = '/Magician/User/Details/@item.Id'">
+                <td>
+                    <div class="container">
+                        @if (string.IsNullOrEmpty(item.ImageSrc))
+                        {
+                            <img class="img-fluid" src="~/img/siluet.jpg" height="50" width="50">
+
+                        }
+                        else
+                        {
+                            <img src="@item.ImageSrc">
+                        }
+                    </div>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EmailConfirmed)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PhoneNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PhoneNumberConfirmed)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
