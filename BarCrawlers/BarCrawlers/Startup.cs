@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BarCrawlers.Areas.Magician.Models;
+using BarCrawlers.Areas.Magician.Models.Contrtacts;
 using BarCrawlers.Data;
 using BarCrawlers.Data.DBModels;
 using BarCrawlers.Services;
@@ -12,6 +14,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -49,6 +52,9 @@ namespace BarCrawlers
 
             services.AddScoped<IIngredientsService, IngredientsService>();
             services.AddScoped<IIngredientMapper, IngredientMapper>();
+            services.AddScoped<IUsersService, UsersService>();
+            services.AddScoped<IUserMapper, UserMapper>();
+            services.AddScoped<IUserViewMapper, UserViewMapper>();
 
 
             services.AddIdentity<User, Role>()
@@ -74,7 +80,7 @@ namespace BarCrawlers
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie();
-
+            services.AddMvc(option => option.EnableEndpointRouting = false);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -90,11 +96,11 @@ namespace BarCrawlers
             }
             app.UseStaticFiles();
 
-            app.UseRouting();
-
+            //app.UseRouting();
+            app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseCookiePolicy();
             //app.UseMvc(routes =>
             //{
             //    routes.MapRoute(
@@ -102,15 +108,24 @@ namespace BarCrawlers
             //      template: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
             //    );
             //});
-
-            app.UseEndpoints(endpoints =>
+            app.UseMvc(routes =>
             {
-                endpoints.MapControllers();
-                endpoints.MapRazorPages();
-                endpoints.MapControllerRoute(
+                routes.MapRoute(
+                     name: "areas",
+                     template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+                routes.MapRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");//{area:exists}/
+                    template: "{controller=Home}/{action=Index}/{id?}");
             });
+            //app.UseEndpoints(endpoints =>
+            //{
+            //    endpoints.MapControllers();
+            //    endpoints.MapRazorPages();
+            //    endpoints.MapControllerRoute(
+            //        name: "default",
+            //        pattern: "{controller=Home}/{action=Index}/{id?}");//{area:exists}/
+            //});
         }
     }
 }
