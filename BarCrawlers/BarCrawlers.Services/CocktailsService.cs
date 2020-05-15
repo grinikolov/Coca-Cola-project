@@ -25,6 +25,7 @@ namespace BarCrawlers.Services
             this._context = context ?? throw new ArgumentNullException(nameof(context));
             this._mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
+
         /// <summary>
         /// Gets all cocktails from the database.
         /// </summary>
