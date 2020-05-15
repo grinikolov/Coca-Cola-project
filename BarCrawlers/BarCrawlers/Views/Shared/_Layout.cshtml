@@ -7,20 +7,24 @@
     <style type="text/css">
         body {
             background-image: url("/img/BarBackground.jpg");
-            background-size:auto;
+            background-size: auto;
         }
+
         div {
             color: white;
         }
+
         btn-primary {
-            background-color:green;
+            background-color: green;
         }
+
         table {
-            background-color:white;
+            background-color: white;
         }
-        table.row {
-            cursor:pointer;
-        }
+
+            table.row {
+                cursor: pointer;
+            }
     </style>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
@@ -28,35 +32,37 @@
 <body>
     <div class="row">
         @*<div class="container">*@
-            <div class="col-sm-2" role="complementary">
-                <nav class="float-left">
-                    <div>
-                        <a href="/">
-                            @if (User.Identity.IsAuthenticated)
-                            {
-                                <img src="/img/siluet.jpg" width="150" height="150">
-                            }
-                            else
-                            {
-                                <img src="/img/siluet.jpg" width="150" height="150">
-                            }
-                        </a>
-                    </div>
-                    <br>
-                    <ul class="nav flex-column">
-                        <partial name="_LoginPartial" />
-                    </ul>
-                    @if (User.IsInRole("Magician"))
-                    {
-                        <a class="nav-link btn btn-primary" asp-area="Magician" asp-controller="User" asp-action="Index"> Users Actions</a>
-                    }
-                </nav>
-            </div>
-            <div class="col-9" role="main">
-                <main role="main" class="pb-3">
-                        @RenderBody()
-                </main>
-            </div>
+        <div class="col-sm-2" role="complementary">
+            <nav class="float-left">
+                <div>
+                    <a href="/">
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <img src="/img/siluet.jpg" width="150" height="150">
+                        }
+                        else
+                        {
+                            <img src="/img/siluet.jpg" width="150" height="150">
+                        }
+                    </a>
+                </div>
+                <br>
+                <ul class="nav flex-column">
+                    <partial name="_LoginPartial" />
+                </ul>
+                @if (User.IsInRole("Magician"))
+                {
+                    <a class="nav-link btn btn-primary" asp-area="Magician" asp-controller="User" asp-action="Index"> Users Actions</a>
+                    <a class="nav-link btn btn-primary"  asp-controller="Ingredients" asp-action="Index"> Ingredients</a>
+
+                }
+            </nav>
+        </div>
+        <div class="col-9" role="main">
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
         @*</div>*@
     </div>
     @*<header>
@@ -81,10 +87,10 @@
             </nav>
         </header>*@
     @*<div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>*@
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>*@
 
     <footer class="border-top footer text-muted">
         <div class="container">

@@ -52,10 +52,10 @@ namespace BarCrawlers.Services
         {
             var cocktail = await _context.Cocktails
                 .Include(c => c.Ingredients)
-                    .ThenInclude( c => c.Ingredient)
-                .Include(c=> c.Comment)
-                    .ThenInclude(c=> c.User)
-                .Include(c=> c.Bars)
+                    .ThenInclude(c => c.Ingredient)
+                .Include(c => c.Comment)
+                    .ThenInclude(c => c.User)
+                .Include(c => c.Bars)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
             if (cocktail == null)
@@ -76,11 +76,26 @@ namespace BarCrawlers.Services
         /// <returns>The created cocktail.</returns>
         public async Task<CocktailDTO> CreateAsync(CocktailDTO cocktailDTO)
         {
+            //check if exists
 
 
             var cocktail = this._mapper.MapDTOToEntity(cocktailDTO);
             this._context.Cocktails.Add(cocktail);
+
             await _context.SaveChangesAsync();
+
+            cocktail = await this._context.Cocktails.FirstOrDefaultAsync(c => c.Name == cocktailDTO.Name);
+            foreach (var item in cocktailDTO.Ingredients)
+            {
+                var cocktailIngredient = new CocktailIngredient
+                {
+                    CocktailId = cocktail.Id,
+                    IngredientId = item.IngredientId,
+                    Parts = item.Parts,
+                };
+                this._context.CocktailIngredients.Add(cocktailIngredient);
+            }
+            await this._context.SaveChangesAsync();
 
             cocktail = await this._context.Cocktails.FirstOrDefaultAsync(x => x.Name.ToLower() == cocktailDTO.Name.ToLower());
 

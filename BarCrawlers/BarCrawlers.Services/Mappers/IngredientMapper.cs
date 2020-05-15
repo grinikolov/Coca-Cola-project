@@ -30,9 +30,14 @@ namespace BarCrawlers.Services.Mappers
                 Id = entity.Id,
                 Name = entity.Name,
                 IsAlcoholic = entity.IsAlcoholic,
-
-                //TODO: What about coctails mapping?
-                //Cocktails = entity.Cocktails.Select(c => CocktailIngredientMapper(c)),
+                Cocktails = entity.Cocktails.Select(c => new CocktailIngredientDTO()
+                {
+                    IngredientId = entity.Id,
+                    IngredientName = entity.Name,
+                    CocktailId = c.CocktailId,
+                    CocktailName = c.Cocktail.Name,
+                    Parts = c.Parts
+                }).ToList(),
             };
         }
     }

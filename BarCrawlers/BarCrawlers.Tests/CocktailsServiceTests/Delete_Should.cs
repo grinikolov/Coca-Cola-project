@@ -15,34 +15,43 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
     [TestClass]
     public class Delete_Should
     {
-        //[TestMethod]
-        //public void ReturnTrue_when_Valid()
-        //{
+        [TestMethod]
+        public void DeleteCocktail_ShouldReturnTrue_when_Valid()
+        {
 
-        //    //Arrange
-        //    var options = Utils.GetOptions(nameof(ReturnTrue_when_Valid));
-        //    var entity = new Cocktail
-        //    {
-                
-        //    };
-        //    var mockMapper = new Mock<ICocktailMapper>();
+            //Arrange
+            var options = Utils.GetOptions(nameof(DeleteCocktail_ShouldReturnTrue_when_Valid));
+            // TODO: Create some ingredients
+           // var ingredient1 = new Ingredient { Id = Some Guid};
 
-        //    using (var arrangeContext = new BCcontext(options))
-        //    {
-        //        arrangeContext.Cocktails.Add(entity);
-        //        arrangeContext.SaveChanges();
-        //    }
+            // save them to the database
+            var entity = new Cocktail
+            {
 
-        //    //Act & Assert
-        //    using (var context = new BCcontext(options))
-        //    {
-        //        var sut = new CocktailsService(context, mockMapper.Object);
 
-        //        var result = sut.DeleteAsync(Utils.MySampleGuid()).Result;
 
-        //        Assert.IsTrue(result);
-        //    }
-        //}
+              //  Ingredients = 
+            };
+
+
+            var mockMapper = new Mock<ICocktailMapper>();
+
+            using (var arrangeContext = new BCcontext(options))
+            {
+                arrangeContext.Cocktails.Add(entity);
+                arrangeContext.SaveChanges();
+            }
+
+            //Act & Assert
+            using (var context = new BCcontext(options))
+            {
+                var sut = new CocktailsService(context, mockMapper.Object);
+
+                var result = sut.DeleteAsync(Utils.MySampleGuid()).Result;
+
+                Assert.IsTrue(result);
+            }
+        }
 
 
 

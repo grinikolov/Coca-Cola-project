@@ -28,8 +28,6 @@ namespace BarCrawlers.Services.Mappers
             };
         }
 
-
-
         public CocktailDTO MapEntityToDTO(Cocktail entity)
         {
             return new CocktailDTO
@@ -42,8 +40,14 @@ namespace BarCrawlers.Services.Mappers
                 IsDeleted = entity.IsDeleted,
                 IsAlcoholic = entity.IsAlcoholic,
                 
-                //Ingredients = entity.Ingredients.Select(x =>  MapEntityToDTO(x))
-
+                Ingredients = entity.Ingredients.Select(i => new CocktailIngredientDTO()
+                {
+                    IngredientId = i.IngredientId,
+                    IngredientName = i.Ingredient.Name,
+                    CocktailId = i.CocktailId,
+                    CocktailName = i.Cocktail.Name,
+                    Parts = i.Parts
+                }).ToList(),
             };
         }
     }
