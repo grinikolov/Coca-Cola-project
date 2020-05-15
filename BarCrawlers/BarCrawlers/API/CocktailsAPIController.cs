@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BarCrawlers.Data;
-using BarCrawlers.Data.DBModels;
+using BarCrawlers.Services.Contracts;
+using System.Runtime.InteropServices;
+using BarCrawlers.Services.DTOs;
 
 namespace BarCrawlers.API
 {
@@ -14,97 +15,101 @@ namespace BarCrawlers.API
     [ApiController]
     public class CocktailsAPIController : ControllerBase
     {
-        private readonly BCcontext _context;
+        private readonly ICocktailsService _service;
 
-        public CocktailsAPIController(BCcontext context)
+        public CocktailsAPIController(ICocktailsService service)
         {
-            _context = context;
+            this._service = service ?? throw new ArgumentNullException(nameof(service));
         }
 
         // GET: api/CocktailsAPI
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Cocktail>>> GetCocktails()
+        public async Task<ActionResult<IEnumerable<CocktailDTO>>> GetCocktails()
         {
-            return await _context.Cocktails.ToListAsync();
+            try
+            {
+                var cocktails = await this._service.GetAllAsync();
+                return Ok(cocktails);
+            }
+            catch (Exception)
+            {
+                return NoContent();
+            }
         }
 
         // GET: api/CocktailsAPI/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Cocktail>> GetCocktail(Guid id)
+        public async Task<ActionResult<CocktailDTO>> GetCocktail(Guid id)
         {
-            var cocktail = await _context.Cocktails.FindAsync(id);
-
-            if (cocktail == null)
+            try
             {
-                return NotFound();
+                var cocktail = await this._service.GetAsync(id);
+                if (cocktail == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(cocktail);
+
+            }
+            catch (Exception)
+            {
+                return NoContent();
             }
 
-            return cocktail;
         }
 
         // PUT: api/CocktailsAPI/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCocktail(Guid id, Cocktail cocktail)
+        public async Task<IActionResult> PutCocktail(Guid id, CocktailDTO cocktailDTO)
         {
-            if (id != cocktail.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(cocktail).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                var cocktail = await this._service.UpdateAsync(id, cocktailDTO);
+                return RedirectToAction();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception)
             {
-                if (!CocktailExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NoContent();
             }
-
-            return NoContent();
         }
 
         // POST: api/CocktailsAPI
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Cocktail>> PostCocktail(Cocktail cocktail)
+        public async Task<ActionResult<CocktailDTO>> PostCocktail(CocktailDTO cocktailDTO)
         {
-            _context.Cocktails.Add(cocktail);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var cocktail = await this._service.CreateAsync(cocktailDTO);
 
-            return CreatedAtAction("GetCocktail", new { id = cocktail.Id }, cocktail);
+                return Created("PostCocktail", cocktail);
+
+            }
+            catch (Exception)
+            {
+                return NoContent();
+            }
         }
 
         // DELETE: api/CocktailsAPI/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Cocktail>> DeleteCocktail(Guid id)
+        public async Task<ActionResult<bool>> DeleteCocktail(Guid id)
         {
-            var cocktail = await _context.Cocktails.FindAsync(id);
-            if (cocktail == null)
+            try
             {
-                return NotFound();
+                var result = await this._service.DeleteAsync(id);
+                return Ok(result);
             }
-
-            _context.Cocktails.Remove(cocktail);
-            await _context.SaveChangesAsync();
-
-            return cocktail;
+            catch (Exception)
+            {
+                return NoContent();
+            }
         }
 
-        private bool CocktailExists(Guid id)
-        {
-            return _context.Cocktails.Any(e => e.Id == id);
-        }
     }
 }

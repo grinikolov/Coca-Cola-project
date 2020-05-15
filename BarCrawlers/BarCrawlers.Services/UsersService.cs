@@ -20,8 +20,8 @@ namespace BarCrawlers.Services
         public UsersService(BCcontext context,
             IUserMapper mapper)
         {
-            this._context = context;
-            this._mapper = mapper;
+            this._context = context ?? throw new ArgumentNullException(nameof(context));
+            this._mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
         public Task<bool> DeleteAsync(Guid id)
         {

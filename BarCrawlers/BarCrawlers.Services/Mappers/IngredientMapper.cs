@@ -19,7 +19,7 @@ namespace BarCrawlers.Services.Mappers
                 IsAlcoholic = dto.IsAlcoholic,
 
                 //TODO: Mapping list of cocktails?
-                //Cocktails = dto.Cocktails
+                //Cocktails = dto.Cocktails.Select(c => c.CocktailId)
             };
         }
 
@@ -32,7 +32,7 @@ namespace BarCrawlers.Services.Mappers
                 IsAlcoholic = entity.IsAlcoholic,
 
                 //TODO: What about coctails mapping?
-                //Cocktails = entity.Cocktails.Select(x=>x.Cocktail.Name)
+                //Cocktails = entity.Cocktails.Select(c => CocktailIngredientMapper(c)),
             };
         }
     }

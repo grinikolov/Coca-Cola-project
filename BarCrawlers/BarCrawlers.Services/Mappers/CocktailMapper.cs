@@ -29,18 +29,6 @@ namespace BarCrawlers.Services.Mappers
         }
 
 
-        public IngredientDTO MapEntityToDTO(Ingredient entity)
-        {
-            return new IngredientDTO
-            {
-                Id = entity.Id,
-                Name = entity.Name,
-                IsAlcoholic = entity.IsAlcoholic,
-
-                //TODO: What about coctails mapping?
-                //Cocktails = entity.Cocktails.Select(x=>x.Cocktail.Name)
-            };
-        }
 
         public CocktailDTO MapEntityToDTO(Cocktail entity)
         {
