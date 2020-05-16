@@ -56,10 +56,10 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
 
 
         [TestMethod]
-        public void ReturnFalse_when_NotValidIngredientID()
+        public void DeleteCocktail_ReturnFalse_when_NotValidIngredientID()
         {
             //Arrange
-            var options = Utils.GetOptions(nameof(ReturnFalse_when_NotValidIngredientID));
+            var options = Utils.GetOptions(nameof(DeleteCocktail_ReturnFalse_when_NotValidIngredientID));
             //var entity = new
             var mockMapper = new Mock<ICocktailMapper>();
 

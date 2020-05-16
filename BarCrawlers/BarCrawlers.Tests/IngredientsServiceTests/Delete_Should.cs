@@ -16,11 +16,11 @@ namespace BarCrawlers.Tests.IngredientsServiceTests
     public class Delete_Should
     {
         [TestMethod]
-        public void ReturnTrue_when_Valid()
+        public void ReturnTrue_when_ValidIngredient()
         {
 
             //Arrange
-            var options = Utils.GetOptions(nameof(ReturnTrue_when_Valid));
+            var options = Utils.GetOptions(nameof(ReturnTrue_when_ValidIngredient));
             var entity = new Ingredient
             {
                 Id = Utils.MySampleGuid(),
