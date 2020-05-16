@@ -12,33 +12,47 @@ namespace BarCrawlers.Services.Mappers
     {
         public Ingredient MapDTOToEntity(IngredientDTO dto)
         {
-            return new Ingredient
+            try
             {
-                Id = dto.Id,
-                Name = dto.Name,
-                IsAlcoholic = dto.IsAlcoholic,
+                return new Ingredient
+                {
+                    Id = dto.Id,
+                    Name = dto.Name,
+                    IsAlcoholic = dto.IsAlcoholic,
 
-                //TODO: Mapping list of cocktails?
-                //Cocktails = dto.Cocktails.Select(c => c.CocktailId)
-            };
+                    //TODO: Mapping list of cocktails?
+                    //Cocktails = dto.Cocktails.Select(c => c.CocktailId)
+                };
+            }
+            catch (Exception)
+            {
+                return new Ingredient();
+            }
         }
 
         public IngredientDTO MapEntityToDTO(Ingredient entity)
         {
-            return new IngredientDTO
+            try
             {
-                Id = entity.Id,
-                Name = entity.Name,
-                IsAlcoholic = entity.IsAlcoholic,
-                Cocktails = entity.Cocktails.Select(c => new CocktailIngredientDTO()
+                return new IngredientDTO
                 {
-                    IngredientId = entity.Id,
-                    IngredientName = entity.Name,
-                    CocktailId = c.CocktailId,
-                    CocktailName = c.Cocktail.Name,
-                    Parts = c.Parts
-                }).ToList(),
-            };
+                    Id = entity.Id,
+                    Name = entity.Name,
+                    IsAlcoholic = entity.IsAlcoholic,
+                    Cocktails = entity.Cocktails.Select(c => new CocktailIngredientDTO()
+                    {
+                        IngredientId = entity.Id,
+                        IngredientName = entity.Name,
+                        CocktailId = c.CocktailId,
+                        CocktailName = c.Cocktail.Name,
+                        Parts = c.Parts
+                    }).ToList(),
+                };
+            }
+            catch (Exception)
+            {
+                return new IngredientDTO();
+            }
         }
     }
 }

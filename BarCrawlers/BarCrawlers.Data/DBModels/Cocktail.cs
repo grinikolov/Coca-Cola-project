@@ -15,7 +15,7 @@ namespace BarCrawlers.Data.DBModels
         public bool IsAlcoholic { get; set; }
         public ICollection<CocktailIngredient> Ingredients { get; set; }
         public ICollection<CocktailBar> Bars { get; set; }
-        public ICollection<CocktailUserComment> Comment { get; set; }
+        public ICollection<CocktailUserComment> Comments { get; set; }
         public ICollection<UserCocktailRating> CocktailRatings { get; set; }
         public string Instructions { get; set; }
 

@@ -12,43 +12,84 @@ namespace BarCrawlers.Services.Mappers
     {
         public Cocktail MapDTOToEntity(CocktailDTO dto)
         {
-            return new Cocktail
+            try
             {
-                Id = dto.Id,
-                Name = dto.Name,
-                Rating = dto.Rating,
-                TimesRated = dto.TimesRated,
-                ImageSrc = dto.ImageSrc,
-                IsDeleted = dto.IsDeleted,
-                IsAlcoholic = dto.IsAlcoholic,
+                return new Cocktail
+                {
+                    Id = dto.Id,
+                    Name = dto.Name,
+                    Rating = dto.Rating,
+                    TimesRated = dto.TimesRated,
+                    ImageSrc = dto.ImageSrc,
+                    IsDeleted = dto.IsDeleted,
+                    IsAlcoholic = dto.IsAlcoholic,
 
-                //Ingredients = dto.Ingredients,
+                    //Ingredients = dto.Ingredients,
 
-                //TODO: Mapping lists ?
-            };
+                    //TODO: Mapping lists ?
+                };
+            }
+            catch (Exception)
+            {
+                return new Cocktail();
+            }
         }
 
         public CocktailDTO MapEntityToDTO(Cocktail entity)
         {
-            return new CocktailDTO
+            try
             {
-                Id = entity.Id,
-                Name = entity.Name,
-                Rating = entity.Rating,
-                TimesRated = entity.TimesRated,
-                ImageSrc = entity.ImageSrc,
-                IsDeleted = entity.IsDeleted,
-                IsAlcoholic = entity.IsAlcoholic,
-                
-                Ingredients = entity.Ingredients.Select(i => new CocktailIngredientDTO()
+                return new CocktailDTO
                 {
-                    IngredientId = i.IngredientId,
-                    IngredientName = i.Ingredient.Name,
-                    CocktailId = i.CocktailId,
-                    CocktailName = i.Cocktail.Name,
-                    Parts = i.Parts
-                }).ToList(),
-            };
+                    Id = entity.Id,
+                    Name = entity.Name,
+                    Rating = entity.Rating,
+                    TimesRated = entity.TimesRated,
+                    ImageSrc = entity.ImageSrc,
+                    IsDeleted = entity.IsDeleted,
+                    IsAlcoholic = entity.IsAlcoholic,
+
+                    Ingredients = entity.Ingredients.Select(i => new CocktailIngredientDTO()
+                    {
+                        IngredientId = i.IngredientId,
+                        IngredientName = i.Ingredient.Name,
+                        CocktailId = i.CocktailId,
+                        CocktailName = i.Cocktail.Name,
+                        Parts = i.Parts
+                    }).ToList(),
+                    Bars = entity.Bars.Select(b => new CocktailBarDTO
+                    {
+                        BarId = b.BarId,
+                        BarName = b.Bar.Name,
+                        CocktailId = b.CocktailId,
+                        CocktailName = b.Cocktail.Name,
+                    }).ToList(),
+                    Comments = entity.Comments.Select(c => new CocktailUserCommentDTO
+                    {
+                        CocktailId = c.CocktailId,
+                        CocktailName = c.Cocktail.Name,
+                        UserId = c.UserId,
+                        UserName = c.User.UserName,
+                        Text = c.Text,
+                        IsFlagged = c.IsFlagged,
+                    }).ToList(),
+                    CocktailRatings = entity.CocktailRatings.Select(r => new UserCocktailRatingDTO
+                    {
+                        CocktailId = r.CocktailId,
+                        CocktailName = r.Cocktail.Name,
+                        UserId = r.UserId,
+                        UserName = r.User.UserName,
+                        Rating = r.Rating,
+
+                    }).ToList(),
+                    Instructions = entity.Instructions,
+
+                };
+            }
+            catch (Exception)
+            {
+                return new CocktailDTO();
+            }
         }
     }
 }

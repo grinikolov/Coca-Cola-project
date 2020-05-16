@@ -50,6 +50,8 @@ namespace BarCrawlers
             services.AddDbContext<BCcontext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("Default")).UseLoggerFactory(MyLoggerFactory));
 
+            services.AddScoped<ICocktailsService, CocktailsService>();
+            services.AddScoped<ICocktailMapper, CocktailMapper>();
             services.AddScoped<IIngredientsService, IngredientsService>();
             services.AddScoped<IIngredientMapper, IngredientMapper>();
             services.AddScoped<IUsersService, UsersService>();

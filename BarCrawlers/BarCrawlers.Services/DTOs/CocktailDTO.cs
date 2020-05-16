@@ -14,9 +14,9 @@ namespace BarCrawlers.Services.DTOs
         public bool IsDeleted { get; set; }
         public bool IsAlcoholic { get; set; }
         public ICollection<CocktailIngredientDTO> Ingredients { get; set; }
-        //public ICollection<CocktailBar> Bars { get; set; }
-        //public ICollection<CocktailUserComment> Comment { get; set; }
-        //public ICollection<UserCocktailRating> CocktailRatings { get; set; }
+        public ICollection<CocktailBarDTO> Bars { get; set; }
+        public ICollection<CocktailUserCommentDTO> Comments { get; set; }
+        public ICollection<UserCocktailRatingDTO> CocktailRatings { get; set; }
         public string Instructions { get; set; }
 
     }

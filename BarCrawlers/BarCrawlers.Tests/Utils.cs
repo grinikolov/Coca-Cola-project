@@ -16,7 +16,15 @@ namespace BarCrawlers.Tests
 
         public static Guid MySampleGuid()
         {
-            return Guid.Parse("f57960f4-d779-4b1c-ace2-056ad2dbb7d4");
+            return Guid.Parse("a17960f4-d779-4b1c-ace2-056ad2dbb7d4");
+        }
+        public static Guid MySampleGuid2()
+        {
+            return Guid.Parse("b27960f4-d779-4b1c-ace2-056ad2dbb7d4");
+        }
+        public static Guid MySampleGuid3()
+        {
+            return Guid.Parse("c37960f4-d779-4b1c-ace2-056ad2dbb7d4");
         }
     }
 }

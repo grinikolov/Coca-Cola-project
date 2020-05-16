@@ -9,57 +9,60 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace BarCrawlers.Tests.CocktailsServiceTests
 {
     [TestClass]
     public class Delete_Should
     {
+        //[TestMethod]
+        //public async Task DeleteCocktail_ShouldReturnTrue_when_ValidAsync()
+        //{
+
+        //    //Arrange
+        //    var options = Utils.GetOptions(nameof(DeleteCocktail_ShouldReturnTrue_when_ValidAsync));
+        //    // TODO: Create some ingredients
+        //    var mockIngredient1 = new Mock<Ingredient>();
+        //    mockIngredient1.Setup(x=> x.Id).Returns(Utils.MySampleGuid2());
+            
+        //    var mockIngredient2 = new Mock<Ingredient>();
+        //    mockIngredient2.Setup(x => x.Id).Returns(Utils.MySampleGuid3());
+
+        //    var entity = new Cocktail
+        //    {
+        //        Id = Utils.MySampleGuid(),
+        //        Name = "Mohito",
+                
+        //    };
+            
+        //    var mockMapper = new Mock<ICocktailMapper>();
+
+        //    using (var arrangeContext = new BCcontext(options))
+        //    {
+
+        //        arrangeContext.Cocktails.Add(entity);
+        //        arrangeContext.SaveChanges();
+        //    }
+
+        //    //Act & Assert
+        //    using (var context = new BCcontext(options))
+        //    {
+        //        var sut = new CocktailsService(context, mockMapper.Object);
+
+        //        var result = await sut.DeleteAsync(Utils.MySampleGuid());
+
+        //        Assert.IsTrue(result);
+        //    }
+        //}
+
+
+
         [TestMethod]
-        public void DeleteCocktail_ShouldReturnTrue_when_Valid()
-        {
-
-            //Arrange
-            var options = Utils.GetOptions(nameof(DeleteCocktail_ShouldReturnTrue_when_Valid));
-            // TODO: Create some ingredients
-           // var ingredient1 = new Ingredient { Id = Some Guid};
-
-            // save them to the database
-            var entity = new Cocktail
-            {
-
-
-
-              //  Ingredients = 
-            };
-
-
-            var mockMapper = new Mock<ICocktailMapper>();
-
-            using (var arrangeContext = new BCcontext(options))
-            {
-                arrangeContext.Cocktails.Add(entity);
-                arrangeContext.SaveChanges();
-            }
-
-            //Act & Assert
-            using (var context = new BCcontext(options))
-            {
-                var sut = new CocktailsService(context, mockMapper.Object);
-
-                var result = sut.DeleteAsync(Utils.MySampleGuid()).Result;
-
-                Assert.IsTrue(result);
-            }
-        }
-
-
-
-        [TestMethod]
-        public void DeleteCocktail_ReturnFalse_when_NotValidIngredientID()
+        public void DeleteCocktail_ReturnFalse_when_NotValidID()
         {
             //Arrange
-            var options = Utils.GetOptions(nameof(DeleteCocktail_ReturnFalse_when_NotValidIngredientID));
+            var options = Utils.GetOptions(nameof(DeleteCocktail_ReturnFalse_when_NotValidID));
             //var entity = new
             var mockMapper = new Mock<ICocktailMapper>();
 

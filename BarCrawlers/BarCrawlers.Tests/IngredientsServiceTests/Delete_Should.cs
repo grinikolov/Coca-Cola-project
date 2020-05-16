@@ -9,6 +9,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace BarCrawlers.Tests.IngredientsServiceTests
 {
@@ -16,11 +17,11 @@ namespace BarCrawlers.Tests.IngredientsServiceTests
     public class Delete_Should
     {
         [TestMethod]
-        public void ReturnTrue_when_ValidIngredient()
+        public async Task ReturnTrue_when_ValidIngredientAsync()
         {
 
             //Arrange
-            var options = Utils.GetOptions(nameof(ReturnTrue_when_ValidIngredient));
+            var options = Utils.GetOptions(nameof(ReturnTrue_when_ValidIngredientAsync));
             var entity = new Ingredient
             {
                 Id = Utils.MySampleGuid(),
@@ -41,17 +42,17 @@ namespace BarCrawlers.Tests.IngredientsServiceTests
             {
                 var sut = new IngredientsService(context, mockMapper.Object);
 
-                var result = sut.DeleteAsync(Utils.MySampleGuid()).Result;
+                var result = await sut.DeleteAsync(Utils.MySampleGuid());
 
                 Assert.IsTrue(result);
             }
         }
 
         [TestMethod]
-        public void ReturnFalse_when_NotValidIngredientID()
+        public async Task ReturnFalse_when_NotValidIngredientIDAsync()
         {
             //Arrange
-            var options = Utils.GetOptions(nameof(ReturnFalse_when_NotValidIngredientID));
+            var options = Utils.GetOptions(nameof(ReturnFalse_when_NotValidIngredientIDAsync));
             var entity = new Ingredient
             {
                 Name = "Lime",
@@ -71,7 +72,7 @@ namespace BarCrawlers.Tests.IngredientsServiceTests
             {
                 var sut = new IngredientsService(context, mockMapper.Object);
 
-                var result = sut.DeleteAsync(Utils.MySampleGuid()).Result;
+                var result = await sut.DeleteAsync(Utils.MySampleGuid());
 
                 Assert.IsFalse(result);
             }
