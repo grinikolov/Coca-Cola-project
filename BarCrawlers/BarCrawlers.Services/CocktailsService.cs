@@ -30,7 +30,7 @@ namespace BarCrawlers.Services
         /// Gets all cocktails from the database.
         /// </summary>
         /// <returns>List of cocktails, DTOs</returns>
-        public async Task<IEnumerable<CocktailDTO>> GetAllAsync()
+        public async Task<IEnumerable<CocktailDTO>> GetAllAsync(string page, string itemsOnPage)
         {
             var cocktails = await _context.Cocktails
                 .Include(c => c.Ingredients)

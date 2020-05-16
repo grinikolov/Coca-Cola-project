@@ -24,11 +24,11 @@ namespace BarCrawlers.API
 
         // GET: api/CocktailsAPI
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CocktailDTO>>> GetCocktails()
+        public async Task<ActionResult<IEnumerable<CocktailDTO>>> GetCocktails(string page = "0", string itemsOnPage = "12")
         {
             try
             {
-                var cocktails = await this._service.GetAllAsync();
+                var cocktails = await this._service.GetAllAsync(page, itemsOnPage);
                 return Ok(cocktails);
             }
             catch (Exception)

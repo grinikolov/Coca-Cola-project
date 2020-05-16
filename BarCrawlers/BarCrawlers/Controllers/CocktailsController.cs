@@ -7,45 +7,75 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BarCrawlers.Data;
 using BarCrawlers.Data.DBModels;
+using BarCrawlers.Services.Contracts;
+using BarCrawlers.Models.Contracts;
+using BarCrawlers.Models;
+using Microsoft.AspNetCore.Identity.UI.V4.Pages.Internal;
+using System.Diagnostics;
 
 namespace BarCrawlers.Controllers
 {
     public class CocktailsController : Controller
     {
-        private readonly BCcontext _context;
+        private readonly ICocktailsService _service;
+        private readonly ICocktailViewMapper _mapper;
+        private readonly IIngredientsService _ingredientsService;
 
-        public CocktailsController(BCcontext context)
+        public CocktailsController(ICocktailsService service,
+            ICocktailViewMapper mapper,
+             IIngredientsService ingredientsService)
         {
-            _context = context;
+            this._service = service ?? throw new ArgumentNullException(nameof(service));
+            this._mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            this._ingredientsService = ingredientsService ?? throw new ArgumentNullException(nameof(ingredientsService));
         }
 
         // GET: Cocktails
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string page = "0", string itemsOnPage = "12")
         {
-            return View(await _context.Cocktails.ToListAsync());
+            try
+            {
+                var cocktails = await this._service.GetAllAsync(page, itemsOnPage);
+
+                return View(cocktails.Select(c => this._mapper.MapDTOToView(c)));
+            }
+            catch (Exception)
+            {
+                return Error();
+            }
         }
 
         // GET: Cocktails/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        public async Task<IActionResult> Details(Guid id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
-            }
+                if (id == null)
+                {
+                    return NotFound();
+                }
 
-            var cocktail = await _context.Cocktails
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (cocktail == null)
+                var cocktail = await this._service.GetAsync(id);
+
+                if (cocktail == null)
+                {
+                    return NotFound();
+                }
+
+                return View(cocktail);
+
+            }
+            catch (Exception)
             {
-                return NotFound();
+                return Error();
             }
-
-            return View(cocktail);
         }
 
         // GET: Cocktails/Create
         public IActionResult Create()
         {
+            ViewData["IngredientId"] = new SelectList(this._ingredientsService.GetAllAsync().Result, "ID", "Name");
+
             return View();
         }
 
@@ -54,32 +84,47 @@ namespace BarCrawlers.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Rating,TimesRated,ImageSrc,IsDeleted,IsAlcoholic,Instructions")] Cocktail cocktail)
+        public async Task<IActionResult> Create([Bind("Id,Name,Rating,TimesRated,ImageSrc,IsDeleted,IsAlcoholic,Instructions")] CocktailViewModel cocktailView)
         {
-            if (ModelState.IsValid)
+            try
             {
-                cocktail.Id = Guid.NewGuid();
-                _context.Add(cocktail);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(cocktail);
-        }
 
+                if (ModelState.IsValid)
+                {
+                    var cocktailDTO = this._mapper.MapViewToDTO(cocktailView);
+                    var cocktail = await this._service.CreateAsync(cocktailDTO);
+                    return RedirectToAction(nameof(Index));
+                }
+                return Create();
+            }
+            catch (Exception)
+            {
+                return Error();
+            }
+        }
+        /* TODO: Edit cocktail!
+         
         // GET: Cocktails/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
-            }
+                if (id == null)
+                {
+                    return NotFound();
+                }
 
-            var cocktail = await _context.Cocktails.FindAsync(id);
-            if (cocktail == null)
-            {
-                return NotFound();
+                var cocktail = await _context.Cocktails.FindAsync(id);
+                if (cocktail == null)
+                {
+                    return NotFound();
+                }
+                return View(cocktail);
             }
-            return View(cocktail);
+            catch (Exception)
+            {
+                return Error();
+            }
         }
 
         // POST: Cocktails/Edit/5
@@ -115,24 +160,30 @@ namespace BarCrawlers.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(cocktail);
-        }
+        }*/
 
         // GET: Cocktails/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
-            }
+                if (id == null)
+                {
+                    return NotFound();
+                }
 
-            var cocktail = await _context.Cocktails
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (cocktail == null)
+                var cocktail = await this._service.GetAsync(id);
+                if (cocktail == null)
+                {
+                    return NotFound();
+                }
+
+                return View(cocktail);
+            }
+            catch (Exception)
             {
-                return NotFound();
+                return Error();
             }
-
-            return View(cocktail);
         }
 
         // POST: Cocktails/Delete/5
@@ -140,15 +191,23 @@ namespace BarCrawlers.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var cocktail = await _context.Cocktails.FindAsync(id);
-            _context.Cocktails.Remove(cocktail);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            var result = await this._service.DeleteAsync(id);
+            if (result == true)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+                return await Delete(id);
+            }
         }
 
-        private bool CocktailExists(Guid id)
+        
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
         {
-            return _context.Cocktails.Any(e => e.Id == id);
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
