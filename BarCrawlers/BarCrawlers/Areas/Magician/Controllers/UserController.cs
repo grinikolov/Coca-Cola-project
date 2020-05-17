@@ -12,29 +12,36 @@ using BarCrawlers.Areas.Magician.Models;
 using Microsoft.AspNetCore.Identity;
 using BarCrawlers.Services.DTOs;
 using BarCrawlers.Areas.Magician.Models.Contrtacts;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BarCrawlers.Areas.Magician.Controllers
 {
     [Area("Magician")]
+    [Authorize(Roles ="Magician")]
     public class UserController : Controller
     {
         private readonly IUsersService _service;
         private readonly IUserViewMapper _mapper;
+        private readonly UserManager<User> _userManager;
 
-        public UserController(IUsersService service, IUserViewMapper mapper)
+        public UserController(IUsersService service, IUserViewMapper mapper, UserManager<User> userManager)
         {
             this._service = service ?? throw new ArgumentNullException("User service not found");
             this._mapper = mapper ?? throw new ArgumentNullException("User mapper not found");
+            this._userManager = userManager ?? throw new ArgumentNullException("User manager not found");
         }
 
         // GET: Magician/User
-        public async Task<IActionResult> Index(string page = "0", string itemsOnPage = "10")
+        public async Task<IActionResult> Index(string page = "0", string itemsOnPage = "10", string searchString = null)
         {
             try
             {
-                var serviceResult = await _service.GetAllAsync(page, itemsOnPage);
+                var serviceResult = await _service.GetAllAsync(page, itemsOnPage, searchString);
+                ViewBag.Count = serviceResult.Count();
+                ViewBag.CurrentPage = int.Parse(page);
+                ViewBag.ItemsOnPage = int.Parse(itemsOnPage);
+                ViewBag.SearchString = searchString;
                 return View(serviceResult.Select(u => _mapper.MapDTOToView(u)));
-                
             }
             catch (Exception)
             {
@@ -51,15 +58,19 @@ namespace BarCrawlers.Areas.Magician.Controllers
             {
                 return NotFound();
             }
-
-            var user = await _service.GetAsync(id);
-                //.FirstOrDefaultAsync(m => m.Id == id);
-            if (user == null)
+            try
             {
-                return NotFound();
+                var user = _mapper.MapDTOToView(await _service.GetAsync(id));
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                return View(user);
             }
-
-            return View(user);
+            catch (Exception)
+            {
+                return View();
+            }
         }
 
         // GET: Magician/User/Create
@@ -85,72 +96,65 @@ namespace BarCrawlers.Areas.Magician.Controllers
         //    return View(user);
         //}
 
-        //// GET: Magician/User/Edit/5
-        //public async Task<IActionResult> Edit(Guid? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var user = await _context.Users.FindAsync(id);
-        //    if (user == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return View(user);
-        //}
-
-        // POST: Magician/User/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("ImageSrc,Id,UserName,Email,EmailConfirmed,PhoneNumber,PhoneNumberConfirmed,LockoutEnd,LockoutEnabled")] UserViewModel user)
-        {
-            if (id != user.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    var userDTO = new UserDTO();
-                    await _service.UpdateAsync(id, userDTO);
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    //if (!UserExists(user.Id))
-                    //{
-                    //    return NotFound();
-                    //}
-                    //else
-                    //{
-                    //    throw;
-                    //}
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(user);
-        }
-
-        // GET: Magician/User/Delete/5
-        public async Task<IActionResult> Delete(Guid id)
+        // GET: Magician/User/Edit/5
+        public async Task<IActionResult> Edit(Guid id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var user = await _service.GetAsync(id);
+            var user = _mapper.MapDTOToView(await _service.GetAsync(id));
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return View(user);
+        }
+
+        // POST: Magician/User/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Guid id, [Bind("LockDays")] int lockDays)
+        {
+            //if (id != user.Id)
+            //{
+            //    return NotFound();
+            //}
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var userDTO = new UserDTO() { Id = id,LockoutEnd = DateTime.UtcNow.AddDays(lockDays + 1)};
+                    await _service.UpdateAsync(id, userDTO, _userManager);
+                }
+                catch (Exception)
+                {
+                    return NotFound();
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Magician/User/Delete/5
+        public async Task<IActionResult> Unban(Guid id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var user = await _service.UnbanAsync(id, _userManager);
             if (user == null)
             {
                 return NotFound();
             }
 
-            return View(user);
+            return RedirectToAction(nameof(Index));
         }
 
         // POST: Magician/User/Delete/5
