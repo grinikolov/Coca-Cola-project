@@ -103,6 +103,138 @@ namespace BarCrawlers.Data.Seeder
                     await usermanager.AddToRoleAsync(user, "Magician");
                 }
             }
+            if (await usermanager.FindByNameAsync("TestUser1") == null)
+            {
+                User user = new User();
+                user.UserName = "TestUser1";
+                user.Email = "Test@User.One";
+                var result = await usermanager.CreateAsync(user, "TestUser1");
+                if (result.Succeeded)
+                {
+                    await usermanager.AddToRoleAsync(user, "Crawler");
+                }
+            }
+            if (await usermanager.FindByNameAsync("TestUser2") == null)
+            {
+                User user = new User();
+                user.UserName = "TestUser2";
+                user.Email = "Test@User.Two";
+                var result = await usermanager.CreateAsync(user, "TestUser2");
+                if (result.Succeeded)
+                {
+                    await usermanager.AddToRoleAsync(user, "Crawler");
+                }
+            }
+            if (await usermanager.FindByNameAsync("TestUser3") == null)
+            {
+                User user = new User();
+                user.UserName = "TestUser3";
+                user.Email = "Test@User.Three";
+                var result = await usermanager.CreateAsync(user, "TestUser3");
+                if (result.Succeeded)
+                {
+                    await usermanager.AddToRoleAsync(user, "Crawler");
+                }
+            }
+            if (await usermanager.FindByNameAsync("TestUser4") == null)
+            {
+                User user = new User();
+                user.UserName = "TestUser4";
+                user.Email = "Test@User.Four";
+                var result = await usermanager.CreateAsync(user, "TestUser4");
+                if (result.Succeeded)
+                {
+                    await usermanager.AddToRoleAsync(user, "Crawler");
+                }
+            }
+            if (await usermanager.FindByNameAsync("TestUser5") == null)
+            {
+                User user = new User();
+                user.UserName = "TestUser5";
+                user.Email = "Test@User.Five";
+                var result = await usermanager.CreateAsync(user, "TestUser5");
+                if (result.Succeeded)
+                {
+                    await usermanager.AddToRoleAsync(user, "Crawler");
+                }
+            }
+            if (await usermanager.FindByNameAsync("TestUser6") == null)
+            {
+                User user = new User();
+                user.UserName = "TestUser6";
+                user.Email = "Test@User.Six";
+                var result = await usermanager.CreateAsync(user, "TestUser6");
+                if (result.Succeeded)
+                {
+                    await usermanager.AddToRoleAsync(user, "Crawler");
+                }
+            }
+            if (await usermanager.FindByNameAsync("TestUser7") == null)
+            {
+                User user = new User();
+                user.UserName = "TestUser7";
+                user.Email = "Test@User.Seven";
+                var result = await usermanager.CreateAsync(user, "TestUser7");
+                if (result.Succeeded)
+                {
+                    await usermanager.AddToRoleAsync(user, "Crawler");
+                }
+            }
+            if (await usermanager.FindByNameAsync("TestUser8") == null)
+            {
+                User user = new User();
+                user.UserName = "TestUser8";
+                user.Email = "Test@User.Eight";
+                var result = await usermanager.CreateAsync(user, "TestUser8");
+                if (result.Succeeded)
+                {
+                    await usermanager.AddToRoleAsync(user, "Crawler");
+                }
+            }
+            if (await usermanager.FindByNameAsync("TestUser9") == null)
+            {
+                User user = new User();
+                user.UserName = "TestUser9";
+                user.Email = "Test@User.Nine";
+                var result = await usermanager.CreateAsync(user, "TestUser9");
+                if (result.Succeeded)
+                {
+                    await usermanager.AddToRoleAsync(user, "Crawler");
+                }
+            }
+            if (await usermanager.FindByNameAsync("TestUser10") == null)
+            {
+                User user = new User();
+                user.UserName = "TestUser10";
+                user.Email = "Test@User.Ten";
+                var result = await usermanager.CreateAsync(user, "TestUser10");
+                if (result.Succeeded)
+                {
+                    await usermanager.AddToRoleAsync(user, "Crawler");
+                }
+            }
+            if (await usermanager.FindByNameAsync("TestUser11") == null)
+            {
+                User user = new User();
+                user.UserName = "TestUser11";
+                user.Email = "Test@User.Eleven";
+                var result = await usermanager.CreateAsync(user, "TestUser11");
+                if (result.Succeeded)
+                {
+                    await usermanager.AddToRoleAsync(user, "Crawler");
+                }
+            }
+            if (await usermanager.FindByNameAsync("TestUser12") == null)
+            {
+                User user = new User();
+                user.UserName = "TestUser12";
+                user.Email = "Test@User.Twelve";
+                var result = await usermanager.CreateAsync(user, "TestUser12");
+                if (result.Succeeded)
+                {
+                    await usermanager.AddToRoleAsync(user, "Crawler");
+                }
+            }
             //if (context.Users.Any())
             //{
             //    return;
