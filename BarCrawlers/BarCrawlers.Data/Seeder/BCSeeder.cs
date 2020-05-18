@@ -19,11 +19,11 @@ namespace BarCrawlers.Data.Seeder
         //    this._userManager = _userManager;
         //}
 
-        public static async Task InitAsync(UserManager<User> userManager, RoleManager<Role> roleManager)//BCcontext context)
+        public static async Task InitAsync(UserManager<User> userManager, RoleManager<Role> roleManager, BCcontext context)
         {
             await SeedRolesAsync(roleManager);
             //await SeedCountriesAsync(context);
-            //await SeedStylesAsync(context);
+            await SeedIngredientsAsync(context);
             await SeedFirstAdmin(userManager);
             //await SeedBreweriesAsync(context);
             //await SeedBeersAsync(context);
@@ -59,20 +59,123 @@ namespace BarCrawlers.Data.Seeder
             //await context.SaveChangesAsync();
         }
 
-        //private static async Task SeedStylesAsync(BOContext context)
-        //{
-        //    if (context.BeerStyles.Any())
-        //        return;
+        private static async Task SeedIngredientsAsync(BCcontext context)
+        {
+            if (context.Ingredients.Any())
+                return;
 
-        //    await context.BeerStyles.AddAsync(new BeerStyle()
-        //    {
-        //        Name = "Lager",
-        //        Description = "Pale lagers are the standard international beer style, as personified by products from Miller to Heineken. This style is the generic spin-off of the pilsner style. Pale lagers are generally light- to medium-bodied with a light-to-medium hop impression and a clean, crisp malt character.",
-        //        CreatedOn = DateTime.UtcNow,
+            var nonAlcoholics = new List<string>() {
+                "Agave syrup",
+                "Almond syrup",
+                "Apple juice",
+                "Basil leaves",
+                "Black pepper",
+                "Cranberry juice (red)",
+                "Cream",
+                "Coca-Cola",
+                "Crème de cassis",
+                "Egg white",
+                "Espresso coffee (freshly made)",
+                "Fresh mint leaves/sprigs",
+                "Ginger (fresh root)",
+                "Grapefruit juice (pink)",
+                "Honey sugar syrup",
+                "Lemon juice",
+                "Lime juice",
+                "Lime slice",
+                "Maple syrup",
+                "Milk",
+                "Orange bitters",
+                "Orange juice",
+                "Passion fruit (fresh)",
+                "Passion fruit syrup",
+                "Pineapple juice",
+                "Pomegranate (grenadine) syrup",
+                "Raspberries (fresh)",
+                "Runny honey",
+                "Soda (club soda)",
+                "Sprite",
+                "Strawberries (fresh)",
+                "Sugar syrup",
+                "Tonic water",
+                "Vanilla sugar syrup",
+                "White crème de menthe", };
+            foreach (var item in nonAlcoholics)
+            {
+                await context.Ingredients.AddAsync(new Ingredient()
+                {
+                    Name = item,
+                    IsAlcoholic = false,
+                    //TODO: Should we initialize the collection of cocktails?
+                });
+            }
 
-        //    });
-        //    await context.SaveChangesAsync();
-        //}
+            var alcoholics = new List<string>() {
+                "Absinthe",
+                "Aged rum (+7 year old)",
+                "Amaretto liqueur",
+                "Apple schnapps liqueur",
+                "Apricot brandy liqueur",
+                "Black raspberry liqueur",
+                "Blended Scotch whisky",
+                "Blue curaçao liqueur",
+                "Bourbon whiskey",
+                "Brut champagne",
+                "Bénédictine D.O.M. liqueur",
+                "Calvados apple brandy",
+                "Campari Bitter",
+                "Chartreuse Vert (green)",
+                "Cherry brandy liqueur",
+                "Citrus flavoured vodka",
+                "Coconut rum liqueur",
+                "Coffee liqueur",
+                "Cognac V.S.O.P.",
+                "Crème de banane liqueur",
+                "Dark crème de cacao liqueur",
+                "Drambuie liqueur",
+                "Dry vermouth",
+                "Elderflower liqueur",
+                "Falernum liqueur",
+                "Galliano L'Autentico liqueur",
+                "Ginger ale",
+                "Ginger beer",
+                "Ginger liqueur",
+                "Golden rum",
+                "Grand Marnier liqueur",
+                "Hazelnut liqueur",
+                "Irish cream liqueur",
+                "Islay single malt Scotch whisky",
+                "Light white rum",
+                "London dry gin",
+                "Maraschino liqueur",
+                "Melon liqueur (green)",
+                "Navy rum",
+                "Peach Schnapps liqueur",
+                "Port wine",
+                "Prosecco sparkling wine",
+                "Sake",
+                "Southern Comfort liqueur",
+                "Straight rye whiskey",
+                "Sweet vermouth",
+                "Tequila (reposado)",
+                "Triple sec liqueur",
+                "Vanilla infused vodka",
+                "Vodka raspberry flavoured",
+                "Vodka",
+                "White crème de cacao liqueur",
+                "White wine (Sauvignon Blanc)",
+                "Żubrówka bison grass vodka"};
+            foreach (var item in alcoholics)
+            {
+                await context.Ingredients.AddAsync(new Ingredient()
+                {
+                    Name = item,
+                    IsAlcoholic = true,
+                });
+            }
+
+            await context.SaveChangesAsync();
+        }
 
         //private static async Task SeedCountriesAsync(BOContext context)
         //{

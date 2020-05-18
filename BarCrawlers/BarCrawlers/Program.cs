@@ -24,10 +24,10 @@ namespace BarCrawlers
                 var services = scope.ServiceProvider;
                 try
                 {
-                    //var context = services.GetRequiredService<BCcontext>();
+                    var context = services.GetRequiredService<BCcontext>();
                     var usermanager = services.GetRequiredService<UserManager<User>>();
                     var rolemanager = services.GetRequiredService<RoleManager<Role>>();
-                    await BCSeeder.InitAsync(usermanager, rolemanager);
+                    await BCSeeder.InitAsync(usermanager, rolemanager, context);
                 }
                 catch (Exception ex)
                 {

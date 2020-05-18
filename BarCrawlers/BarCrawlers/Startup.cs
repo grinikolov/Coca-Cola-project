@@ -50,6 +50,8 @@ namespace BarCrawlers
             services.AddDbContext<BCcontext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("Default")).UseLoggerFactory(MyLoggerFactory));
 
+            services.AddScoped<ICocktailsService, CocktailsService>();
+            services.AddScoped<ICocktailMapper, CocktailMapper>();
             services.AddScoped<IIngredientsService, IngredientsService>();
             services.AddScoped<IIngredientMapper, IngredientMapper>();
             services.AddScoped<IUsersService, UsersService>();
@@ -113,9 +115,11 @@ namespace BarCrawlers
 
             app.UseRouting();
             app.UseHttpsRedirection();
+
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseCookiePolicy();
+
             //app.UseMvc(routes =>
             //{
             //    routes.MapRoute(
@@ -133,17 +137,33 @@ namespace BarCrawlers
             //        name: "default",
             //        template: "{controller=Home}/{action=Index}/{id?}");
             //});
-            //app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapRazorPages();
-                endpoints.MapControllerRoute(
-                    name: "area",
-                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapAreaControllerRoute(
+                    name: "MyAreaMagician",
+                    areaName: "Magician",
+                    pattern: "Magician/{controller=Home}/{action=Index}/{id?}");
+                
+                endpoints.MapAreaControllerRoute(
+                    name: "MyAreaIdentity",
+                    areaName: "Identity",
+                    pattern: "Identity/{controller=Home}/{action=Index}/{id?}");
+
+          //  //app.UseRouting();
+          //  app.UseEndpoints(endpoints =>
+          //  {
+          //      endpoints.MapControllers();
+          //      endpoints.MapRazorPages();
+          //      endpoints.MapControllerRoute(
+          //          name: "area",
+          //          pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");//{area:exists}/
+
+                endpoints.MapRazorPages();
 
             });
         }
