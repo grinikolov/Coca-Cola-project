@@ -80,9 +80,24 @@ namespace BarCrawlers
                 options.User.RequireUniqueEmail = true;
             });
 
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+                options.Cookie.Name = "YourAppCookieName";
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+                options.LoginPath = "/Identity/Account/Login";
+                // ReturnUrlParameter requires 
+                //using Microsoft.AspNetCore.Authentication.Cookies;
+                options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+                options.SlidingExpiration = true;
+            });
+
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie();
-            services.AddMvc(option => option.EnableEndpointRouting = false);
+
+
+            //services.AddMvc(option => option.EnableEndpointRouting = false);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -124,7 +139,7 @@ namespace BarCrawlers
             //});
             app.UseEndpoints(endpoints =>
             {
-                //endpoints.MapControllers();
+                endpoints.MapControllers();
 
                 endpoints.MapAreaControllerRoute(
                     name: "MyAreaMagician",
@@ -136,11 +151,20 @@ namespace BarCrawlers
                     areaName: "Identity",
                     pattern: "Identity/{controller=Home}/{action=Index}/{id?}");
 
+          //  //app.UseRouting();
+          //  app.UseEndpoints(endpoints =>
+          //  {
+          //      endpoints.MapControllers();
+          //      endpoints.MapRazorPages();
+          //      endpoints.MapControllerRoute(
+          //          name: "area",
+          //          pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");//{area:exists}/
 
                 endpoints.MapRazorPages();
+
             });
         }
     }

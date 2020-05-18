@@ -27,6 +27,8 @@ namespace BarCrawlers.Areas.Magician.Models
 
         public bool LockoutEnabled { get; set; }
 
+        public int LockDays { get; set; }
+
         //public ICollection<BarUserComment> BarComments { get; set; }
         //public ICollection<CocktailUserComment> CocktailComments { get; set; }
 

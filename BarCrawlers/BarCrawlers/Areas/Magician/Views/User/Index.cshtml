@@ -13,6 +13,7 @@
         <input type="submit" value="Search" class="btn btn-primary" />
     </p>
 </form>
+
 <table class="table table-hover table-sm" id="UserTable">
     <thead>
         <tr>
@@ -40,7 +41,7 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr onclick ="window.location = '/Magician/User/Details/@item.Id'">
+            <tr onclick="window.location = '/Magician/User/Details/@item.Id'">
                 <td>
                     <div class="container">
                         @if (string.IsNullOrEmpty(item.ImageSrc))
@@ -50,7 +51,7 @@
                         }
                         else
                         {
-                            <img src="@item.ImageSrc">
+                            <img src="@item.ImageSrc" height="50" width="50">
                         }
                     </div>
                 </td>
@@ -73,3 +74,17 @@
         }
     </tbody>
 </table>
+
+@*@if (ViewBag.Count > ViewBag.ItemsOnPage)
+{*@
+    <div>
+        @*@if (@ViewBag.CurrentPage > 0)
+        {*@
+            <a class="btn btn-primary" href="/Magician/User/Index?page=@(@ViewBag.CurrentPage - 1)&searchstring=@ViewBag.SearchString" @*asp-area="Magician" asp-controller="User" asp-action="Index"*@ @*asp-route-page=@(@ViewBag.CurrentPage - 1) asp-route-itemsOnPage=@ViewBag.ItemsOnPage asp-route-searchString="@ViewBag.SearchString"*@>Previous</a>
+        @*}
+        @if (@ViewBag.CurrentPage * @ViewBag.ItemsOnPage <= @ViewBag.Count)
+        {*@
+            <a class="btn btn-primary" href="/Magician/User/Index?page=@(@ViewBag.CurrentPage + 1)&searchstring=@ViewBag.SearchString" @*asp-area="Magician" asp-controller="User" asp-action="Index"*@ @*asp-route-page=@(@ViewBag.CurrentPage + 1) asp-route-itemsOnPage=@ViewBag.ItemsOnPage asp-route-searchString="@ViewBag.SearchString"*@>Next</a>
+        @*}*@
+    </div>
+@*}*@
