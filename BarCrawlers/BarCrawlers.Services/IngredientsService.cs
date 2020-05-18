@@ -2,7 +2,6 @@
 using BarCrawlers.Data.DBModels;
 using BarCrawlers.Services.Contracts;
 using BarCrawlers.Services.DTOs;
-using BarCrawlers.Services.Mappers;
 using BarCrawlers.Services.Mappers.Contracts;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -21,8 +20,8 @@ namespace BarCrawlers.Services
         public IngredientsService(BCcontext context,
             IIngredientMapper mapper)
         {
-            this._context = context;
-            this._mapper = mapper;
+            this._context = context ?? throw new ArgumentNullException(nameof(context));
+            this._mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         /// <summary>
@@ -31,7 +30,10 @@ namespace BarCrawlers.Services
         /// <returns>List of ingredients, DTOs</returns>
         public async Task<IEnumerable<IngredientDTO>> GetAllAsync()
         {
-            var ingredients = await this._context.Ingredients.ToListAsync();
+            var ingredients = await this._context.Ingredients
+                .Include(i => i.Cocktails)
+                    .ThenInclude(c=> c.Cocktail)
+                .ToListAsync();
             
             return ingredients.Select(x => this._mapper.MapEntityToDTO(x));
         }
@@ -65,7 +67,8 @@ namespace BarCrawlers.Services
 
             this._context.Ingredients.Add(ingredient);
             await this._context.SaveChangesAsync();
-
+            ingredient = await this._context.Ingredients.FirstOrDefaultAsync(x => x.Name.ToLower() == ingredientDTO.Name.ToLower());
+            
             return this._mapper.MapEntityToDTO(ingredient);
         }
         /// <summary>

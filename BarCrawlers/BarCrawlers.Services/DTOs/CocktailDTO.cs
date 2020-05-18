@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BarCrawlers.Data.DBModels
+namespace BarCrawlers.Services.DTOs
 {
-    public class Cocktail
+    public class CocktailDTO
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
@@ -13,10 +13,10 @@ namespace BarCrawlers.Data.DBModels
         public string ImageSrc { get; set; }
         public bool IsDeleted { get; set; }
         public bool IsAlcoholic { get; set; }
-        public ICollection<CocktailIngredient> Ingredients { get; set; }
-        public ICollection<CocktailBar> Bars { get; set; }
-        public ICollection<CocktailUserComment> Comments { get; set; }
-        public ICollection<UserCocktailRating> CocktailRatings { get; set; }
+        public ICollection<CocktailIngredientDTO> Ingredients { get; set; }
+        public ICollection<CocktailBarDTO> Bars { get; set; }
+        public ICollection<CocktailUserCommentDTO> Comments { get; set; }
+        public ICollection<UserCocktailRatingDTO> CocktailRatings { get; set; }
         public string Instructions { get; set; }
 
     }
