@@ -17,12 +17,16 @@ namespace BarCrawlers.Services
     {
         private readonly BCcontext _context;
         private readonly IUserMapper _mapper;
+        private readonly ICocktailsService _cocktailsService;
+        private readonly ICocktailCommentMapper _cocktailCommentMapper;
 
-        public UsersService(BCcontext context,
-            IUserMapper mapper)
+        public UsersService(BCcontext context
+            ,IUserMapper mapper
+            ,ICocktailCommentMapper cocktailCommentMapper)
         {
             this._context = context ?? throw new ArgumentNullException(nameof(context));
             this._mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            this._cocktailCommentMapper= cocktailCommentMapper ?? throw new ArgumentNullException(nameof(cocktailCommentMapper));
         }
         //public Task<bool> DeleteAsync(Guid id)
         //{
@@ -129,6 +133,18 @@ namespace BarCrawlers.Services
             {
                 return new UserDTO();
             }
+        }
+
+        public async Task<CocktailUserCommentDTO> AddCocktailReview(CocktailUserCommentDTO commentDTO, Guid cocktailId, Guid userId)
+        {
+            var cocktail = await this._context.Cocktails.FirstOrDefaultAsync(x => x.Id == cocktailId);
+
+            var comment = this._cocktailCommentMapper.MapDTOToEntity(commentDTO);
+            
+            await this._context.CocktailComments.AddAsync(comment);
+            await this._context.SaveChangesAsync();
+
+            return this._cocktailCommentMapper.MapEntityToDTO(comment);
         }
     }
 }
