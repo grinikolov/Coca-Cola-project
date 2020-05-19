@@ -12,6 +12,7 @@ using BarCrawlers.Models.Contracts;
 using BarCrawlers.Models;
 using Microsoft.AspNetCore.Identity.UI.V4.Pages.Internal;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace BarCrawlers.Controllers
 {
@@ -31,10 +32,13 @@ namespace BarCrawlers.Controllers
         }
 
         // GET: Cocktails
-        public async Task<IActionResult> Index(string page = "0", string itemsOnPage = "12")
+        public async Task<IActionResult> Index(string page = "0", string itemsOnPage = "6")
         {
             try
             {
+                var role = this.User.FindFirstValue(ClaimTypes.Role);
+                var count = await this._service.CountAll(role);
+
                 var cocktails = await this._service.GetAllAsync(page, itemsOnPage);
 
                 return View(cocktails.Select(c => this._mapper.MapDTOToView(c)));
@@ -72,9 +76,11 @@ namespace BarCrawlers.Controllers
         }
 
         // GET: Cocktails/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["IngredientId"] = new SelectList(this._ingredientsService.GetAllAsync().Result, "ID", "Name");
+            ViewData["Ingredient"] = new SelectList(this._ingredientsService.GetAllAsync().Result, "ID", "Name");
+            var ingredients = await this._ingredientsService.GetAllAsync();
+            ViewData["Ingredients"] = ingredients.Select(x => new SelectListItem(x.Name,x.Id.ToString()));
 
             return View();
         }
@@ -84,18 +90,26 @@ namespace BarCrawlers.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Rating,TimesRated,ImageSrc,IsDeleted,IsAlcoholic,Instructions")] CocktailViewModel cocktailView)
+        public async Task<IActionResult> Create([Bind("Id,Name,Rating,TimesRated,ImageSrc,IsDeleted,IsAlcoholic,Instructions")] CocktailCreateViewModel cocktailView)
         {
             try
             {
-
                 if (ModelState.IsValid)
                 {
                     var cocktailDTO = this._mapper.MapViewToDTO(cocktailView);
                     var cocktail = await this._service.CreateAsync(cocktailDTO);
+
+                    foreach (var item in cocktailView.Ingredients)
+                    {
+                        if (!await this._service.AddIngredientsToCocktail(item, cocktail.Id)) //item.IngredientId, cocktail.Id, item.Parts
+                        {
+                            return Error();
+                        }
+                    }
+
                     return RedirectToAction(nameof(Index));
                 }
-                return Create();
+                return await Create();
             }
             catch (Exception)
             {
@@ -202,7 +216,7 @@ namespace BarCrawlers.Controllers
             }
         }
 
-        
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

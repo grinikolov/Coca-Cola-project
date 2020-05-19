@@ -19,6 +19,7 @@ namespace BarCrawlers.Services
         private readonly BCcontext _context;
         private readonly ICocktailMapper _mapper;
 
+
         public CocktailsService(BCcontext context,
             ICocktailMapper mapper)
         {
@@ -114,6 +115,55 @@ namespace BarCrawlers.Services
             }
         }
 
+        public async Task<int> CountAll(string role)
+        {
+            var cocktails = this._context.Cocktails
+                .AsQueryable();
+
+            if (role != "Admin" || role == null)
+            {
+                cocktails =  cocktails.Where(x => x.IsDeleted == false);
+            }
+            return await cocktails.CountAsync();
+        }
+
+        public async Task<bool> AddIngredientsToCocktail(Guid ingredientID, Guid cocktailId, int? parts)
+        {
+            try
+            {
+                var cocktailIngredient = new CocktailIngredient
+                {
+                    IngredientId = ingredientID,
+                    CocktailId = cocktailId,
+                    Parts = parts,
+                };
+                this._context.CocktailIngredients.Add(cocktailIngredient);
+                await this._context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        public async Task<bool> AddIngredientsToCocktail(Guid ingredientID, Guid cocktailId)
+        {
+            try
+            {
+                var cocktailIngredient = new CocktailIngredient
+                {
+                    IngredientId = ingredientID,
+                    CocktailId = cocktailId,
+                };
+                this._context.CocktailIngredients.Add(cocktailIngredient);
+                await this._context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
 
         public async Task<CocktailDTO> UpdateAsync(Guid id, CocktailDTO cocktailDTO)
         {
@@ -169,5 +219,5 @@ namespace BarCrawlers.Services
             return _context.Cocktails.Any(e => e.Name == name);
         }
 
-    }
+        }
 }
