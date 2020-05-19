@@ -90,7 +90,7 @@ namespace BarCrawlers.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Rating,TimesRated,ImageSrc,IsDeleted,IsAlcoholic,Instructions")] CocktailCreateViewModel cocktailView)
+        public async Task<IActionResult> Create( CocktailCreateViewModel cocktailView)
         {
             try
             {

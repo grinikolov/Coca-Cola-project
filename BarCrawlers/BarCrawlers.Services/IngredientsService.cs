@@ -37,6 +37,20 @@ namespace BarCrawlers.Services
             
             return ingredients.Select(x => this._mapper.MapEntityToDTO(x));
         }
+
+        public async Task<IEnumerable<IngredientDTO>> GetAllAsync(string page, string itemsOnPage, string searchString)
+        {
+            throw new NotImplementedException();
+            int pageSize = 6;
+            var ingredients = await this._context.Ingredients
+                .Include(i => i.Cocktails)
+                    .ThenInclude(c => c.Cocktail)
+                .ToListAsync();
+
+            return ingredients.Select(x => this._mapper.MapEntityToDTO(x));
+
+        }
+
         /// <summary>
         /// Gets the ingredient by ID
         /// </summary>
@@ -135,6 +149,12 @@ namespace BarCrawlers.Services
         private bool IngredientExists(Guid id)
         {
             return this._context.Ingredients.Any(e => e.Id == id);
+        }
+
+
+        public Task<int> CountAll(string role)
+        {
+            throw new NotImplementedException();
         }
     }
 }
