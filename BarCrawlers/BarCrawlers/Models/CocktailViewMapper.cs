@@ -50,8 +50,8 @@ namespace BarCrawlers.Models
                     {
                         IngredientId = i.IngredientId,
                         IngredientName = i.IngredientName,
-                        CocktailId = i.CocktailId,
-                        CocktailName = i.CocktailName,
+                        //CocktailId = i.CocktailId,
+                        //CocktailName = i.CocktailName,
                         Parts = i.Parts
                     }).ToList(),
                     Bars = view.Bars.Select(b => new CocktailBarDTO
@@ -79,6 +79,30 @@ namespace BarCrawlers.Models
                         Rating = r.Rating,
 
                     }).ToList(),
+                    Instructions = view.Instructions,
+
+                };
+            }
+            catch (Exception)
+            {
+                return new CocktailDTO();
+            }
+        }
+
+        public CocktailDTO MapViewToDTO(CocktailCreateViewModel view)
+        {
+            try
+            {
+                return new CocktailDTO
+                {
+                    Id = view.Id,
+                    Name = view.Name,
+                    Rating = view.Rating,
+                    TimesRated = view.TimesRated,
+                    ImageSrc = view.ImageSrc,
+                    IsDeleted = view.IsDeleted,
+                    IsAlcoholic = view.IsAlcoholic,
+
                     Instructions = view.Instructions,
 
                 };

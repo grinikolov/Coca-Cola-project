@@ -1,4 +1,4 @@
-﻿@model BarCrawlers.Data.DBModels.Cocktail
+﻿@model CocktailCreateViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -23,12 +23,24 @@
                 <input asp-for="ImageSrc" class="form-control" />
                 <span asp-validation-for="ImageSrc" class="text-danger"></span>
             </div>
-
-            <div class="form-group">
-                <label asp-for="Ingredients" class="control-label">Ingredient</label>
-                <select asp-for="Ingredients" class="form-control" asp-items="ViewBag.IngredientId"></select>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsAlcoholic" /> @Html.DisplayNameFor(model => model.IsAlcoholic)
+                </label>
             </div>
-
+            <div class="form-group">
+                <label asp-for="Ingredients" class="control-label">Ingredients</label>
+                <select asp-for="Ingredients" asp-items="ViewBag.Ingredients" class="form-control"  rows="8" multiple="multiple"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Instructions" class="control-label"></label>
+                <input asp-for="Instructions" class="form-control" />
+                <span asp-validation-for="Instructions" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="exampleFormControlFile1">File:</label>
+                <input type="file" class="form-control-file" id="exampleFormControlFile1">
+            </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
