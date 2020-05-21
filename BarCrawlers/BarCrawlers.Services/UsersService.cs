@@ -24,11 +24,11 @@ namespace BarCrawlers.Services
             this._context = context ?? throw new ArgumentNullException(nameof(context));
             this._mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
-        //public Task<bool> DeleteAsync(Guid id)
-        //{
-        //    throw new NotImplementedException();
-        //}
 
+        /// <summary>
+        /// Gets all users from the database.
+        /// </summary>
+        /// <returns>List of users, DTOs</returns>
         public async Task<IEnumerable<UserDTO>> GetAllAsync(string page, string itemsOnPage, string search)
         {
             try
@@ -63,6 +63,11 @@ namespace BarCrawlers.Services
                             
         }
 
+        /// <summary>
+        /// Gets the user by ID
+        /// </summary>
+        /// <param name="id">User ID, Guid</param>
+        /// <returns>The user, DTO</returns>
         public async Task<UserDTO> GetAsync(Guid id)
         {
             try

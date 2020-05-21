@@ -38,11 +38,11 @@
                     <a href="/">
                         @if (User.Identity.IsAuthenticated)
                         {
-                        <img src="/img/siluet.jpg" width="150" height="150">
+                            <img src="/img/siluet.jpg" width="150" height="150">
                         }
                         else
                         {
-                        <img src="/img/siluet.jpg" width="150" height="150">
+                            <img src="/img/siluet.jpg" width="150" height="150">
                         }
                     </a>
                 </div>
@@ -52,11 +52,13 @@
                 </ul>
                 @if (User.IsInRole("Magician"))
                 {
-                <a class="nav-link btn btn-primary" asp-area="Magician" asp-controller="User" asp-action="Index"> Users Actions</a>
-                <a class="nav-link btn btn-primary" asp-area="Magician" asp-controller="Ingredients" asp-action="Index"> Ingredients</a>
+                    <a class="nav-link btn btn-primary" asp-area="Magician" asp-controller="User" asp-action="Index"> Users Actions</a>
+                    <a class="nav-link btn btn-primary" asp-area="Magician" asp-controller="Ingredients" asp-action="Index"> Ingredients</a>
 
                 }
+
                 <a class="nav-link btn btn-primary" asp-area="" asp-controller="Cocktails" asp-action="Index"> Cocktails</a>
+                <a class="nav-link btn btn-primary" asp-area="" asp-controller="Bars" asp-action="Index">Bars</a>
 
             </nav>
         </div>
