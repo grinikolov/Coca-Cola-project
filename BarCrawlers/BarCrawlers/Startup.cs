@@ -6,6 +6,8 @@ using BarCrawlers.Areas.Magician.Models;
 using BarCrawlers.Areas.Magician.Models.Contrtacts;
 using BarCrawlers.Data;
 using BarCrawlers.Data.DBModels;
+using BarCrawlers.Models;
+using BarCrawlers.Models.Contracts;
 using BarCrawlers.Services;
 using BarCrawlers.Services.Contracts;
 using BarCrawlers.Services.Mappers;
@@ -52,11 +54,15 @@ namespace BarCrawlers
 
             services.AddScoped<ICocktailsService, CocktailsService>();
             services.AddScoped<ICocktailMapper, CocktailMapper>();
+            services.AddScoped<ICocktailViewMapper, CocktailViewMapper>();
             services.AddScoped<IIngredientsService, IngredientsService>();
             services.AddScoped<IIngredientMapper, IngredientMapper>();
             services.AddScoped<IUsersService, UsersService>();
             services.AddScoped<IUserMapper, UserMapper>();
             services.AddScoped<IUserViewMapper, UserViewMapper>();
+            services.AddScoped<IBarMapper, BarMapper>();
+            services.AddScoped<IBarsService, BarsService>();
+            services.AddScoped<IBarViewMapper, BarViewMapper>();
 
 
             services.AddIdentity<User, Role>()
