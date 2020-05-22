@@ -55,6 +55,7 @@ namespace BarCrawlers
             services.AddScoped<ICocktailsService, CocktailsService>();
             services.AddScoped<ICocktailMapper, CocktailMapper>();
             services.AddScoped<ICocktailViewMapper, CocktailViewMapper>();
+            services.AddScoped<ICocktailCommentMapper, CocktailCommentMapper>();
             services.AddScoped<IIngredientsService, IngredientsService>();
             services.AddScoped<IIngredientMapper, IngredientMapper>();
             services.AddScoped<IUsersService, UsersService>();
