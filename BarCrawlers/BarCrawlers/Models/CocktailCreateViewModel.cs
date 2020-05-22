@@ -8,6 +8,7 @@ namespace BarCrawlers.Models
     public class CocktailCreateViewModel
     {
         public Guid Id { get; set; }
+        [Required]
         [StringLength(70, MinimumLength = 3)]
         public string Name { get; set; }
         public double Rating { get; set; }

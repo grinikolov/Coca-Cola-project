@@ -92,7 +92,7 @@ namespace BarCrawlers.Controllers
         [HttpPost]
         [Authorize(Roles = "Magician")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CocktailCreateViewModel cocktailView)
+        public async Task<IActionResult> Create([Bind("Name,Rating,TimesRated,ImageSrc,IsAlcoholic,Instructions")] CocktailCreateViewModel cocktailView)
         {
             try
             {

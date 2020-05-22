@@ -120,9 +120,9 @@ namespace BarCrawlers.Services
             var cocktails = this._context.Cocktails
                 .AsQueryable();
 
-            if (role != "Admin" || role == null)
+            if (role == "Magician" )
             {
-                cocktails =  cocktails.Where(x => x.IsDeleted == false);
+                cocktails =  cocktails.Where(x => x.IsDeleted == true);
             }
             return await cocktails.CountAsync();
         }
