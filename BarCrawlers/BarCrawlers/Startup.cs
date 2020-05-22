@@ -60,6 +60,9 @@ namespace BarCrawlers
             services.AddScoped<IUsersService, UsersService>();
             services.AddScoped<IUserMapper, UserMapper>();
             services.AddScoped<IUserViewMapper, UserViewMapper>();
+            services.AddScoped<IBarMapper, BarMapper>();
+            services.AddScoped<IBarsService, BarsService>();
+            services.AddScoped<IBarViewMapper, BarViewMapper>();
 
 
             services.AddIdentity<User, Role>()

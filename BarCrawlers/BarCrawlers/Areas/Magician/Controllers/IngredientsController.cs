@@ -67,12 +67,23 @@ namespace BarCrawlers.Areas.Magician.Controllers
         [Authorize(Roles = "Magician")]
         public async Task<IActionResult> Edit(Guid id)
         {
-            if (id == null)
+            try
             {
-                return NotFound();
+                if (id == null)
+                {
+                    return NotFound();
+                }
+                var ingredient = await this._service.GetAsync(id);
+                if (ingredient == null)
+                {
+                    return NotFound();
+                }
+                return View(ingredient);
             }
-            var ingredient = await this._service.GetAsync(id);
-            return View(ingredient);
+            catch (Exception)
+            {
+                return Error();
+            }
         }
 
         // POST: Magician/Ingredients/Edit/5
@@ -95,7 +106,7 @@ namespace BarCrawlers.Areas.Magician.Controllers
                     var ingredient = await this._service.UpdateAsync(id, ingredientDTO);
 
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (Exception)
                 {
                     return Error();
                 }

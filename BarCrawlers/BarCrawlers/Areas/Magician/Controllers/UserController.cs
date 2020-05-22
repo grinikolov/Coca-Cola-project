@@ -32,7 +32,7 @@ namespace BarCrawlers.Areas.Magician.Controllers
         }
 
         // GET: Magician/User
-        public async Task<IActionResult> Index(string page = "0", string itemsOnPage = "10", string searchString = null)
+        public async Task<IActionResult> Index(string page = "0", string itemsOnPage = "12", string searchString = null)
         {
             try
             {
