@@ -17,7 +17,7 @@ namespace BarCrawlers.Models
         public bool IsAlcoholic { get; set; }
 
         [Required(ErrorMessage = "Choose at least one ingredient!")]
-        public ICollection<Guid> Ingredients { get; set; }
+        public ICollection<CocktailIngredientViewModel> Ingredients { get; set; }
         //public ICollection<CocktailBarDTO> Bars { get; set; }
         //public ICollection<CocktailUserCommentDTO> Comments { get; set; }
         //public ICollection<UserCocktailRatingDTO> CocktailRatings { get; set; }

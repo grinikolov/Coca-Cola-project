@@ -104,7 +104,7 @@ namespace BarCrawlers.Controllers
                     foreach (var item in cocktailView.Ingredients)
                     {
                         //TODO: Parts of ingredient in Cocktail:
-                        if (!await this._service.AddIngredientsToCocktail(item, cocktail.Id)) //item.IngredientId, cocktail.Id, item.Parts
+                        if (!await this._service.AddIngredientsToCocktail(item.IngredientId, cocktail.Id,item.Parts)) //item.IngredientId, cocktail.Id, item.Parts
                         {
                             return Error();
                         }
