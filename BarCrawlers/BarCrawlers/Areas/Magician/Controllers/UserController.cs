@@ -45,7 +45,6 @@ namespace BarCrawlers.Areas.Magician.Controllers
             }
             catch (Exception)
             {
-
                 return View();
             }
 

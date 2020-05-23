@@ -17,7 +17,6 @@ namespace BarCrawlers.Services
     {
         private readonly BCcontext _context;
         private readonly IUserMapper _mapper;
-        private readonly ICocktailsService _cocktailsService;
         private readonly ICocktailCommentMapper _cocktailCommentMapper;
 
         public UsersService(BCcontext context
@@ -140,10 +139,11 @@ namespace BarCrawlers.Services
             }
         }
 
-        public async Task<CocktailUserCommentDTO> AddCocktailReview(CocktailUserCommentDTO commentDTO, Guid cocktailId, Guid userId)
+        public async Task<CocktailUserCommentDTO> AddCocktailComment(CocktailUserCommentDTO commentDTO, Guid cocktailId, Guid userId)
         {
             var cocktail = await this._context.Cocktails.FirstOrDefaultAsync(x => x.Id == cocktailId);
 
+            commentDTO.UserId = userId;
             var comment = this._cocktailCommentMapper.MapDTOToEntity(commentDTO);
             
             await this._context.CocktailComments.AddAsync(comment);

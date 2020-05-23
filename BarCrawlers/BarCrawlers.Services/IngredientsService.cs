@@ -23,7 +23,7 @@ namespace BarCrawlers.Services
             this._context = context ?? throw new ArgumentNullException(nameof(context));
             this._mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
-
+        
         /// <summary>
         /// Gets all ingredients from the database.
         /// </summary>
@@ -38,14 +38,27 @@ namespace BarCrawlers.Services
             return ingredients.Select(x => this._mapper.MapEntityToDTO(x));
         }
 
+        /// <summary>
+        /// Gets page of ingredients from the database.
+        /// </summary>
+        /// <returns>List of ingredients, DTOs</returns>
         public async Task<IEnumerable<IngredientDTO>> GetAllAsync(string page, string itemsOnPage, string searchString)
         {
-            throw new NotImplementedException();
-            int pageSize = 6;
-            var ingredients = await this._context.Ingredients
+            var p = int.Parse(page);
+            var item = int.Parse(itemsOnPage);
+            var ingredients = this._context.Ingredients
                 .Include(i => i.Cocktails)
-                    .ThenInclude(c => c.Cocktail)
-                .ToListAsync();
+                    .ThenInclude(c => c.Cocktail).AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                ingredients = ingredients.Where(u => u.Name.Contains(searchString));
+            }
+
+            ingredients = ingredients.Skip(p * item)
+                            .Take(item);
+
+            var result = await ingredients.ToListAsync();
 
             return ingredients.Select(x => this._mapper.MapEntityToDTO(x));
 

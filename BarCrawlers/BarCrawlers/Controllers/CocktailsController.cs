@@ -92,12 +92,12 @@ namespace BarCrawlers.Controllers
         [HttpPost]
         [Authorize(Roles = "Magician")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Rating,TimesRated,ImageSrc,IsAlcoholic,Instructions")] CocktailCreateViewModel cocktailView)
+        public async Task<IActionResult> Create([Bind("Name,Rating,TimesRated,ImageSrc,IsAlcoholic,Ingredients,Instructions")] CocktailCreateViewModel cocktailView)
         {
             try
             {
-                if (ModelState.IsValid)
-                {
+                //if (ModelState.IsValid)
+                //{
                     var cocktailDTO = this._mapper.MapViewToDTO(cocktailView);
                     var cocktail = await this._service.CreateAsync(cocktailDTO);
 
@@ -111,7 +111,7 @@ namespace BarCrawlers.Controllers
                     }
 
                     return RedirectToAction(nameof(Index));
-                }
+                //}
                 return await Create();
             }
             catch (Exception)

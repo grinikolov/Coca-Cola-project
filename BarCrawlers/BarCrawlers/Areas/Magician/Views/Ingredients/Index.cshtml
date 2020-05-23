@@ -10,6 +10,14 @@
 <p>
     <a class="nav-link" asp-area="Magician" asp-controller="Ingredients" asp-action="Create">Create New</a>
 </p>
+
+<form asp-area="Magician" asp-controller="Ingredients" asp-action="Index">
+    <p>
+        Ingredient: <input type="text" name="SearchString">
+        <input type="submit" value="Search" class="btn btn-primary" />
+    </p>
+</form>
+
 <table class="table">
     <thead>
         <tr>
@@ -41,3 +49,28 @@
         }
     </tbody>
 </table>
+
+<div>
+    @if (@ViewBag.CurrentPage > 0)
+    {
+        @if (@ViewBag.SearchString == null)
+        {
+            <a class="btn btn-primary" href="/Magician/Ingredients/Index?page=@(@ViewBag.CurrentPage - 1)">Previous</a>
+        }
+        else
+        {
+            <a class="btn btn-primary" href="/Magician/Ingredients/Index?page=@(@ViewBag.CurrentPage - 1)&searchstring=@ViewBag.SearchString" @*asp-area="Magician" asp-controller="User" asp-action="Index"*@ @*asp-route-page=@(@ViewBag.CurrentPage - 1) asp-route-itemsOnPage=@ViewBag.ItemsOnPage asp-route-searchString="@ViewBag.SearchString"*@>Previous</a>
+        }
+    }
+    @if (!(@Model.Count() < @ViewBag.ItemsOnPage))
+    {
+        @if (@ViewBag.SearchString == null)
+        {
+            <a class="btn btn-primary" href="/Magician/Ingredients/Index?page=@(@ViewBag.CurrentPage + 1)">Next</a>
+        }
+        else
+        {
+            <a class="btn btn-primary" href="/Magician/Ingredients/Index?page=@(@ViewBag.CurrentPage + 1)&searchstring=@ViewBag.SearchString" @*asp-area="Magician" asp-controller="User" asp-action="Index"*@ @*asp-route-page=@(@ViewBag.CurrentPage + 1) asp-route-itemsOnPage=@ViewBag.ItemsOnPage asp-route-searchString="@ViewBag.SearchString"*@>Next</a>
+        }
+    }
+</div>

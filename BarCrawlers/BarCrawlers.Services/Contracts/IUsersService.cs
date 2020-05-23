@@ -16,5 +16,7 @@ namespace BarCrawlers.Services.Contracts
         Task<UserDTO> UpdateAsync(Guid id, UserDTO userDTO, UserManager<User> userManager);
 
         Task<UserDTO> UnbanAsync(Guid id, UserManager<User> userManager);
+
+        Task<CocktailUserCommentDTO> AddCocktailComment(CocktailUserCommentDTO commentDTO, Guid cocktailId, Guid userId);
     }
 }

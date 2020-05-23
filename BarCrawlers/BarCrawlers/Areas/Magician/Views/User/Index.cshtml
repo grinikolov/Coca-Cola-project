@@ -77,14 +77,14 @@
 
 @*@if (ViewBag.Count > ViewBag.ItemsOnPage)
 {*@
-    <div>
-        @*@if (@ViewBag.CurrentPage > 0)
-        {*@
-            <a class="btn btn-primary" href="/Magician/User/Index?page=@(@ViewBag.CurrentPage - 1)&searchstring=@ViewBag.SearchString" @*asp-area="Magician" asp-controller="User" asp-action="Index"*@ @*asp-route-page=@(@ViewBag.CurrentPage - 1) asp-route-itemsOnPage=@ViewBag.ItemsOnPage asp-route-searchString="@ViewBag.SearchString"*@>Previous</a>
-        @*}
-        @if (@ViewBag.CurrentPage * @ViewBag.ItemsOnPage <= @ViewBag.Count)
-        {*@
-            <a class="btn btn-primary" href="/Magician/User/Index?page=@(@ViewBag.CurrentPage + 1)&searchstring=@ViewBag.SearchString" @*asp-area="Magician" asp-controller="User" asp-action="Index"*@ @*asp-route-page=@(@ViewBag.CurrentPage + 1) asp-route-itemsOnPage=@ViewBag.ItemsOnPage asp-route-searchString="@ViewBag.SearchString"*@>Next</a>
-        @*}*@
-    </div>
+<div>
+    @if (@ViewBag.CurrentPage > 0)
+    {
+        <a class="btn btn-primary" href="/Magician/User/Index?page=@(@ViewBag.CurrentPage - 1)&searchstring=@ViewBag.SearchString" @*asp-area="Magician" asp-controller="User" asp-action="Index"*@ @*asp-route-page=@(@ViewBag.CurrentPage - 1) asp-route-itemsOnPage=@ViewBag.ItemsOnPage asp-route-searchString="@ViewBag.SearchString"*@>Previous</a>
+    }
+    @if ( !( @Model.Count() < @ViewBag.ItemsOnPage))      @*(@ViewBag.CurrentPage * @ViewBag.ItemsOnPage <= @ViewBag.Count)*@
+    {
+    <a class="btn btn-primary" href="/Magician/User/Index?page=@(@ViewBag.CurrentPage + 1)&searchstring=@ViewBag.SearchString" @*asp-area="Magician" asp-controller="User" asp-action="Index"*@ @*asp-route-page=@(@ViewBag.CurrentPage + 1) asp-route-itemsOnPage=@ViewBag.ItemsOnPage asp-route-searchString="@ViewBag.SearchString"*@>Next</a>
+    }
+</div>
 @*}*@

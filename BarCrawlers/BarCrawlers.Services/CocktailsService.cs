@@ -41,7 +41,7 @@ namespace BarCrawlers.Services
                 .Include(c => c.Bars)
                 .ToListAsync();
 
-            return cocktails.Select(x => this._mapper.MapEntityToDTO(x));
+            return cocktails.Select(x => this._mapper.MapEntityToDTO(x)).ToList();
         }
 
         /// <summary>

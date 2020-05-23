@@ -26,9 +26,13 @@ namespace BarCrawlers.Areas.Magician.Controllers
         }
 
         // GET: Magician/Ingredients
-        public async Task<IActionResult> Index(string page = "0", string itemsOnPage = "10", string searchString = null)
+        public async Task<IActionResult> Index(string page = "0", string itemsOnPage = "12", string searchString = null)
         {
-            var ingredients = await this._service.GetAllAsync();
+            var ingredients = await this._service.GetAllAsync(page, itemsOnPage, searchString);
+            ViewBag.Count = ingredients.Count();
+            ViewBag.CurrentPage = int.Parse(page);
+            ViewBag.ItemsOnPage = int.Parse(itemsOnPage);
+            ViewBag.SearchString = searchString; 
             return View(ingredients);
         }
 
