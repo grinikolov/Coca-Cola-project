@@ -48,7 +48,8 @@ namespace BarCrawlers.Services
             var item = int.Parse(itemsOnPage);
             var ingredients = this._context.Ingredients
                 .Include(i => i.Cocktails)
-                    .ThenInclude(c => c.Cocktail).AsQueryable();
+                    .ThenInclude(c => c.Cocktail)
+                .AsQueryable();
 
             if (!string.IsNullOrEmpty(searchString))
             {

@@ -8,6 +8,7 @@ namespace BarCrawlers.Services.Contracts
     public interface ICocktailsService
     {
         Task<IEnumerable<CocktailDTO>> GetAllAsync(string page, string itemsOnPage);
+        Task<IEnumerable<CocktailDTO>> GetAllAsync(string page, string itemsOnPage, string searchString);
         Task<CocktailDTO> GetAsync(Guid id);
         Task<CocktailDTO> CreateAsync(CocktailDTO cocktailDTO);
         Task<bool> AddIngredientsToCocktail(Guid ingredientID, Guid cocktailId, int? parts);

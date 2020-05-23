@@ -33,14 +33,19 @@ namespace BarCrawlers.Controllers
         }
 
         // GET: Cocktails
-        public async Task<IActionResult> Index(string page = "0", string itemsOnPage = "6")
+        public async Task<IActionResult> Index(string page = "0", string itemsOnPage = "12", string searchString = null)
         {
             try
             {
-                var role = this.User.FindFirstValue(ClaimTypes.Role);
-                var count = await this._service.CountAll(role);
+                ////TODO: searchString cocktails
+                //var role = this.User.FindFirstValue(ClaimTypes.Role);
+                //var count = await this._service.CountAll(role);
 
-                var cocktails = await this._service.GetAllAsync(page, itemsOnPage);
+                var cocktails = await this._service.GetAllAsync(page, itemsOnPage, searchString);
+                ViewBag.Count = cocktails.Count();
+                ViewBag.CurrentPage = int.Parse(page);
+                ViewBag.ItemsOnPage = int.Parse(itemsOnPage);
+                ViewBag.SearchString = searchString;
 
                 return View(cocktails.Select(c => this._mapper.MapDTOToView(c)));
             }

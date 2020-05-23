@@ -59,10 +59,10 @@ namespace BarCrawlers.Areas.Magician.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(IngredientDTO ingredientDTO)
         {
-            if (ModelState.IsValid)
-            {
-                return View(ingredientDTO);
-            }
+            //if (ModelState.IsValid)
+            //{
+            //    return View(ingredientDTO);
+            //}
             await this._service.CreateAsync(ingredientDTO);
             return RedirectToAction("Index", "Ingredients");
         }

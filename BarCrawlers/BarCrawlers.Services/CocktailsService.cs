@@ -39,9 +39,31 @@ namespace BarCrawlers.Services
                 .Include(c => c.Comments)
                     .ThenInclude(c => c.User)
                 .Include(c => c.Bars)
-                .ToListAsync();
+                .ToListAsync() ;
 
             return cocktails.Select(x => this._mapper.MapEntityToDTO(x)).ToList();
+        }
+        /// <summary>
+        /// Gets page of cocktails from the database.
+        /// </summary>
+        /// <returns>List of cocktails, DTOs</returns>
+        public async Task<IEnumerable<CocktailDTO>> GetAllAsync(string page, string itemsOnPage, string searchString)
+        {
+            var cocktails = _context.Cocktails
+                .Include(c => c.Ingredients)
+                    .ThenInclude(c => c.Ingredient)
+                .Include(c => c.Comments)
+                    .ThenInclude(c => c.User)
+                .Include(c => c.Bars)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                cocktails = cocktails.Where(u => u.Name.Contains(searchString));
+            }
+            var result = await cocktails.ToListAsync();
+
+            return result.Select(x => this._mapper.MapEntityToDTO(x)).ToList();
         }
 
         /// <summary>
