@@ -12,7 +12,7 @@
 <hr />
 <div class="row">
     <div class="col-md-6">
-        <form asp-action="Create">
+        <form asp-action="Create" id="form">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
@@ -30,9 +30,9 @@
                 </label>
             </div>
             @*<div class="form-group">
-            <label asp-for="Ingredients" class="control-label">Ingredients</label>
-            <select asp-for="Ingredients" asp-items="ViewBag.Ingredients" class="form-control"></select>
-            </div>*@
+                <label asp-for="Ingredients" class="control-label">Ingredients</label>
+                <select asp-for="Ingredients" asp-items="ViewBag.Ingredients" class="form-control"></select>
+                </div>*@
             <div class="form-group">
                 <label asp-for="Instructions" class="control-label"></label>
                 <input asp-for="Instructions" class="form-control" />
@@ -50,6 +50,19 @@
 
                 <input type="number" min=1 max=12 class="form-control mb-2 mr-sm-2" id="inlineFormInputName2" placeholder="Parts">
             </div>
+
+            <div id="CocktailIngredientsContainer">
+                @Html.EditorFor(model => model.Ingredients)
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <input class="btn btn-primary" type="button" id="btnAdd" value="Add product" />
+                </div>
+
+            </div>
+
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -62,5 +75,23 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+        <script type="text/javascript" src="~/js/Cocktails/Create.js" asp-append-version="true">
+        </script>
+    }
+
+@*@section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+        <script type="text/javascript">$("#btnAdd").on('click', function () {
+                $.ajax({
+                    async: true,
+                    data: $('#form').serialize(),
+                    type: "POST",
+                    url: '/Cocktails/AddCocktailIngredient',
+                    success: function (partialView) {
+                        console.log("partialView: "+partialView);
+                        $('#CocktailIngredientsContainer').html(partialView);
+                    }
+                });
+            });</script>
+    }*@

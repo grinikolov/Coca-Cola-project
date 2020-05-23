@@ -72,6 +72,7 @@ namespace BarCrawlers.Controllers
                     return NotFound();
                 }
 
+                //TODO: Map to ViewModel
                 return View(cocktail);
 
             }
@@ -82,6 +83,7 @@ namespace BarCrawlers.Controllers
         }
 
         // GET: Cocktails/Create
+        [Authorize(Roles = "Magician")]
         public async Task<IActionResult> Create()
         {
             ViewData["Ingredient"] = new SelectList(this._ingredientsService.GetAllAsync().Result, "ID", "Name");
@@ -117,14 +119,26 @@ namespace BarCrawlers.Controllers
 
                     return RedirectToAction(nameof(Index));
                 //}
-                return await Create();
+               // return await Create();
             }
             catch (Exception)
             {
                 return Error();
             }
         }
-        // TODO: Edit cocktail!
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Magician")]
+        public async Task<ActionResult> AddCocktailIngredient([Bind("Ingredients")] CocktailCreateViewModel cocktailVM)
+        {
+            if (cocktailVM.Ingredients == null)
+            {
+                cocktailVM.Ingredients = new List<CocktailIngredientViewModel>();
+            }
+            cocktailVM.Ingredients.Add( new CocktailIngredientViewModel());
+            return PartialView("CocktailIngredients", cocktailVM);
+        }
 
         // GET: Cocktails/Edit/5
 
