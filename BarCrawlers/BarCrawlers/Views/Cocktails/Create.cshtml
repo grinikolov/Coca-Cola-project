@@ -1,5 +1,6 @@
 ﻿@model CocktailCreateViewModel
 
+
 @{
     ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -10,7 +11,7 @@
 <h4>Cocktail</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
@@ -28,10 +29,10 @@
                     <input class="form-check-input" asp-for="IsAlcoholic" /> @Html.DisplayNameFor(model => model.IsAlcoholic)
                 </label>
             </div>
-            <div class="form-group">
-                <label asp-for="Ingredients" class="control-label">Ingredients</label>
-                <select asp-for="Ingredients" asp-items="ViewBag.Ingredients" class="form-control"></select>
-            </div>
+            @*<div class="form-group">
+            <label asp-for="Ingredients" class="control-label">Ingredients</label>
+            <select asp-for="Ingredients" asp-items="ViewBag.Ingredients" class="form-control"></select>
+            </div>*@
             <div class="form-group">
                 <label asp-for="Instructions" class="control-label"></label>
                 <input asp-for="Instructions" class="form-control" />
@@ -40,6 +41,14 @@
             <div class="form-group">
                 <label for="exampleFormControlFile1">File:</label>
                 <input type="file" class="form-control-file" id="exampleFormControlFile1">
+            </div>
+
+
+            <div class="input-group mr-2 mr-2">
+
+                <select asp-for="Ingredients" asp-items="ViewBag.Ingredients" multiple class="form-control"></select>
+
+                <input type="number" min=1 max=12 class="form-control mb-2 mr-sm-2" id="inlineFormInputName2" placeholder="Parts">
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

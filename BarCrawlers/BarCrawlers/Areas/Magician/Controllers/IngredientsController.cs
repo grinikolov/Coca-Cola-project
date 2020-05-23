@@ -96,7 +96,7 @@ namespace BarCrawlers.Areas.Magician.Controllers
         [HttpPost]
         [Authorize(Roles = "Magician")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,IsAlcoholic")] IngredientDTO ingredientDTO)
+        public async Task<IActionResult> Edit(Guid id, IngredientDTO ingredientDTO)
         {
             if (id != ingredientDTO.Id)
             {

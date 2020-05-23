@@ -92,7 +92,7 @@ namespace BarCrawlers.Controllers
         [HttpPost]
         [Authorize(Roles = "Magician")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Rating,TimesRated,ImageSrc,IsAlcoholic,Ingredients,Instructions")] CocktailCreateViewModel cocktailView)
+        public async Task<IActionResult> Create(CocktailCreateViewModel cocktailView)
         {
             try
             {
@@ -151,7 +151,7 @@ namespace BarCrawlers.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Rating,TimesRated,ImageSrc,IsDeleted,IsAlcoholic,Instructions")] CocktailDTO cocktailDTO)
+        public async Task<IActionResult> Edit(Guid id, CocktailDTO cocktailDTO)
         {
             if (id != cocktailDTO.Id)
             {
