@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net.Http;
+using System.Text.Json;
 
 namespace BarCrawlers.Services
 {
@@ -16,11 +18,15 @@ namespace BarCrawlers.Services
     {
         private readonly BCcontext _context;
         private readonly IBarMapper _mapper;
+        private readonly IHttpClientFactory _clientFactory;
+        private readonly ICocktailMapper _cocktailMapper;
 
-        public BarsService(BCcontext context, IBarMapper mapper)
+        public BarsService(BCcontext context, IBarMapper mapper, IHttpClientFactory httpClient, ICocktailMapper cocktailMapper)
         {
             this._context = context ?? throw new ArgumentNullException(nameof(context));
             this._mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            this._clientFactory = httpClient ?? throw new ArgumentNullException(nameof(mapper));
+            this._cocktailMapper = cocktailMapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         /// <summary>
@@ -31,37 +37,38 @@ namespace BarCrawlers.Services
         public async Task<BarDTO> CreateAsync(BarDTO barDTO)
         {
             //try
-            //{
-                if (BarExistsByName(barDTO.Name))
+        //{
+            if (BarExistsByName(barDTO.Name))
+            {
+                var theBar = await this._context.Bars
+                    .FirstOrDefaultAsync(c => c.Name.Equals(barDTO.Name));
+                if (theBar.IsDeleted == true)
                 {
-                    var theBar = await this._context.Bars
-                        .FirstOrDefaultAsync(c => c.Name.Equals(barDTO.Name));
-                    if (theBar.IsDeleted == true)
-                    {
-                        theBar.IsDeleted = false;
-                    }
-                    return this._mapper.MapEntityToDTO(theBar);
+                    theBar.IsDeleted = false;
                 }
-                else
-                {
+                return this._mapper.MapEntityToDTO(theBar);
+            }
+            else
+            {
+                barDTO = await SetLocation(barDTO); 
+                var bar = this._mapper.MapDTOToEntity(barDTO);
+                //TODO: Get the location from address
 
-                    var bar = this._mapper.MapDTOToEntity(barDTO);
-                    //TODO: Get the location from address
-                    this._context.Locations.Add(new Location { Lattitude =1,Longtitude = 1});
-                    await _context.SaveChangesAsync();
+                this._context.Locations.Add(new Location { Lattitude =1,Longtitude = 1});
+                await _context.SaveChangesAsync();
 
-                    var location = _context.Locations.FirstOrDefault(l => l.Longtitude == 1);
+                var location = _context.Locations.FirstOrDefault(l => l.Longtitude == 1);
 
-                    bar.LocationId = location.Id;
+                bar.LocationId = location.Id;
                     
-                    this._context.Bars.Add(bar);
+                this._context.Bars.Add(bar);
 
-                    await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
-                    bar = await this._context.Bars.FirstOrDefaultAsync(b => b.Name == barDTO.Name);
+                bar = await this._context.Bars.FirstOrDefaultAsync(b => b.Name == barDTO.Name);
 
-                    return this._mapper.MapEntityToDTO(bar);
-                }
+                return this._mapper.MapEntityToDTO(bar);
+            }
             //}
             //catch (Exception)
             //{
@@ -187,6 +194,116 @@ namespace BarCrawlers.Services
             {
                 return new BarDTO();
             }
+        }
+
+        public async Task<BarDTO> RateBarAsync(Guid barId, Guid userId,  int rating)
+        {
+            try
+            {
+                var rate = await _context.BarRatings.FirstOrDefaultAsync(r => r.BarId == barId && r.UserId == userId);
+
+                if (rate != null)
+                {
+                    rate.Rating = rating;
+
+                    _context.Update(rate);
+                }
+                else
+                {
+                    var barRating = new UserBarRating
+                    {
+                        //BarId = barId,
+                        //UserId = userId,
+                        Rating = rating
+                    };
+
+                    barRating.Bar = await _context.Bars.FindAsync(barId);
+                    barRating.User = await _context.Users.FindAsync(userId);
+
+                    _context.BarRatings.Add(barRating);
+                }
+
+                await _context.SaveChangesAsync();
+
+                var bar = await _context.Bars.FindAsync(barId);
+
+                bar.Rating = await CalculateRating(barId);
+
+                bar.TimesRated = await CountRates(barId);
+
+                _context.Update(bar);
+
+                await _context.SaveChangesAsync();
+
+                return _mapper.MapEntityToDTO(bar);
+            }
+            catch (Exception)
+            {
+                return new BarDTO();
+            }
+
+        }
+
+
+        public async Task<IEnumerable<CocktailDTO>> GetCocktailsAsync(Guid id, string page, string itemsOnPage, string search)
+        {
+            try
+            {
+                var cocktails = await _context.Cocktails
+                 .Include(c => c.Ingredients)
+                     .ThenInclude(c => c.Ingredient)
+                 .Include(c => c.Comments)
+                     .ThenInclude(c => c.User)
+                 .Include(c => c.Bars)
+                 .Where(c => c.Id == id)
+                 .ToListAsync();
+
+                return cocktails.Select(x => this._cocktailMapper.MapEntityToDTO(x));
+            }
+            catch (Exception)
+            {
+                return new List<CocktailDTO>();
+            }
+        }
+
+        private async Task<int> CountRates(Guid barId)
+        {
+            return await _context.BarRatings.Where(b => b.BarId == barId).CountAsync();
+        }
+
+        private async Task<double> CalculateRating(Guid id)
+        {
+            return await _context.BarRatings.Where(b => b.BarId == id).AverageAsync(b => b.Rating);
+        }
+
+        private async Task<BarDTO> SetLocation(BarDTO barDTO)
+        {
+            var street = barDTO.Address.Split();
+            var httpStreet = string.Join("+", street);
+            var request = new HttpRequestMessage(HttpMethod.Get,
+                                                            $"search.php?q=+{httpStreet}%2C" +
+                                                            $"+{barDTO.District}%2C+" +
+                                                            $"{barDTO.Town}%2C+" +
+                                                            $"{barDTO.Country}" +
+                                                            $"&street=&city=&county=&state=&country=&postalcode=&polygon_geojson=1&viewbox=&format=json");
+            //request.Headers.Add("Accept", "application/vnd.github.v3+json");
+            //request.Headers.Add("User-Agent", "HttpClientFactory-Sample");
+
+            var client = _clientFactory.CreateClient("nominatim");
+
+            var response = await client.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                using var responseStream = await response.Content.ReadAsStreamAsync();
+                var coordinates = await JsonSerializer.DeserializeAsync
+                    <IEnumerable<object>>(responseStream);
+            }
+            else
+            {
+            }
+
+            return barDTO;
         }
     }
 }

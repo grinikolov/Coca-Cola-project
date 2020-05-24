@@ -7,12 +7,22 @@
 
 <h1>Index</h1>
 
+<form asp-controller="Bars" asp-action="Index">
+    <p>
+        Bar: <input type="text" name="SearchString">
+        <input type="submit" value="Search" class="btn btn-primary" />
+    </p>
+</form>
+
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table">
+<table class="table table-hover table-sm">
     <thead>
         <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ImageSrc)
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.Name)
             </th>
@@ -22,12 +32,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.TimesRated)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ImageSrc)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsDeleted)
-            </th>
+            @*<th>
+                    @Html.DisplayNameFor(model => model.IsDeleted)
+                </th>*@
             <th>
                 @Html.DisplayNameFor(model => model.Phone)
             </th>
@@ -47,56 +54,78 @@
                 @Html.DisplayNameFor(model => model.Country)
             </th>
             @*<th>
-                @Html.DisplayNameFor(model => model.Location)
-            </th>*@
+                    @Html.DisplayNameFor(model => model.Location)
+                </th>*@
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Rating)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TimesRated)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ImageSrc)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsDeleted)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Phone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Address)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.District)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Town)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Country)
-            </td>
-            @*<td>
-                @Html.DisplayFor(modelItem => item.Location.Id)
-            </td>*@
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr onclick="window.location = '/Bars/Details/@item.Id'">
+                <td>
+                    <div class="container">
+                        @if (string.IsNullOrEmpty(item.ImageSrc))
+                        {
+                            <img class="img-fluid" src="~/img/BarSiluet.jpg" height="50" width="50">
+
+                        }
+                        else
+                        {
+                            <img src="@item.ImageSrc" height="50" width="50">
+                        }
+                    </div>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Rating)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TimesRated)
+                </td>
+                @*<td>
+                        @Html.DisplayFor(modelItem => item.IsDeleted)
+                    </td>*@
+                <td>
+                    @Html.DisplayFor(modelItem => item.Phone)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Address)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.District)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Town)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Country)
+                </td>
+                @*<td>
+                        @Html.DisplayFor(modelItem => item.Location.Id)
+                    </td>*@
+                @*<td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>*@
+            </tr>
+        }
     </tbody>
 </table>
+
+<div>
+    @if (@ViewBag.CurrentPage > 0)
+    {
+        <a class="btn btn-primary" href="/Bar/Index?page=@(@ViewBag.CurrentPage - 1)&searchstring=@ViewBag.SearchString">Previous</a>
+    }
+    @if (!(@Model.Count() < @ViewBag.ItemsOnPage))
+    {
+        <a class="btn btn-primary" href="/Bar/Index?page=@(@ViewBag.CurrentPage + 1)&searchstring=@ViewBag.SearchString">Next</a>
+    }
+</div>
