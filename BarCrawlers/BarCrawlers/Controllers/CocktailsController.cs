@@ -22,14 +22,16 @@ namespace BarCrawlers.Controllers
         private readonly ICocktailsService _service;
         private readonly ICocktailViewMapper _mapper;
         private readonly IIngredientsService _ingredientsService;
-
+        private readonly IUserInteractionsService _userInteractionsService;
         public CocktailsController(ICocktailsService service,
-            ICocktailViewMapper mapper,
-             IIngredientsService ingredientsService)
+             ICocktailViewMapper mapper,
+             IIngredientsService ingredientsService,
+             IUserInteractionsService userInteractionsService)
         {
             this._service = service ?? throw new ArgumentNullException(nameof(service));
             this._mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             this._ingredientsService = ingredientsService ?? throw new ArgumentNullException(nameof(ingredientsService));
+            this._userInteractionsService = userInteractionsService ?? throw new ArgumentNullException(nameof(userInteractionsService));
         }
 
         // GET: Cocktails
@@ -103,23 +105,25 @@ namespace BarCrawlers.Controllers
         {
             try
             {
+                //TODO: Initialize new List<CocktailIngredientViewModel> Ingredients  maybe?
+
                 //if (ModelState.IsValid)
                 //{
-                    var cocktailDTO = this._mapper.MapViewToDTO(cocktailView);
-                    var cocktail = await this._service.CreateAsync(cocktailDTO);
+                var cocktailDTO = this._mapper.MapViewToDTO(cocktailView);
+                var cocktail = await this._service.CreateAsync(cocktailDTO);
 
-                    foreach (var item in cocktailView.Ingredients)
+                foreach (var item in cocktailView.Ingredients)
+                {
+                    //TODO: Parts of ingredient in Cocktail:
+                    if (!await this._service.AddIngredientsToCocktail(item.IngredientId, cocktail.Id, item.Parts)) //item.IngredientId, cocktail.Id, item.Parts
                     {
-                        //TODO: Parts of ingredient in Cocktail:
-                        if (!await this._service.AddIngredientsToCocktail(item.IngredientId, cocktail.Id,item.Parts)) //item.IngredientId, cocktail.Id, item.Parts
-                        {
-                            return Error();
-                        }
+                        return Error();
                     }
+                }
 
-                    return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index));
                 //}
-               // return await Create();
+                // return await Create();
             }
             catch (Exception)
             {
@@ -136,7 +140,7 @@ namespace BarCrawlers.Controllers
             {
                 cocktailVM.Ingredients = new List<CocktailIngredientViewModel>();
             }
-            cocktailVM.Ingredients.Add( new CocktailIngredientViewModel());
+            cocktailVM.Ingredients.Add(new CocktailIngredientViewModel());
             return PartialView("CocktailIngredients", cocktailVM);
         }
 
@@ -170,6 +174,7 @@ namespace BarCrawlers.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Magician")]
         public async Task<IActionResult> Edit(Guid id, CocktailDTO cocktailDTO)
         {
             if (id != cocktailDTO.Id)
@@ -193,6 +198,7 @@ namespace BarCrawlers.Controllers
         }
 
         // GET: Cocktails/Delete/5
+        [Authorize(Roles = "Magician")]
         public async Task<IActionResult> Delete(Guid id)
         {
             try
@@ -219,6 +225,7 @@ namespace BarCrawlers.Controllers
         // POST: Cocktails/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Magician")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var result = await this._service.DeleteAsync(id);
@@ -231,6 +238,27 @@ namespace BarCrawlers.Controllers
                 return await Delete(id);
             }
         }
+
+        public async Task<IActionResult> Rate(Guid userId, Guid cocktailId, int rating)
+        {
+
+            if (rating <= 0 || cocktailId == default || userId == default)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                var model = await this._userInteractionsService.RateCocktail(userId,cocktailId,rating);
+                return RedirectToAction("Details", "Cocktails", new { id = cocktailId });
+            }
+            catch (Exception e)
+            {
+                return NotFound(e.Message);
+            }
+        }
+
+
 
 
 
