@@ -21,7 +21,7 @@ namespace BarCrawlers.Services
         private readonly IUsersService _usersService;
         private readonly ICocktailsService _cocktailsService;
         private readonly ICocktailMapper _cocktailMapper;
-        private readonly IBarCommentMapper _barCommentMapper;
+        //private readonly IBarCommentMapper _barCommentMapper;
         private readonly IBarMapper _barMapper;
 
         public UserInteractionsService(BCcontext context
@@ -30,6 +30,7 @@ namespace BarCrawlers.Services
             , IUsersService usersService
             , ICocktailsService cocktailsService
             , ICocktailMapper cocktailMapper
+            
             , IBarMapper barMapper)
         {
             this._context = context ?? throw new ArgumentNullException(nameof(context));
@@ -38,6 +39,7 @@ namespace BarCrawlers.Services
             this._usersService = usersService ?? throw new ArgumentNullException(nameof(usersService));
             this._cocktailsService = cocktailsService ?? throw new ArgumentNullException(nameof(cocktailsService));
             this._cocktailMapper = cocktailMapper ?? throw new ArgumentNullException(nameof(cocktailMapper));
+            //this._barCommentMapper = barCommentMapper ?? throw new ArgumentNullException(nameof(barCommentMapper));
             this._barMapper = barMapper ?? throw new ArgumentNullException(nameof(barMapper));
 
             //throw new NotImplementedException(" Service for Commenting / Rating Cocktails/Bars");
@@ -199,16 +201,17 @@ namespace BarCrawlers.Services
 
         public async Task<BarUserCommentDTO> AddBarComment(BarUserCommentDTO commentDTO, Guid barId, Guid userId)
         {
-            var bar = await this._context.Bars
-                .FirstOrDefaultAsync(x => x.Id == barId);
+            throw new NotImplementedException(nameof(AddBarComment));
+            //var bar = await this._context.Bars
+            //    .FirstOrDefaultAsync(x => x.Id == barId);
 
-            commentDTO.UserId = userId;
-            var comment = this._barCommentMapper.MapDTOToEntity(commentDTO);
+            //commentDTO.UserId = userId;
+            //var comment = this._barCommentMapper.MapDTOToEntity(commentDTO);
 
-            await this._context.BarComments.AddAsync(comment);
-            await this._context.SaveChangesAsync();
+            //await this._context.BarComments.AddAsync(comment);
+            //await this._context.SaveChangesAsync();
 
-            return this._barCommentMapper.MapEntityToDTO(comment);
+            //return this._barCommentMapper.MapEntityToDTO(comment);
         }
 
     }

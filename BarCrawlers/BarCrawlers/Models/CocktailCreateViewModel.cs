@@ -7,6 +7,10 @@ namespace BarCrawlers.Models
 {
     public class CocktailCreateViewModel
     {
+        public CocktailCreateViewModel()
+        {
+            this.Ingredients = new List<CocktailIngredientViewModel>();
+        }
         public Guid Id { get; set; }
         [Required]
         [StringLength(70, MinimumLength = 3)]
@@ -18,7 +22,7 @@ namespace BarCrawlers.Models
         public bool IsAlcoholic { get; set; }
 
         [Required(ErrorMessage = "Choose at least one ingredient!")]
-        public ICollection<CocktailIngredientViewModel> Ingredients { get; set; }
+        public List<CocktailIngredientViewModel> Ingredients { get; set; }
         //public ICollection<CocktailBarDTO> Bars { get; set; }
         //public ICollection<CocktailUserCommentDTO> Comments { get; set; }
         //public ICollection<UserCocktailRatingDTO> CocktailRatings { get; set; }

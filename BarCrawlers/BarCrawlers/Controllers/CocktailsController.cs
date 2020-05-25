@@ -88,8 +88,9 @@ namespace BarCrawlers.Controllers
         [Authorize(Roles = "Magician")]
         public async Task<IActionResult> Create()
         {
-            ViewData["Ingredient"] = new SelectList(this._ingredientsService.GetAllAsync().Result, "ID", "Name");
+            //ViewData["Ingredient"] = new SelectList( await this._ingredientsService.GetAllAsync(), "ID", "Name");
             var ingredients = await this._ingredientsService.GetAllAsync();
+            
             ViewData["Ingredients"] = ingredients.Select(x => new SelectListItem(x.Name, x.Id.ToString()));
 
             return View();

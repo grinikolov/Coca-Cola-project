@@ -4,6 +4,8 @@
 @{
     ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    int counter = 0;
+    
 }
 
 <h1>Create</h1>
@@ -44,11 +46,18 @@
             </div>
 
 
-            <div class="input-group mr-2 mr-2">
+            <div class="input-group mr-4 mr-2">
 
-                <select asp-for="Ingredients" asp-items="ViewBag.Ingredients" multiple class="form-control"></select>
+                <select asp-for="@Model.Ingredients[counter].IngredientId" class="form-control">
+                    <option selected>Choose an ingredient:</option>
 
-                <input type="number" min=1 max=12 class="form-control mb-2 mr-sm-2" id="inlineFormInputName2" placeholder="Parts">
+                    @foreach (var ingredient in ViewBag.Ingredients)
+                    {
+                        <option value="@ingredient.Value"> @ingredient.Text </option>
+
+                    }
+                </select>
+                <input asp-for="@Model.Ingredients[counter].Parts" type="number" min=1 max=12 class="form-control mb-2 mr-sm-2" id="inlineFormInputName2" placeholder="Parts">
             </div>
 
             <div id="CocktailIngredientsContainer">
@@ -57,7 +66,8 @@
 
             <div class="row">
                 <div class="col-md-4">
-                    <input class="btn btn-primary" type="button" id="btnAdd" value="Add product" />
+                    <input class="btn btn-primary" type="button" id="btnAdd" value="Add ingredient" onclick="@counter++" />
+
                 </div>
 
             </div>
@@ -75,10 +85,10 @@
 </div>
 
 @section Scripts {
-        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-        <script type="text/javascript" src="~/js/Cocktails/Create.js" asp-append-version="true">
-        </script>
-    }
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript" src="~/js/Cocktails/Create.js" asp-append-version="true">
+    </script>
+}
 
 @*@section Scripts {
         @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
