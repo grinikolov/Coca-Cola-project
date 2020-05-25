@@ -21,8 +21,12 @@ namespace BarCrawlers.Models
                     IsDeleted = dto.IsDeleted,
                     IsAlcoholic = dto.IsAlcoholic,
 
-                    //Ingredients = dto.Ingredients,
-
+                    Ingredients = dto.Ingredients.Select(i => new CocktailIngredientViewModel()
+                    {
+                        IngredientId = i.IngredientId,
+                        IngredientName = i.IngredientName,
+                        Parts = i.Parts
+                    }).ToList(),
                     //TODO: Mapping lists ?
                 };
             }

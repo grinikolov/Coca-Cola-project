@@ -1,7 +1,7 @@
 ﻿@model CocktailViewModel
 
 @using Microsoft.AspNetCore.Identity
-@using BarCrawlers.Data.DBModels 
+@using BarCrawlers.Data.DBModels
 
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
@@ -73,6 +73,21 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Instructions)
         </dd>
+        <dt class="col-sm-2">
+            <!--@Html.DisplayNameFor(model => model.Ingredients)-->
+            Contains:
+        </dt>
+        <dd class="col-sm-10">
+            <!--@Html.DisplayFor(model => model.Ingredients)-->
+
+            @foreach (var item in Model.Ingredients)
+            {
+                <p>
+                    @item.IngredientName, @item.Parts parts
+                </p>
+            }
+        </dd>
+
     </dl>
 </div>
 <div>

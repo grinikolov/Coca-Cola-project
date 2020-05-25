@@ -130,7 +130,7 @@ namespace BarCrawlers.Services
                 cocktail = await this._context.Cocktails.FirstOrDefaultAsync(c => c.Name == cocktailDTO.Name);
                 foreach (var item in cocktailDTO.Ingredients)
                 {
-                    bool isAdded = await AddIngredientsToCocktail(item.IngredientId,cocktail.Id, item.Parts);
+                    bool isAdded = await AddIngredientsToCocktail(cocktail.Id, cocktail, item.IngredientId, item.Parts);
                     
                     //var cocktailIngredient = new CocktailIngredient
                     //{
@@ -160,14 +160,18 @@ namespace BarCrawlers.Services
             return await cocktails.CountAsync();
         }
 
-        public async Task<bool> AddIngredientsToCocktail(Guid cocktailId, Guid ingredientID, int? parts)
+        private async Task<bool> AddIngredientsToCocktail(Guid cocktailId,Cocktail cocktail, Guid ingredientId, int? parts)
         {
             try
             {
+                var ingredient = await this._context.Ingredients
+                    .FirstOrDefaultAsync(i=> i.Id == ingredientId);
                 var cocktailIngredient = new CocktailIngredient
                 {
-                    IngredientId = ingredientID,
+                    IngredientId = ingredientId,
+                    Ingredient = ingredient,
                     CocktailId = cocktailId,
+                    Cocktail = cocktail,
                     Parts = parts,
                 };
                 this._context.CocktailIngredients.Add(cocktailIngredient);

@@ -122,7 +122,7 @@ namespace BarCrawlers.Controllers
                 //    }
                 //}
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index");
                 //}
                 // return await Create();
             }

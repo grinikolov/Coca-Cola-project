@@ -1,4 +1,5 @@
-﻿using BarCrawlers.Services.DTOs;
+﻿using BarCrawlers.Data.DBModels;
+using BarCrawlers.Services.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,8 +12,7 @@ namespace BarCrawlers.Services.Contracts
         Task<IEnumerable<CocktailDTO>> GetAllAsync(string page, string itemsOnPage, string searchString);
         Task<CocktailDTO> GetAsync(Guid id);
         Task<CocktailDTO> CreateAsync(CocktailDTO cocktailDTO);
-        Task<bool> AddIngredientsToCocktail(Guid cocktailId, Guid ingredientID, int? parts);
-        //Task<bool> AddIngredientsToCocktail(Guid ingredientID, Guid cocktailId);
+        //Task<bool> AddIngredientsToCocktail(Guid cocktailId, Cocktail cocktail, Guid ingredientID, int? parts);
         Task<CocktailDTO> UpdateAsync(Guid id, CocktailDTO cocktailDTO);
         Task<bool> DeleteAsync(Guid id);
         Task<int> CountAll(string role);
