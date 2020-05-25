@@ -90,7 +90,7 @@ namespace BarCrawlers.Controllers
         {
             //ViewData["Ingredient"] = new SelectList( await this._ingredientsService.GetAllAsync(), "ID", "Name");
             var ingredients = await this._ingredientsService.GetAllAsync();
-            
+
             ViewData["Ingredients"] = ingredients.Select(x => new SelectListItem(x.Name, x.Id.ToString()));
 
             return View();
@@ -113,14 +113,14 @@ namespace BarCrawlers.Controllers
                 var cocktailDTO = this._mapper.MapViewToDTO(cocktailView);
                 var cocktail = await this._service.CreateAsync(cocktailDTO);
 
-                foreach (var item in cocktailView.Ingredients)
-                {
-                    //TODO: Parts of ingredient in Cocktail:
-                    if (!await this._service.AddIngredientsToCocktail(item.IngredientId, cocktail.Id, item.Parts)) //item.IngredientId, cocktail.Id, item.Parts
-                    {
-                        return Error();
-                    }
-                }
+                //foreach (var item in cocktailView.Ingredients)
+                //{
+                //    //TODO: Parts of ingredient in Cocktail:
+                //    if (!await this._service.AddIngredientsToCocktail(item.IngredientId, cocktail.Id, item.Parts)) //item.IngredientId, cocktail.Id, item.Parts
+                //    {
+                //        return Error();
+                //    }
+                //}
 
                 return RedirectToAction(nameof(Index));
                 //}
@@ -250,7 +250,7 @@ namespace BarCrawlers.Controllers
 
             try
             {
-                var model = await this._userInteractionsService.RateCocktail(userId,cocktailId,rating);
+                var model = await this._userInteractionsService.RateCocktail(userId, cocktailId, rating);
                 return RedirectToAction("Details", "Cocktails", new { id = cocktailId });
             }
             catch (Exception e)

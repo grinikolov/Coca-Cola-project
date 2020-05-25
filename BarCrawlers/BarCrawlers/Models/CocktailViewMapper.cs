@@ -104,8 +104,14 @@ namespace BarCrawlers.Models
                     IsAlcoholic = view.IsAlcoholic,
 
                     Instructions = view.Instructions,
-
+                    Ingredients = view.Ingredients.Select(i => new CocktailIngredientDTO()
+                    {
+                        IngredientId = i.IngredientId,
+                        Parts = i.Parts
+                    }).ToList(),
                 };
+
+
             }
             catch (Exception)
             {

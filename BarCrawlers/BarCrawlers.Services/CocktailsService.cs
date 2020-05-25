@@ -121,13 +121,15 @@ namespace BarCrawlers.Services
                 cocktail = await this._context.Cocktails.FirstOrDefaultAsync(c => c.Name == cocktailDTO.Name);
                 foreach (var item in cocktailDTO.Ingredients)
                 {
-                    var cocktailIngredient = new CocktailIngredient
-                    {
-                        CocktailId = cocktail.Id,
-                        IngredientId = item.IngredientId,
-                        Parts = item.Parts,
-                    };
-                    this._context.CocktailIngredients.Add(cocktailIngredient);
+                    bool isAdded = await AddIngredientsToCocktail(item.IngredientId,cocktail.Id, item.Parts);
+                    
+                    //var cocktailIngredient = new CocktailIngredient
+                    //{
+                    //    CocktailId = cocktail.Id,
+                    //    IngredientId = item.IngredientId,
+                    //    Parts = item.Parts,
+                    //};
+                    //this._context.CocktailIngredients.Add(cocktailIngredient);
                 }
                 await this._context.SaveChangesAsync();
 
@@ -149,7 +151,7 @@ namespace BarCrawlers.Services
             return await cocktails.CountAsync();
         }
 
-        public async Task<bool> AddIngredientsToCocktail(Guid ingredientID, Guid cocktailId, int? parts)
+        public async Task<bool> AddIngredientsToCocktail(Guid cocktailId, Guid ingredientID, int? parts)
         {
             try
             {
@@ -168,24 +170,24 @@ namespace BarCrawlers.Services
                 return false;
             }
         }
-        public async Task<bool> AddIngredientsToCocktail(Guid ingredientID, Guid cocktailId)
-        {
-            try
-            {
-                var cocktailIngredient = new CocktailIngredient
-                {
-                    IngredientId = ingredientID,
-                    CocktailId = cocktailId,
-                };
-                this._context.CocktailIngredients.Add(cocktailIngredient);
-                await this._context.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
+        //public async Task<bool> AddIngredientsToCocktail(Guid ingredientID, Guid cocktailId)
+        //{
+        //    try
+        //    {
+        //        var cocktailIngredient = new CocktailIngredient
+        //        {
+        //            IngredientId = ingredientID,
+        //            CocktailId = cocktailId,
+        //        };
+        //        this._context.CocktailIngredients.Add(cocktailIngredient);
+        //        await this._context.SaveChangesAsync();
+        //        return true;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return false;
+        //    }
+        //}
 
         public async Task<CocktailDTO> UpdateAsync(Guid id, CocktailDTO cocktailDTO)
         {
