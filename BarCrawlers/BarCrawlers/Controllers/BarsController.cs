@@ -154,7 +154,7 @@ namespace BarCrawlers.Controllers
                 return NotFound();
             }
 
-            var bar = _service.GetAsync(id);
+            var bar = await _service.GetAsync(id);
             if (bar == null)
             {
                 return NotFound();

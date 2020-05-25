@@ -45,7 +45,7 @@ namespace BarCrawlers.Services
         public async Task<IEnumerable<IngredientDTO>> GetAllAsync(string page, string itemsOnPage, string searchString)
         {
             var p = int.Parse(page);
-            var item = int.Parse(itemsOnPage);
+            var items = int.Parse(itemsOnPage);
             var ingredients = this._context.Ingredients
                 .Include(i => i.Cocktails)
                     .ThenInclude(c => c.Cocktail)
@@ -56,8 +56,8 @@ namespace BarCrawlers.Services
                 ingredients = ingredients.Where(u => u.Name.Contains(searchString));
             }
 
-            ingredients = ingredients.Skip(p * item)
-                            .Take(item);
+            ingredients = ingredients.Skip(p * items)
+                            .Take(items);
 
             var result = await ingredients.ToListAsync();
 

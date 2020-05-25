@@ -119,6 +119,8 @@ namespace BarCrawlers.Services
             var recalculatedRating = await this._context.CocktailRatings
                 .Where(r => r.CocktailId == cocktailId)
                 .Select(r => r.Rating).AverageAsync();
+            
+            recalculatedRating = Math.Round(recalculatedRating, 2);
             return recalculatedRating;
         }
 

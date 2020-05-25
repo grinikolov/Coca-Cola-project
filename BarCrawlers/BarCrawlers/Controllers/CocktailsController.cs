@@ -75,7 +75,7 @@ namespace BarCrawlers.Controllers
                 }
 
                 //TODO: Map to ViewModel
-                return View(cocktail);
+                return View(this._mapper.MapDTOToView(cocktail));
 
             }
             catch (Exception)
@@ -215,7 +215,7 @@ namespace BarCrawlers.Controllers
                     return NotFound();
                 }
 
-                return View(cocktail);
+                return View(this._mapper.MapDTOToView( cocktail));
             }
             catch (Exception)
             {

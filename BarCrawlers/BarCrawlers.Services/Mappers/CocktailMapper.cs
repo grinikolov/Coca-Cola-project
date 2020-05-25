@@ -49,14 +49,14 @@ namespace BarCrawlers.Services.Mappers
                     IsDeleted = entity.IsDeleted,
                     IsAlcoholic = entity.IsAlcoholic,
 
-                    //Ingredients = entity.Ingredients.Select(i => new CocktailIngredientDTO()
-                    //{
-                    //    IngredientId = i.IngredientId,
-                    //    IngredientName = i.Ingredient.Name,
-                    //    CocktailId = i.CocktailId,
-                    //    CocktailName = i.Cocktail.Name,
-                    //    Parts = i.Parts
-                    //}).ToList(),
+                    Ingredients = entity.Ingredients?.Select(i => new CocktailIngredientDTO()
+                    {
+                        IngredientId = i.IngredientId,
+                        IngredientName = i.Ingredient.Name,
+                        CocktailId = i.CocktailId,
+                        CocktailName = i.Cocktail.Name,
+                        Parts = i.Parts
+                    }).ToList(),
                     //Bars = entity.Bars.Select(b => new CocktailBarDTO
                     //{
                     //    BarId = b.BarId,

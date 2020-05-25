@@ -49,6 +49,9 @@ namespace BarCrawlers.Services
         /// <returns>List of cocktails, DTOs</returns>
         public async Task<IEnumerable<CocktailDTO>> GetAllAsync(string page, string itemsOnPage, string searchString)
         {
+            var p = int.Parse(page);
+            var items = int.Parse(itemsOnPage);
+
             var cocktails = _context.Cocktails
                 .Include(c => c.Ingredients)
                     .ThenInclude(c => c.Ingredient)
@@ -61,6 +64,10 @@ namespace BarCrawlers.Services
             {
                 cocktails = cocktails.Where(u => u.Name.Contains(searchString));
             }
+
+            cocktails = cocktails.Skip(p * items)
+                            .Take(items);
+
             var result = await cocktails.ToListAsync();
 
             return result.Select(x => this._mapper.MapEntityToDTO(x)).ToList();
@@ -89,6 +96,8 @@ namespace BarCrawlers.Services
             {
                 throw new UnauthorizedAccessException("Not authorized to access this resource.");
             }
+
+            cocktail.Rating = Math.Round(cocktail.Rating, 2);
 
             return this._mapper.MapEntityToDTO(cocktail);
         }

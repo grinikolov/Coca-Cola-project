@@ -59,7 +59,7 @@
         }
         else
         {
-            <a class="btn btn-primary" href="/Magician/Ingredients/Index?page=@(@ViewBag.CurrentPage - 1)&searchstring=@ViewBag.SearchString" @*asp-area="Magician" asp-controller="User" asp-action="Index"*@ @*asp-route-page=@(@ViewBag.CurrentPage - 1) asp-route-itemsOnPage=@ViewBag.ItemsOnPage asp-route-searchString="@ViewBag.SearchString"*@>Previous</a>
+            <a class="btn btn-primary" href="/Magician/Ingredients/Index?page=@(@ViewBag.CurrentPage - 1)&searchstring=@ViewBag.SearchString">Previous</a>
         }
     }
     @if (!(@Model.Count() < @ViewBag.ItemsOnPage))
@@ -70,7 +70,7 @@
         }
         else
         {
-            <a class="btn btn-primary" href="/Magician/Ingredients/Index?page=@(@ViewBag.CurrentPage + 1)&searchstring=@ViewBag.SearchString" @*asp-area="Magician" asp-controller="User" asp-action="Index"*@ @*asp-route-page=@(@ViewBag.CurrentPage + 1) asp-route-itemsOnPage=@ViewBag.ItemsOnPage asp-route-searchString="@ViewBag.SearchString"*@>Next</a>
+            <a class="btn btn-primary" href="/Magician/Ingredients/Index?page=@(@ViewBag.CurrentPage + 1)&searchstring=@ViewBag.SearchString">Next</a>
         }
     }
 </div>
