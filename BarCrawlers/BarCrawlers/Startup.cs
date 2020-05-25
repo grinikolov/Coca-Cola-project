@@ -48,6 +48,8 @@ namespace BarCrawlers
             services.AddControllersWithViews();
             services.AddRazorPages()
                 .AddRazorRuntimeCompilation();
+            services.AddHttpClient("nominatim", n =>
+                                        n.BaseAddress = new Uri("https://nominatim.openstreetmap.org/"));
 
             services.AddDbContext<BCcontext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("Default")).UseLoggerFactory(MyLoggerFactory));
@@ -64,6 +66,11 @@ namespace BarCrawlers
             services.AddScoped<IBarMapper, BarMapper>();
             services.AddScoped<IBarsService, BarsService>();
             services.AddScoped<IBarViewMapper, BarViewMapper>();
+
+            services.AddScoped<IBarUserCommentViewMapper, BarUserCommentViewMapper>();
+            services.AddScoped<IBarUserCommentsService, BarUserCommentsService>();
+            services.AddScoped<IBarUserCommentMapper, BarUserCommentMapper>();
+
             services.AddScoped<IUserInteractionsService, UserInteractionsService>();
 
             services.AddIdentity<User, Role>()

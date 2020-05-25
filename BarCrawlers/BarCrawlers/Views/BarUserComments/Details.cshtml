@@ -1,0 +1,46 @@
+﻿@model BarCrawlers.Models.BarUserCommentView
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>BarUserComment</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.BarName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.BarName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.UserName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.UserName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Text)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Text)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.IsFlagged)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.IsFlagged)
+        </dd>
+    </dl>
+</div>
+<div>
+    @if (Model.UserName == User.Identity.Name)
+    {
+        <a class="btn btn-primary" asp-action="Edit" asp-route-barId=@Model.BarId asp-route-userId=@Model.UserId>Edit</a>
+        <a class="btn btn-primary" asp-action="Delete" asp-route-barId=@Model.BarId asp-route-userId=@Model.UserId>Delete</a>
+    }
+    <a class="btn btn-primary" asp-action="Index" asp-route-barId=@Model.BarId >Back to List</a>
+</div>

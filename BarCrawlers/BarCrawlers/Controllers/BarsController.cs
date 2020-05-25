@@ -18,11 +18,13 @@ namespace BarCrawlers.Controllers
     {
         private readonly IBarsService _service;
         private readonly IBarViewMapper _mapper;
+        private readonly ICocktailViewMapper _cocktailMapper;
 
-        public BarsController(IBarsService service, IBarViewMapper mapper)
+        public BarsController(IBarsService service, IBarViewMapper mapper, ICocktailViewMapper cocktailMapper)
         {
             _service = service ?? throw new ArgumentNullException("Bar service not found");
             _mapper = mapper ?? throw new ArgumentNullException("Mapper not found");
+            _cocktailMapper = cocktailMapper ?? throw new ArgumentNullException("Mapper not found");
         }
 
         // GET: Bars
@@ -35,7 +37,7 @@ namespace BarCrawlers.Controllers
                 ViewBag.Count = bars.Count();
                 ViewBag.CurrentPage = int.Parse(page);
                 ViewBag.ItemsOnPage = int.Parse(itemsOnPage);
-                //ViewBag.SearchString = searchString;
+                ViewBag.SearchString = searchString;
 
                 return View(bars.Select(b => this._mapper.MapDTOToView(b)));
             }
@@ -160,7 +162,7 @@ namespace BarCrawlers.Controllers
                 return NotFound();
             }
 
-            return View(bar);
+            return View(_mapper.MapDTOToView(bar));
         }
 
         // POST: Bars/Delete/5
@@ -174,6 +176,55 @@ namespace BarCrawlers.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return Error();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Rate(Guid barId, Guid userId, [Bind("Rating")] int rating)
+        {
+            if (barId == null || userId == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                await _service.RateBarAsync(barId, userId, rating);
+                return RedirectToAction(nameof(Details), new { id = barId });
+        }
+            catch (Exception)
+            {
+                return Error();
+            }
+        }
+
+        public async Task<IActionResult> LoadCocktails(Guid id, string page = "0", string itemsOnPage = "12", string searchString = null)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                var bars = await this._service.GetCocktailsAsync(id, page, itemsOnPage, searchString);
+
+                ViewBag.Count = bars.Count();
+                ViewBag.CurrentPage = int.Parse(page);
+                ViewBag.ItemsOnPage = int.Parse(itemsOnPage);
+                ViewBag.SearchString = searchString;
+                ViewBag.CurrentBar = id;
+
+                return View(bars.Select(b => this._cocktailMapper.MapDTOToView(b)));
+            }
+            catch (Exception)
+            {
+                return Error();
+            }
+
+            //var result = await _service.GetCocktails();
+
+            //return View();
         }
 
         //private bool BarExists(Guid id)

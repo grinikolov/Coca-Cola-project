@@ -10,8 +10,11 @@ namespace BarCrawlers.Services.Contracts
     {
         Task<IEnumerable<BarDTO>> GetAllAsync(string page, string itemsOnPage, string search);
         Task<BarDTO> GetAsync(Guid id);
-        Task<BarDTO> CreateAsync(BarDTO cocktailDTO);
-        Task<BarDTO> UpdateAsync(Guid id, BarDTO cocktailDTO);
+        Task<BarDTO> CreateAsync(BarDTO barDTO);
+        Task<BarDTO> UpdateAsync(Guid id, BarDTO barDTO);
         Task<bool> DeleteAsync(Guid id);
+        Task<BarDTO> RateBarAsync(Guid barId, Guid userId, int rating);
+
+        Task<IEnumerable<CocktailDTO>> GetCocktailsAsync(Guid id, string page, string itemsOnPage, string search);
     }
 }

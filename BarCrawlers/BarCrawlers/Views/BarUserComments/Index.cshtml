@@ -1,0 +1,82 @@
+﻿@model IEnumerable<BarCrawlers.Models.BarUserCommentView>
+@using Microsoft.AspNetCore.Identity
+@using BarCrawlers.Data.DBModels
+
+
+@inject UserManager<User> _userManager
+
+@{
+    ViewData["Title"] = "Index";
+    var currentUser = await _userManager.GetUserAsync(User);
+}
+
+<h1>Index</h1>
+@*@var currentUser = await _userManager.FindByNameAsync(User.Identity.Name)*@
+
+@if (!Model.Any(b => b.UserName == User.Identity.Name))
+{
+    <p>
+        <a asp-action="Create" asp-route-barId=@ViewBag.CurrentBar asp-route-userId=@currentUser.Id>Leave Comment</a>
+    </p>
+}
+
+<table class="table table-hover table-sm">
+    <thead>
+        <tr>
+            @*<th>
+                @Html.DisplayNameFor(model => model.BarName)
+            </th>*@
+            <th>
+                @Html.DisplayNameFor(model => model.UserName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Text)
+            </th>
+            @*<th>
+                @Html.DisplayNameFor(model => model.IsFlagged)
+            </th>*@
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr onclick="location.href = '@(Url.Action("Details", "BarUserComments", new { barId = item.BarId, userId = item.UserId }))'">
+                @*<td>
+                    @Html.DisplayFor(modelItem => item.BarName)
+                </td>*@
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Text)
+                </td>
+                @*<td>
+                    @Html.DisplayFor(modelItem => item.IsFlagged)
+                </td>*@
+                @*<td>
+                        @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                        @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                        @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                    </td>*@
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    @if (@ViewBag.CurrentPage > 0)
+    {
+        <a class="btn btn-primary" asp-controller="BarUserComments" asp-action="Index" 
+           asp-route-page=@(@ViewBag.CurrentPage - 1) 
+           asp-route-itemsOnPage=@ViewBag.ItemsOnPage
+           asp-route-barId =@ViewBag.CurrentBar>Previous</a>
+    }
+    @if (!(@Model.Count() < @ViewBag.ItemsOnPage))
+    {
+        <a class="btn btn-primary" asp-controller="BarUserComments" asp-action="Index" 
+           asp-route-page=@(@ViewBag.CurrentPage + 1) 
+           asp-route-itemsOnPage=@ViewBag.ItemsOnPage
+           asp-route-barId =@ViewBag.CurrentBar>Next</a>
+    }
+</div>
