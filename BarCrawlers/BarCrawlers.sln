@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarCrawlers", "BarCrawlers\BarCrawlers.csproj", "{087F9332-3497-4357-82A1-9F93D0C7CE1C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BarCrawlers", "BarCrawlers\BarCrawlers.csproj", "{087F9332-3497-4357-82A1-9F93D0C7CE1C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarCrawlers.Data", "BarCrawlers.Data\BarCrawlers.Data.csproj", "{E7A53A56-B762-421D-84A6-D2638C14040A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BarCrawlers.Data", "BarCrawlers.Data\BarCrawlers.Data.csproj", "{E7A53A56-B762-421D-84A6-D2638C14040A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarCrawlers.Services", "BarCrawlers.Services\BarCrawlers.Services.csproj", "{ECCFF231-9FE4-4677-8E3C-9F1C3AF45556}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BarCrawlers.Services", "BarCrawlers.Services\BarCrawlers.Services.csproj", "{ECCFF231-9FE4-4677-8E3C-9F1C3AF45556}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BarCrawlers.Tests", "BarCrawlers.Tests\BarCrawlers.Tests.csproj", "{41E4CE73-D164-4F40-A562-E5FC342D40A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BarCrawlers.Tests", "BarCrawlers.Tests\BarCrawlers.Tests.csproj", "{41E4CE73-D164-4F40-A562-E5FC342D40A2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

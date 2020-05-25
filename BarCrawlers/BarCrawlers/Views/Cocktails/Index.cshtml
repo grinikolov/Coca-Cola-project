@@ -1,72 +1,107 @@
-﻿@model IEnumerable<BarCrawlers.Data.DBModels.Cocktail>
+﻿@model IEnumerable<CocktailViewModel>
 
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-area="" asp-controller="Cocktails" asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Rating)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TimesRated)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ImageSrc)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsDeleted)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsAlcoholic)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Instructions)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Rating)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TimesRated)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ImageSrc)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsDeleted)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsAlcoholic)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Instructions)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+<h1>Cocktails</h1>
+@if (User.IsInRole("Magician"))
+{
+    <p>
+        <a asp-area="" asp-controller="Cocktails" asp-action="Create">Create New</a>
+    </p>
 }
-    </tbody>
-</table>
+    <form asp-area="" asp-controller="Cocktails" asp-action="Index">
+        <p>
+            Cocktail: <input type="text" name="SearchString">
+            <input type="submit" value="Search" class="btn btn-primary" />
+        </p>
+    </form>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Rating)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TimesRated)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ImageSrc)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IsDeleted)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IsAlcoholic)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Instructions)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Rating)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TimesRated)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ImageSrc)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IsDeleted)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IsAlcoholic)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Instructions)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div>
+        @if (@ViewBag.CurrentPage > 0)
+        {
+            @if (@ViewBag.SearchString == null)
+            {
+                <a class="btn btn-primary" href="/Cocktails/Index?page=@(@ViewBag.CurrentPage - 1)">Previous</a>
+            }
+            else
+            {
+                <a class="btn btn-primary" href="Cocktails/Index?page=@(@ViewBag.CurrentPage - 1)&searchstring=@ViewBag.SearchString">Previous</a>
+            }
+        }
+        @if (!(@Model.Count() < @ViewBag.ItemsOnPage))
+        {
+            @if (@ViewBag.SearchString == null)
+            {
+                <a class="btn btn-primary" href="Cocktails/Index?page=@(@ViewBag.CurrentPage + 1)">Next</a>
+            }
+            else
+            {
+                <a class="btn btn-primary" href="Cocktails/Index?page=@(@ViewBag.CurrentPage + 1)&searchstring=@ViewBag.SearchString">Next</a>
+            }
+        }
+    </div>

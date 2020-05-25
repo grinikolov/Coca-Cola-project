@@ -10,6 +10,7 @@ namespace BarCrawlers.Models.Contracts
     {
         public CocktailViewModel MapDTOToView(CocktailDTO dto);
 
-        public CocktailDTO MapViewToDTO(CocktailViewModel view);
+        public CocktailDTO MapViewToDTO(CocktailViewModel view); 
+        public CocktailDTO MapViewToDTO(CocktailCreateViewModel view);
     }
 }

@@ -57,6 +57,7 @@ namespace BarCrawlers
             services.AddScoped<ICocktailsService, CocktailsService>();
             services.AddScoped<ICocktailMapper, CocktailMapper>();
             services.AddScoped<ICocktailViewMapper, CocktailViewMapper>();
+            services.AddScoped<ICocktailCommentMapper, CocktailCommentMapper>();
             services.AddScoped<IIngredientsService, IngredientsService>();
             services.AddScoped<IIngredientMapper, IngredientMapper>();
             services.AddScoped<IUsersService, UsersService>();
@@ -65,10 +66,12 @@ namespace BarCrawlers
             services.AddScoped<IBarMapper, BarMapper>();
             services.AddScoped<IBarsService, BarsService>();
             services.AddScoped<IBarViewMapper, BarViewMapper>();
+
             services.AddScoped<IBarUserCommentViewMapper, BarUserCommentViewMapper>();
             services.AddScoped<IBarUserCommentsService, BarUserCommentsService>();
             services.AddScoped<IBarUserCommentMapper, BarUserCommentMapper>();
 
+            services.AddScoped<IUserInteractionsService, UserInteractionsService>();
 
             services.AddIdentity<User, Role>()
                 .AddDefaultUI()
@@ -156,20 +159,20 @@ namespace BarCrawlers
                     name: "MyAreaMagician",
                     areaName: "Magician",
                     pattern: "Magician/{controller=Home}/{action=Index}/{id?}");
-                
+
                 endpoints.MapAreaControllerRoute(
                     name: "MyAreaIdentity",
                     areaName: "Identity",
                     pattern: "Identity/{controller=Home}/{action=Index}/{id?}");
 
-          //  //app.UseRouting();
-          //  app.UseEndpoints(endpoints =>
-          //  {
-          //      endpoints.MapControllers();
-          //      endpoints.MapRazorPages();
-          //      endpoints.MapControllerRoute(
-          //          name: "area",
-          //          pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+                //  //app.UseRouting();
+                //  app.UseEndpoints(endpoints =>
+                //  {
+                //      endpoints.MapControllers();
+                //      endpoints.MapRazorPages();
+                //      endpoints.MapControllerRoute(
+                //          name: "area",
+                //          pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");//{area:exists}/
