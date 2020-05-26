@@ -50,7 +50,7 @@ namespace BarCrawlers.Services
             }
             else
             {
-                barDTO = await SetLocation(barDTO); 
+                //barDTO = await SetLocation(barDTO); 
                 var bar = this._mapper.MapDTOToEntity(barDTO);
                 //TODO: Get the location from address
 
@@ -273,7 +273,7 @@ namespace BarCrawlers.Services
 
         private async Task<double> CalculateRating(Guid id)
         {
-            return await _context.BarRatings.Where(b => b.BarId == id).AverageAsync(b => b.Rating);
+            return Math.Round( await _context.BarRatings.Where(b => b.BarId == id).AverageAsync(b => b.Rating), 2);
         }
 
         private async Task<BarDTO> SetLocation(BarDTO barDTO)
@@ -286,8 +286,8 @@ namespace BarCrawlers.Services
                                                             $"{barDTO.Town}%2C+" +
                                                             $"{barDTO.Country}" +
                                                             $"&street=&city=&county=&state=&country=&postalcode=&polygon_geojson=1&viewbox=&format=json");
-            //request.Headers.Add("Accept", "application/vnd.github.v3+json");
-            //request.Headers.Add("User-Agent", "HttpClientFactory-Sample");
+            request.Headers.Add("Accept", "application/json");
+            request.Headers.Add("User-Agent", "BarCrawlers");
 
             var client = _clientFactory.CreateClient("nominatim");
 
@@ -298,6 +298,7 @@ namespace BarCrawlers.Services
                 using var responseStream = await response.Content.ReadAsStreamAsync();
                 var coordinates = await JsonSerializer.DeserializeAsync
                     <IEnumerable<object>>(responseStream);
+             //var lat = coordinates.[0]
             }
             else
             {
