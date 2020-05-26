@@ -26,9 +26,13 @@ namespace BarCrawlers.Areas.Magician.Controllers
         }
 
         // GET: Magician/Ingredients
-        public async Task<IActionResult> Index(string page = "0", string itemsOnPage = "10", string searchString = null)
+        public async Task<IActionResult> Index(string page = "0", string itemsOnPage = "12", string searchString = null)
         {
-            var ingredients = await this._service.GetAllAsync();
+            var ingredients = await this._service.GetAllAsync(page, itemsOnPage, searchString);
+            ViewBag.Count = ingredients.Count();
+            ViewBag.CurrentPage = int.Parse(page);
+            ViewBag.ItemsOnPage = int.Parse(itemsOnPage);
+            ViewBag.SearchString = searchString; 
             return View(ingredients);
         }
 
@@ -55,10 +59,10 @@ namespace BarCrawlers.Areas.Magician.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(IngredientDTO ingredientDTO)
         {
-            if (ModelState.IsValid)
-            {
-                return View(ingredientDTO);
-            }
+            //if (ModelState.IsValid)
+            //{
+            //    return View(ingredientDTO);
+            //}
             await this._service.CreateAsync(ingredientDTO);
             return RedirectToAction("Index", "Ingredients");
         }
@@ -92,7 +96,7 @@ namespace BarCrawlers.Areas.Magician.Controllers
         [HttpPost]
         [Authorize(Roles = "Magician")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,IsAlcoholic")] IngredientDTO ingredientDTO)
+        public async Task<IActionResult> Edit(Guid id, IngredientDTO ingredientDTO)
         {
             if (id != ingredientDTO.Id)
             {

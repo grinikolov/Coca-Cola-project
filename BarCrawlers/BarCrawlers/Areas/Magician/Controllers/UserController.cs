@@ -45,7 +45,6 @@ namespace BarCrawlers.Areas.Magician.Controllers
             }
             catch (Exception)
             {
-
                 return View();
             }
 
@@ -97,27 +96,27 @@ namespace BarCrawlers.Areas.Magician.Controllers
         //}
 
         // GET: Magician/User/Edit/5
-        public async Task<IActionResult> Edit(Guid id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        //public async Task<IActionResult> Edit(Guid id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var user = _mapper.MapDTOToView(await _service.GetAsync(id));
-            if (user == null)
-            {
-                return NotFound();
-            }
-            return View(user);
-        }
+        //    var user = _mapper.MapDTOToView(await _service.GetAsync(id));
+        //    if (user == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return View(user);
+        //}
 
         // POST: Magician/User/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        //[HttpPost]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("LockDays")] int lockDays)
+        public async Task<IActionResult> Edit(Guid id)
         {
             //if (id != user.Id)
             //{
@@ -128,7 +127,7 @@ namespace BarCrawlers.Areas.Magician.Controllers
             {
                 try
                 {
-                    var userDTO = new UserDTO() { Id = id,LockoutEnd = DateTime.UtcNow.AddDays(lockDays + 1)};
+                    var userDTO = new UserDTO() { Id = id,LockoutEnd = DateTime.UtcNow.AddDays(7)};
                     await _service.UpdateAsync(id, userDTO, _userManager);
                 }
                 catch (Exception)

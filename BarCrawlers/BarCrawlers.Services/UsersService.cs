@@ -17,16 +17,15 @@ namespace BarCrawlers.Services
     {
         private readonly BCcontext _context;
         private readonly IUserMapper _mapper;
-        private readonly ICocktailsService _cocktailsService;
         private readonly ICocktailCommentMapper _cocktailCommentMapper;
 
         public UsersService(BCcontext context
-            ,IUserMapper mapper
-            ,ICocktailCommentMapper cocktailCommentMapper)
+            , IUserMapper mapper
+            , ICocktailCommentMapper cocktailCommentMapper)
         {
             this._context = context ?? throw new ArgumentNullException(nameof(context));
             this._mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            this._cocktailCommentMapper= cocktailCommentMapper ?? throw new ArgumentNullException(nameof(cocktailCommentMapper));
+            this._cocktailCommentMapper = cocktailCommentMapper ?? throw new ArgumentNullException(nameof(cocktailCommentMapper));
         }
 
         /// <summary>
@@ -39,7 +38,7 @@ namespace BarCrawlers.Services
             {
                 var p = int.Parse(page);
                 var item = int.Parse(itemsOnPage);
-                var users =  _context.Users
+                var users = _context.Users
                                     .Include(u => u.BarRatings)
                                     .Include(u => u.CocktailRatings)
                                     .Include(u => u.BarComments)
@@ -64,7 +63,7 @@ namespace BarCrawlers.Services
                 return new List<UserDTO>();
             }
 
-                            
+
         }
 
         /// <summary>
@@ -83,7 +82,7 @@ namespace BarCrawlers.Services
                     .Include(u => u.CocktailComments)
                     .FirstOrDefaultAsync(u => u.Id == id);
 
-                var userDTO =  _mapper.MapEntityToDTO(user);
+                var userDTO = _mapper.MapEntityToDTO(user);
 
                 return userDTO;
             }
@@ -104,7 +103,7 @@ namespace BarCrawlers.Services
                     .Include(u => u.CocktailComments)
                     .FirstOrDefaultAsync(u => u.Id == id);
 
-                await userManager.SetLockoutEnabledAsync(user,true);
+                await userManager.SetLockoutEnabledAsync(user, true);
                 await userManager.SetLockoutEndDateAsync(user, userDTO.LockoutEnd);
                 var status = userManager.GetLockoutEndDateAsync(user);
                 await _context.SaveChangesAsync();
@@ -140,16 +139,5 @@ namespace BarCrawlers.Services
             }
         }
 
-        public async Task<CocktailUserCommentDTO> AddCocktailReview(CocktailUserCommentDTO commentDTO, Guid cocktailId, Guid userId)
-        {
-            var cocktail = await this._context.Cocktails.FirstOrDefaultAsync(x => x.Id == cocktailId);
-
-            var comment = this._cocktailCommentMapper.MapDTOToEntity(commentDTO);
-            
-            await this._context.CocktailComments.AddAsync(comment);
-            await this._context.SaveChangesAsync();
-
-            return this._cocktailCommentMapper.MapEntityToDTO(comment);
-        }
     }
 }

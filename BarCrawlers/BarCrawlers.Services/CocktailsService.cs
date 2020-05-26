@@ -39,9 +39,38 @@ namespace BarCrawlers.Services
                 .Include(c => c.Comments)
                     .ThenInclude(c => c.User)
                 .Include(c => c.Bars)
-                .ToListAsync();
+                .ToListAsync() ;
 
-            return cocktails.Select(x => this._mapper.MapEntityToDTO(x));
+            return cocktails.Select(x => this._mapper.MapEntityToDTO(x)).ToList();
+        }
+        /// <summary>
+        /// Gets page of cocktails from the database.
+        /// </summary>
+        /// <returns>List of cocktails, DTOs</returns>
+        public async Task<IEnumerable<CocktailDTO>> GetAllAsync(string page, string itemsOnPage, string searchString)
+        {
+            var p = int.Parse(page);
+            var items = int.Parse(itemsOnPage);
+
+            var cocktails = _context.Cocktails
+                .Include(c => c.Ingredients)
+                    .ThenInclude(c => c.Ingredient)
+                .Include(c => c.Comments)
+                    .ThenInclude(c => c.User)
+                .Include(c => c.Bars)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                cocktails = cocktails.Where(u => u.Name.Contains(searchString));
+            }
+
+            cocktails = cocktails.Skip(p * items)
+                            .Take(items);
+
+            var result = await cocktails.ToListAsync();
+
+            return result.Select(x => this._mapper.MapEntityToDTO(x)).ToList();
         }
 
         /// <summary>
@@ -67,6 +96,8 @@ namespace BarCrawlers.Services
             {
                 throw new UnauthorizedAccessException("Not authorized to access this resource.");
             }
+
+            cocktail.Rating = Math.Round(cocktail.Rating, 2);
 
             return this._mapper.MapEntityToDTO(cocktail);
         }
@@ -99,13 +130,15 @@ namespace BarCrawlers.Services
                 cocktail = await this._context.Cocktails.FirstOrDefaultAsync(c => c.Name == cocktailDTO.Name);
                 foreach (var item in cocktailDTO.Ingredients)
                 {
-                    var cocktailIngredient = new CocktailIngredient
-                    {
-                        CocktailId = cocktail.Id,
-                        IngredientId = item.IngredientId,
-                        Parts = item.Parts,
-                    };
-                    this._context.CocktailIngredients.Add(cocktailIngredient);
+                    bool isAdded = await AddIngredientsToCocktail(cocktail.Id, cocktail, item.IngredientId, item.Parts);
+                    
+                    //var cocktailIngredient = new CocktailIngredient
+                    //{
+                    //    CocktailId = cocktail.Id,
+                    //    IngredientId = item.IngredientId,
+                    //    Parts = item.Parts,
+                    //};
+                    //this._context.CocktailIngredients.Add(cocktailIngredient);
                 }
                 await this._context.SaveChangesAsync();
 
@@ -120,21 +153,25 @@ namespace BarCrawlers.Services
             var cocktails = this._context.Cocktails
                 .AsQueryable();
 
-            if (role != "Admin" || role == null)
+            if (role == "Magician" )
             {
-                cocktails =  cocktails.Where(x => x.IsDeleted == false);
+                cocktails =  cocktails.Where(x => x.IsDeleted == true);
             }
             return await cocktails.CountAsync();
         }
 
-        public async Task<bool> AddIngredientsToCocktail(Guid ingredientID, Guid cocktailId, int? parts)
+        private async Task<bool> AddIngredientsToCocktail(Guid cocktailId,Cocktail cocktail, Guid ingredientId, int? parts)
         {
             try
             {
+                var ingredient = await this._context.Ingredients
+                    .FirstOrDefaultAsync(i=> i.Id == ingredientId);
                 var cocktailIngredient = new CocktailIngredient
                 {
-                    IngredientId = ingredientID,
+                    IngredientId = ingredientId,
+                    Ingredient = ingredient,
                     CocktailId = cocktailId,
+                    Cocktail = cocktail,
                     Parts = parts,
                 };
                 this._context.CocktailIngredients.Add(cocktailIngredient);
@@ -146,24 +183,24 @@ namespace BarCrawlers.Services
                 return false;
             }
         }
-        public async Task<bool> AddIngredientsToCocktail(Guid ingredientID, Guid cocktailId)
-        {
-            try
-            {
-                var cocktailIngredient = new CocktailIngredient
-                {
-                    IngredientId = ingredientID,
-                    CocktailId = cocktailId,
-                };
-                this._context.CocktailIngredients.Add(cocktailIngredient);
-                await this._context.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
+        //public async Task<bool> AddIngredientsToCocktail(Guid ingredientID, Guid cocktailId)
+        //{
+        //    try
+        //    {
+        //        var cocktailIngredient = new CocktailIngredient
+        //        {
+        //            IngredientId = ingredientID,
+        //            CocktailId = cocktailId,
+        //        };
+        //        this._context.CocktailIngredients.Add(cocktailIngredient);
+        //        await this._context.SaveChangesAsync();
+        //        return true;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return false;
+        //    }
+        //}
 
         public async Task<CocktailDTO> UpdateAsync(Guid id, CocktailDTO cocktailDTO)
         {

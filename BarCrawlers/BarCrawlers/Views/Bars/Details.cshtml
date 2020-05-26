@@ -1,8 +1,15 @@
 ﻿@model BarCrawlers.Models.BarViewModel
 
+@using Microsoft.AspNetCore.Identity
+@using BarCrawlers.Data.DBModels
+
+
+@inject UserManager<User> _userManager
+
 @{
     ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var currentUser = await _userManager.GetUserAsync(User);
 }
 
 <h1>Details</h1>
@@ -11,81 +18,110 @@
     <h4>Bar</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Name)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Name)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Rating)
         </dt>
-        <dd class = "col-sm-10">
+        @*<dt class="col-sm-2">
+                <input asp-for="Rating">
+                <input type="submit" value="Rate" class="btn btn-primary" />
+            </dt>*@
+        <dd class="col-sm-1">
             @Html.DisplayFor(model => model.Rating)
         </dd>
-        <dt class = "col-sm-2">
+        <dd class="col-sm-9">
+            <form asp-action="Rate" asp-route-Id=@Model.Id asp-route-userId=@currentUser.Id method="post">
+                @*<input type="hidden" asp-for="barId" />
+                <input type="hidden" asp-for="UserId" />*@
+                <input asp-for="Rating" type="text">
+                <input type="submit" value="Rate" class="btn btn-primary"/>
+            </form>
+            @*<input asp-for="Rating" class="col-sm-1">*@
+            @*<>*@
+            @*<a class="btn btn-primary" asp-action="Rate" asp-route-barId=@Model.Id asp-route-userId=@currentUser.Id >Rate</a>*@
+        </dd>
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.TimesRated)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.TimesRated)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.ImageSrc)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ImageSrc)
+        <dd class="col-sm-10">
+            @if (string.IsNullOrEmpty(Model.ImageSrc))
+            {
+                <img class="img-fluid" src="~/img/BarSiluet.jpg" height="50" width="50">
+
+            }
+            else
+            {
+                <img src="@Model.ImageSrc" height="50" width="50">
+            }
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.IsDeleted)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.IsDeleted)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Phone)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Phone)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Email)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Email)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Address)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Address)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.District)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.District)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Town)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Town)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Country)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Country)
         </dd>
         @*<dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Location)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Location.Id)
-        </dd>*@
+                @Html.DisplayNameFor(model => model.Location)
+            </dt>
+            <dd class = "col-sm-10">
+                @Html.DisplayFor(model => model.Location.Id)
+            </dd>*@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+    <a class="btn btn-primary" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
+    <a class="btn btn-primary" asp-action="Index">Back to List</a>
+</div>
+<br>
+<div>
+    <a class="btn btn-primary" asp-controller="BarUserComments" asp-action="Index" asp-route-barId="@Model.Id">Comments</a>
+    <a class="btn btn-primary" asp-controller="Bar" asp-action="LoadCocktails" asp-route-id="@Model.Id">Cocktails</a>
 </div>
