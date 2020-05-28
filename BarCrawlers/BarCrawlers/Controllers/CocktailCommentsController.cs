@@ -69,6 +69,9 @@ namespace BarCrawlers.Controllers
         //[Authorize]
         public IActionResult Create(Guid cocktailId, Guid userId)
         {
+            ViewData["CocktailId"] = cocktailId;
+            ViewData["UserId"] = userId;
+
             return View();
         }
 
@@ -78,7 +81,7 @@ namespace BarCrawlers.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         //[Authorize]
-        public async Task<IActionResult> Create([Bind("CocktailId,UserId,Text,IsFlagged")] CocktailUserCommentVM cocktailUserCommentVM)
+        public async Task<IActionResult> Create(CocktailUserCommentVM cocktailUserCommentVM)
         {
             if (ModelState.IsValid)
             {

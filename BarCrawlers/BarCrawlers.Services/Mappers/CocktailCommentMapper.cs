@@ -38,7 +38,7 @@ namespace BarCrawlers.Services.Mappers
                     CocktailId = entity.CocktailId,
                     CocktailName = entity.Cocktail?.Name,
                     UserId = entity.UserId,
-                    UserName = entity.Cocktail?.Name,
+                    UserName = entity.User?.UserName,
                     Text = entity.Text,
                     IsFlagged = entity.IsFlagged,
                 };

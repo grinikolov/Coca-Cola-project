@@ -15,19 +15,17 @@
 
 @if (!Model.Any(b => b.UserName == User.Identity.Name))
 {
-<p>
-    <a asp-action="Create" asp-route-cocktailId=@ViewBag.CurrentCocktail asp-route-userId=@currentUser.Id>Leave Comment</a>
-
-    <a asp-controller="Cocktails" asp-action="Details" asp-route-id="@ViewBag.CurrentCocktail" >Back to cocktail</a>
-</p>
+    <p>
+        <a asp-action="Create" asp-route-cocktailId=@ViewBag.CurrentCocktail asp-route-userId=@currentUser.Id>Leave Comment</a>
+    </p>
 }
 
 <table class="table table-hover table-sm">
     <thead>
         <tr>
             @*<th>
-                @Html.DisplayNameFor(model => model.CocktailName)
-            </th>*@
+                    @Html.DisplayNameFor(model => model.CocktailName)
+                </th>*@
             <th>
                 @Html.DisplayNameFor(model => model.UserName)
             </th>
@@ -35,8 +33,8 @@
                 @Html.DisplayNameFor(model => model.Text)
             </th>
             @*<th>
-                @Html.DisplayNameFor(model => model.IsFlagged)
-            </th>*@
+                    @Html.DisplayNameFor(model => model.IsFlagged)
+                </th>*@
         </tr>
     </thead>
     <tbody>
@@ -44,8 +42,8 @@
         {
             <tr onclick="location.href = '@(Url.Action("Details", "CocktailComments", new { cocktailId = item.CocktailId, userId = item.UserId }))'">
                 @*<td>
-                    @Html.DisplayFor(modelItem => item.CocktailName)
-                </td>*@
+                        @Html.DisplayFor(modelItem => item.CocktailName)
+                    </td>*@
                 <td>
                     @Html.DisplayFor(modelItem => item.UserName)
                 </td>
@@ -53,13 +51,22 @@
                     @Html.DisplayFor(modelItem => item.Text)
                 </td>
                 @*<td>
-                    @Html.DisplayFor(modelItem => item.IsFlagged)
-                </td>*@
+                        @Html.DisplayFor(modelItem => item.IsFlagged)
+                    </td>*@
                 @*<td>
                         @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
                         @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
                         @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
                     </td>*@
+                <td>
+                    <a asp-controller="CocktailComments" asp-action="Details" asp-route-id="@item.CocktailId">Details</a>
+                    @if (item.UserName == User.Identity.Name)
+                    {
+                        <a asp-controller="CocktailComments" asp-action="Edit" asp-route-cocktailId="@item.CocktailId" asp-route-userlId="@item.UserId">| Edit |</a>
+                        <a asp-controller="CocktailComments" asp-action="Delete" asp-route-cocktailId="@item.CocktailId" asp-route-userlId="@item.UserId">Delete</a>
+                    }
+                </td>
+
             </tr>
         }
     </tbody>
@@ -68,16 +75,19 @@
 <div>
     @if (@ViewBag.CurrentPage > 0)
     {
-        <a class="btn btn-primary" asp-controller="CocktailComments" asp-action="Index" 
-           asp-route-page=@(@ViewBag.CurrentPage - 1) 
+        <a class="btn btn-primary" asp-controller="CocktailComments" asp-action="Index"
+           asp-route-page=@(@ViewBag.CurrentPage - 1)
            asp-route-itemsOnPage=@ViewBag.ItemsOnPage
-           asp-route-cocktailId =@ViewBag.CurrentCocktail>Previous</a>
+           asp-route-cocktailId=@ViewBag.CurrentCocktail>Previous</a>
     }
     @if (!(@Model.Count() < @ViewBag.ItemsOnPage))
     {
-        <a class="btn btn-primary" asp-controller="CocktailComments" asp-action="Index" 
-           asp-route-page=@(@ViewBag.CurrentPage + 1) 
+        <a class="btn btn-primary" asp-controller="CocktailComments" asp-action="Index"
+           asp-route-page=@(@ViewBag.CurrentPage + 1)
            asp-route-itemsOnPage=@ViewBag.ItemsOnPage
-           asp-route-cocktailId =@ViewBag.CurrentCocktail>Next</a>
+           asp-route-cocktailId=@ViewBag.CurrentCocktail>Next</a>
     }
 </div>
+<p>
+    <a asp-controller="Cocktails" asp-action="Details" asp-route-id="@ViewBag.CurrentCocktail">Back to cocktail</a>
+</p>
