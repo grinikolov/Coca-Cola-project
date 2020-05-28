@@ -9,6 +9,7 @@
 @{
     ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var currentUser = await UserManager.GetUserAsync(User);
 }
 
 <h1>Details</h1>
@@ -95,6 +96,14 @@
     <a asp-action="Index">Back to List</a>
 </div>
 <div>
+    @if (User.Identity.IsAuthenticated)
+    {
+
+        var user = await UserManager.GetUserAsync(User);
+        var userId = user.Id;
+        <a class="btn btn-primary" asp-controller="CocktailComments" asp-action="Create" asp-route-userId="@userId" asp-route-cocktailId="@Model.Id"> Comment </a>
+    }
+
     <a class="btn btn-primary" asp-controller="CocktailComments" asp-action="Index" asp-route-cocktailId="@Model.Id">Comments</a>
     <a class="btn btn-primary" asp-controller="Cocktails" asp-action="LoadBars" asp-route-id="@Model.Id">Bars serving</a>
 </div>
@@ -112,7 +121,7 @@
                 <a asp-controller="CocktailComments" asp-action="Details" asp-route-id="@item.CocktailId">Details</a>
                 @if (item.UserName == User.Identity.Name)
                 {
-                    <a asp-controller="CocktailComments" asp-action="Edit" asp-route-cocktailId="@item.CocktailId" asp-route-userlId="@item.UserId" >| Edit |</a>
+                    <a asp-controller="CocktailComments" asp-action="Edit" asp-route-cocktailId="@item.CocktailId" asp-route-userlId="@item.UserId">| Edit |</a>
                     <a asp-controller="CocktailComments" asp-action="Delete" asp-route-cocktailId="@item.CocktailId" asp-route-userlId="@item.UserId">Delete</a>
                 }
             </dd>

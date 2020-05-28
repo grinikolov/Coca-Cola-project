@@ -86,7 +86,7 @@ namespace BarCrawlers.Services.Mappers
 
                 };
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return new CocktailDTO();
             }

@@ -66,7 +66,7 @@ namespace BarCrawlers.Controllers
         }
 
         //// GET: CocktailComments/Create
-        [Authorize]
+        //[Authorize]
         public IActionResult Create(Guid cocktailId, Guid userId)
         {
             return View();
@@ -77,14 +77,15 @@ namespace BarCrawlers.Controllers
         //// more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> Create([Bind("CocktailId,UserId,Text,IsFlagged")] CocktailUserCommentVM cocktailUserCommentVM)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    await _service.CreateAsync(_mapper.MapViewToDTO(cocktailUserCommentVM));
+                    var commentDTO = this._mapper.MapViewToDTO(cocktailUserCommentVM);
+                    await _service.CreateAsync(commentDTO);
                     return RedirectToAction(nameof(Index), new { cocktailId = cocktailUserCommentVM.CocktailId });
                 }
                 catch (Exception)
@@ -96,7 +97,7 @@ namespace BarCrawlers.Controllers
         }
 
         //// GET: CocktailComments/Edit/5
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> Edit(Guid cocktailId, Guid userId)
         {
             if (cocktailId == null || userId == null)
@@ -117,7 +118,7 @@ namespace BarCrawlers.Controllers
         //// more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> Edit(Guid cocktailId, Guid userId, [Bind("CocktailId,UserId,Text,IsFlagged")] CocktailUserCommentVM cocktailUserComment)
         {
             if (cocktailId != cocktailUserComment.CocktailId || userId != cocktailUserComment.UserId)
@@ -161,7 +162,7 @@ namespace BarCrawlers.Controllers
         //// POST: CocktailComments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> DeleteConfirmed(Guid cocktailId, Guid userId)
         {
             if (await _service.DeleteAsync(cocktailId, userId))

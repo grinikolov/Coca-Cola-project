@@ -9,7 +9,7 @@ namespace BarCrawlers.Models
 {
     public class CocktailUserCommentViewMapper : ICocktailUserCommentViewMapper
     {
-        
+
         public CocktailUserCommentVM MapDTOToView(CocktailUserCommentDTO dto)
         {
             var view = new CocktailUserCommentVM
@@ -20,14 +20,14 @@ namespace BarCrawlers.Models
                 UserName = dto.UserName,
                 Text = dto.Text,
                 IsFlagged = dto.IsFlagged,
-                
+
             };
             return view;
         }
 
 
 
-            public CocktailUserCommentDTO MapViewToDTO(CocktailUserCommentVM view)
+        public CocktailUserCommentDTO MapViewToDTO(CocktailUserCommentVM view)
         {
             var dto = new CocktailUserCommentDTO
             {
