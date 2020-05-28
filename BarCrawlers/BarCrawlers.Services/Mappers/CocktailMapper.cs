@@ -57,22 +57,22 @@ namespace BarCrawlers.Services.Mappers
                         CocktailName = i.Cocktail.Name,
                         Parts = i.Parts
                     }).ToList(),
-                    //Bars = entity.Bars.Select(b => new CocktailBarDTO
-                    //{
-                    //    BarId = b.BarId,
-                    //    BarName = b.Bar.Name,
-                    //    CocktailId = b.CocktailId,
-                    //    CocktailName = b.Cocktail.Name,
-                    //}).ToList(),
-                    //Comments = entity.Comments.Select(c => new CocktailUserCommentDTO
-                    //{
-                    //    CocktailId = c.CocktailId,
-                    //    CocktailName = c.Cocktail.Name,
-                    //    UserId = c.UserId,
-                    //    UserName = c.User.UserName,
-                    //    Text = c.Text,
-                    //    IsFlagged = c.IsFlagged,
-                    //}).ToList(),
+                    Bars = entity.Bars.Select(b => new CocktailBarDTO
+                    {
+                        BarId = b.BarId,
+                        BarName = b.Bar.Name,
+                        CocktailId = b.CocktailId,
+                        CocktailName = b.Cocktail.Name,
+                    }).ToList(),
+                    Comments = entity.Comments.Select(c => new CocktailUserCommentDTO
+                    {
+                        CocktailId = c.CocktailId,
+                        CocktailName = c.Cocktail.Name,
+                        UserId = c.UserId,
+                        UserName = c.User.UserName,
+                        Text = c.Text,
+                        IsFlagged = c.IsFlagged,
+                    }).ToList(),
                     //CocktailRatings = entity.CocktailRatings.Select(r => new UserCocktailRatingDTO
                     //{
                     //    CocktailId = r.CocktailId,

@@ -19,7 +19,7 @@
         </p>
     </form>
 
-    <table class="table">
+    <table class="table table-hover table-sm">
         <thead>
             <tr>
                 <th>
@@ -49,7 +49,7 @@
         <tbody>
             @foreach (var item in Model)
             {
-                <tr>
+                <tr onclick="window.location = '/Cocktails/Details/@item.Id'">
                     <td>
                         @Html.DisplayFor(modelItem => item.Name)
                     </td>

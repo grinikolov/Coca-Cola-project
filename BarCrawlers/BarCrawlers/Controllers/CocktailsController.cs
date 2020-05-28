@@ -215,7 +215,7 @@ namespace BarCrawlers.Controllers
                     return NotFound();
                 }
 
-                return View(this._mapper.MapDTOToView( cocktail));
+                return View(this._mapper.MapDTOToView(cocktail));
             }
             catch (Exception)
             {
@@ -250,7 +250,7 @@ namespace BarCrawlers.Controllers
 
             try
             {
-                var model = await this._userInteractionsService.RateCocktail(userId, cocktailId, rating);
+                var model = await this._userInteractionsService.RateCocktail(rating, cocktailId, userId);
                 return RedirectToAction("Details", "Cocktails", new { id = cocktailId });
             }
             catch (Exception e)
@@ -259,6 +259,19 @@ namespace BarCrawlers.Controllers
             }
         }
 
+        //public async Task<IActionResult> Comment(Guid userId, Guid cocktailId, CocktailUserCommentVM commentVm)
+        //{
+        //    try
+        //    {
+        //        var commentDTO = this._cocktailUserCommentViewMapper(commentVM);
+        //        var comment = await this._userInteractionsService.AddCocktailComment(commentDTO, cocktailId, userId);
+        //    }
+        //    catch (Exception)
+        //    {
+
+        //        throw;
+        //    }
+        //}
 
 
 
