@@ -135,12 +135,11 @@ namespace BarCrawlers.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Magician")]
-        public async Task<ActionResult> AddCocktailIngredient([Bind("Ingredients")] CocktailCreateViewModel cocktailVM)
+        public async Task<ActionResult> AddCocktailIngredient([Bind("Ingredients")] CocktailCreateViewModel cocktailVM)//[Bind("Ingredients")] 
         {
-            if (cocktailVM.Ingredients == null)
-            {
-                cocktailVM.Ingredients = new List<CocktailIngredientViewModel>();
-            }
+            var ingredients = await this._ingredientsService.GetAllAsync();
+            ViewData["Ingredients"] = ingredients.Select(x => new SelectListItem(x.Name, x.Id.ToString()));
+
             cocktailVM.Ingredients.Add(new CocktailIngredientViewModel());
             return PartialView("CocktailIngredients", cocktailVM);
         }

@@ -14,3 +14,21 @@ $("#btnAdd").on('click', function () {
         }
     });
 });
+//$("#btnAdd").on('click', function () {
+//    var ingredientsSelector = $('#ingredients-selector');
+
+//    var select = ingredientsSelector.children('select').first();
+//    var ingredient = select.children()[select[0].selectedIndex].innerHTML;
+//    var ingredientId = select.children()[select[0].selectedIndex].attributes['value'];
+//    var quantity = ingredientsSelector.children('input').first().val();
+//    var el = '<div><span value="' + ingredientId + '">' + ingredient + '</span><span>' + quantity + '</span><span class="delete-row">X</span><div>';
+
+//    ingredientsSelector.prepend(el);
+
+//    var delBtn = $('.delete-row').last();
+
+//    delBtn.on('click', function () {
+//        var parent = delBtn.parent();
+//        parent.remove();
+//    });
+//});
