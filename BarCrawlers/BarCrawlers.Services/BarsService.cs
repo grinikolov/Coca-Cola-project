@@ -36,9 +36,7 @@ namespace BarCrawlers.Services
         /// <returns>The created bar.</returns>
         public async Task<BarDTO> CreateAsync(BarDTO barDTO)
         {
-            //try
-        //{
-            if (BarExistsByName(barDTO.Name))
+            if (await BarExistsByName(barDTO.Name))
             {
                 var theBar = await this._context.Bars
                     .FirstOrDefaultAsync(c => c.Name.Equals(barDTO.Name));
@@ -50,16 +48,7 @@ namespace BarCrawlers.Services
             }
             else
             {
-                //barDTO = await SetLocation(barDTO); 
                 var bar = this._mapper.MapDTOToEntity(barDTO);
-                //TODO: Get the location from address
-
-                this._context.Locations.Add(new Location { Lattitude =1,Longtitude = 1});
-                await _context.SaveChangesAsync();
-
-                var location = _context.Locations.FirstOrDefault(l => l.Longtitude == 1);
-
-                bar.LocationId = location.Id;
                     
                 this._context.Bars.Add(bar);
 
@@ -69,16 +58,16 @@ namespace BarCrawlers.Services
 
                 return this._mapper.MapEntityToDTO(bar);
             }
-            //}
-            //catch (Exception)
-            //{
-            //    throw new Exception();
-            //}
         }
 
-        private bool BarExistsByName(string name)
+        private async Task<bool> BarExistsByName(string name)
         {
-            return _context.Bars.Any(b => b.Name == name);
+            var result = await _context.Bars.FirstOrDefaultAsync(b => b.Name == name);
+            if (result == null)
+            {
+                return false;
+            }
+            return true;
         }
 
         /// <summary>
@@ -183,7 +172,8 @@ namespace BarCrawlers.Services
                 bar.Name = barDTO.Name;
                 bar.Phone = barDTO.Phone;
                 bar.Town = barDTO.Town;
-                //TODO: Update location from new address
+                barDTO = await SetLocation(barDTO);
+
                 _context.Update(bar);
 
                 await _context.SaveChangesAsync();
@@ -276,7 +266,7 @@ namespace BarCrawlers.Services
             return Math.Round( await _context.BarRatings.Where(b => b.BarId == id).AverageAsync(b => b.Rating), 2);
         }
 
-        private async Task<BarDTO> SetLocation(BarDTO barDTO)
+        public async Task<BarDTO> SetLocation(BarDTO barDTO)
         {
             var street = barDTO.Address.Split();
             var httpStreet = string.Join("+", street);
@@ -295,13 +285,34 @@ namespace BarCrawlers.Services
 
             if (response.IsSuccessStatusCode)
             {
-                using var responseStream = await response.Content.ReadAsStreamAsync();
-                var coordinates = await JsonSerializer.DeserializeAsync
-                    <IEnumerable<object>>(responseStream);
-             //var lat = coordinates.[0]
+                using (var responseStream = await response.Content.ReadAsStreamAsync())
+                {
+                    var coordinates = await JsonSerializer.DeserializeAsync
+                      <IEnumerable<LocationDTO>>(responseStream);
+
+                    if (coordinates.Count() > 0)
+                    {
+                        var lat = coordinates.First().Lat;
+                        var lon = coordinates.First().Lon;
+                        var result = await _context.Locations.FirstOrDefaultAsync(l => l.Lattitude == lat && l.Longtitude == lon);
+                        if (result == null)
+                        {
+                            var location = new Location { Longtitude = lon, Lattitude = lat };
+                            _context.Locations.Add(location);
+                            await _context.SaveChangesAsync();
+                            result = await _context.Locations.FirstOrDefaultAsync(l => l.Lattitude == lat && l.Longtitude == lon);
+                        }
+                        var locationDTO = new LocationDTO();
+                        locationDTO.Lat = result.Lattitude;
+                        locationDTO.Lon = result.Longtitude;
+                        barDTO.LocationId = result.Id;
+                        barDTO.Location = locationDTO;
+                    }
+                }
             }
             else
             {
+                throw new HttpRequestException();
             }
 
             return barDTO;

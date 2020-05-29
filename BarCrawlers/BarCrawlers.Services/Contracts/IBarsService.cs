@@ -14,7 +14,7 @@ namespace BarCrawlers.Services.Contracts
         Task<BarDTO> UpdateAsync(Guid id, BarDTO barDTO);
         Task<bool> DeleteAsync(Guid id);
         Task<BarDTO> RateBarAsync(Guid barId, Guid userId, int rating);
-
+        Task<BarDTO> SetLocation(BarDTO dto);
         Task<IEnumerable<CocktailDTO>> GetCocktailsAsync(Guid id, string page, string itemsOnPage, string search);
     }
 }

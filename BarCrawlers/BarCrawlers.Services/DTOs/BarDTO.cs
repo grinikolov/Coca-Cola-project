@@ -22,7 +22,7 @@ namespace BarCrawlers.Services.DTOs
         public string Town { get; set; }
         public string Country { get; set; }
 
-        public Guid LocationId { get; set; }
+        public Guid? LocationId { get; set; }
         public LocationDTO Location { get; set; }
     }
 }

@@ -91,7 +91,9 @@ namespace BarCrawlers.Controllers
             {
                 try
                 {
-                    await _service.CreateAsync(_mapper.MapViewToDTO(bar));
+                    var dto = _mapper.MapViewToDTO(bar);
+                    dto = await _service.SetLocation(dto);
+                    await _service.CreateAsync(dto);
                     return RedirectToAction(nameof(Index));
                 }
                     catch (Exception)

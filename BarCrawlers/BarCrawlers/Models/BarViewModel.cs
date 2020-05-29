@@ -23,7 +23,7 @@ namespace BarCrawlers.Models
         public string Town { get; set; }
         public string Country { get; set; }
 
-        public Guid LocationId { get; set; }
+        public Guid? LocationId { get; set; }
         public LocationView Location { get; set; }
     }
 }
