@@ -34,7 +34,6 @@
                 var user = await UserManager.GetUserAsync(User);
                 var userId = user.Id;
 
-
                 <form asp-controller="Cocktails" asp-action="Rate" asp-route-cocktailId="@Model.Id" asp-route-userId="@userId">
                     <p>
                         <input type="text" name="rating">
