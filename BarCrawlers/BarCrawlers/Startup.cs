@@ -71,6 +71,10 @@ namespace BarCrawlers
             services.AddScoped<IBarUserCommentsService, BarUserCommentsService>();
             services.AddScoped<IBarUserCommentMapper, BarUserCommentMapper>();
 
+            services.AddScoped<ICocktailUserCommentViewMapper, CocktailUserCommentViewMapper>();
+            services.AddScoped<ICocktailCommentsService, CocktailCommentsService>();
+            services.AddScoped<ICocktailCommentMapper, CocktailCommentMapper>();
+
             services.AddScoped<IUserInteractionsService, UserInteractionsService>();
 
             services.AddIdentity<User, Role>()

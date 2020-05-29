@@ -27,6 +27,7 @@ namespace BarCrawlers.Models
                         IngredientName = i.IngredientName,
                         Parts = i.Parts
                     }).ToList(),
+                    Comments = dto.Comments,
                     //TODO: Mapping lists ?
                 };
             }
