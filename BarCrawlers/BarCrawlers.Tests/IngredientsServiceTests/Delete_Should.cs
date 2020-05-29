@@ -21,7 +21,7 @@ namespace BarCrawlers.Tests.IngredientsServiceTests
         {
 
             //Arrange
-            var options = Utils.GetOptions(nameof(ReturnTrue_when_ValidIngredientAsync));
+            var options = Utils.GetOptions("ReturnTrue_when_ValidIngredientAsync");
             var entity = new Ingredient
             {
                 Id = Utils.MySampleGuid(),
@@ -52,7 +52,7 @@ namespace BarCrawlers.Tests.IngredientsServiceTests
         public async Task ReturnFalse_when_NotValidIngredientIDAsync()
         {
             //Arrange
-            var options = Utils.GetOptions(nameof(ReturnFalse_when_NotValidIngredientIDAsync));
+            var options = Utils.GetOptions("ReturnFalse_when_NotValidIngredientIDAsync");
             var entity = new Ingredient
             {
                 Name = "Lime",
