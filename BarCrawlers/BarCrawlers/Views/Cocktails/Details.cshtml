@@ -12,6 +12,64 @@
     var currentUser = await UserManager.GetUserAsync(User);
 }
 
+
+<div class=" row pt-3">
+    <div class="col-md4 col-sm-4">
+        <div class="figure-img">
+            @if (Model.ImageSrc != null)
+            {
+                <a href="#">
+                    <img class="img-responsive w-100" alt="@Model.Name" src="@Model.ImageSrc">
+                </a>
+            }
+            <div class="figure-caption">
+                <h3 class="float-lg-right">Rating: @Model.Rating / 5 (@Model.TimesRated rates)</h3>
+
+               
+            </div>
+        </div>
+
+    </div>
+    <div class="col-md-4 col-sm-4">
+        <h1 itemprop="name">@Model.Name</h1>
+        <h3>Ingredients:</h3>
+        <ul>
+            @foreach (var item in Model.Ingredients)
+            {
+                <li itemprop="ingredients">
+                    <h4>
+                        @item.IngredientName,
+                        @if (@item.Parts != null)@item.Parts parts
+                    </h4>
+                </li>
+            }
+        </ul>
+        <h3>How to mix:</h3>
+        <div itemprop="recipeInstructions">
+            <p>
+                @Model.Instructions
+            </p>
+
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <h1>Details</h1>
 
 <div>
@@ -74,10 +132,14 @@
             @Html.DisplayFor(model => model.Instructions)
         </dd>
         <dt class="col-sm-2">
+
             <!--@Html.DisplayNameFor(model => model.Ingredients)-->
             Contains:
         </dt>
         <dd class="col-sm-10">
+
+
+
             <!--@Html.DisplayFor(model => model.Ingredients)-->
 
             @foreach (var item in Model.Ingredients)
@@ -109,13 +171,13 @@
                 @Html.DisplayFor(model => item.Text)
             </dd>
             @*<dd>
-                <a asp-controller="CocktailComments" asp-action="Details" asp-route-id="@item.CocktailId">Details</a>
-                @if (item.UserName == User.Identity.Name)
-                {
-                    <a asp-controller="CocktailComments" asp-action="Edit" asp-route-cocktailId="@item.CocktailId" asp-route-userlId="@item.UserId">| Edit |</a>
-                    <a asp-controller="CocktailComments" asp-action="Delete" asp-route-cocktailId="@item.CocktailId" asp-route-userlId="@item.UserId">Delete</a>
-                }
-            </dd>*@
+                    <a asp-controller="CocktailComments" asp-action="Details" asp-route-id="@item.CocktailId">Details</a>
+                    @if (item.UserName == User.Identity.Name)
+                    {
+                        <a asp-controller="CocktailComments" asp-action="Edit" asp-route-cocktailId="@item.CocktailId" asp-route-userlId="@item.UserId">| Edit |</a>
+                        <a asp-controller="CocktailComments" asp-action="Delete" asp-route-cocktailId="@item.CocktailId" asp-route-userlId="@item.UserId">Delete</a>
+                    }
+                </dd>*@
         }
     </dl>
 </div>
