@@ -4,14 +4,16 @@ using BarCrawlers.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BarCrawlers.Data.Migrations
 {
     [DbContext(typeof(BCcontext))]
-    partial class BCcontextModelSnapshot : ModelSnapshot
+    [Migration("20200528100244_MoreFixForLocation")]
+    partial class MoreFixForLocation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
