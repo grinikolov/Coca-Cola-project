@@ -10,20 +10,9 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-//using System.Net.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
-//using BeerOverflow.Models;
-//using Database;
-////using Microsoft.EntityFrameworkCore;
-//using Microsoft.VisualStudio.TestTools.UnitTesting;
-//using Services;
-//using Services.DTOs;
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
+//using Microsoft.Extensions.DependencyModel;
 
 namespace BarCrawlers.Tests.BarsServiceTests
 {
@@ -122,7 +111,7 @@ namespace BarCrawlers.Tests.BarsServiceTests
         }
 
         [TestMethod]
-        public void UndeletesBar_WhenBarExist()
+        public async Task UndeletesBar_WhenBarExistAsync()
         {
             //Arrange
             var options = Utils.GetOptions("UndeletesBar_WhenBarExist");
@@ -134,21 +123,19 @@ namespace BarCrawlers.Tests.BarsServiceTests
                 TimesRated = 1,
                 ImageSrc = null,
                 IsDeleted = true,
-                Address = "Галичица 17",
-                Country = "България",
-                District = "Лозенец",
+                Address = "Галичица 17.",
+                Country = "България.",
+                District = "Лозенец.",
                 Email = "some@mail.bg",
-                Phone = "088888888",
-                Town = "София"
+                Phone = "088888888.",
+                Town = "София.",
+                LocationId = null,
             };
 
             using (var context = new BCcontext(options))
             {
-
-
-                context.Bars.Add(record);
-                context.SaveChanges();
-
+                await context.Bars.AddAsync(record);
+                await context.SaveChangesAsync();
             }
 
             var bar = new BarDTO()
@@ -211,25 +198,126 @@ namespace BarCrawlers.Tests.BarsServiceTests
             //Act & Assert
             using (var context = new BCcontext(options))
             {
-                var bars = context.Bars.ToList();
+                var sut = new BarsService(context, mockMapper.Object, http.Object, coctailMapper.Object);
+                await sut.CreateAsync(bar);
 
-                var foo = 2;
-                //var sut = new BarsService(context, mockMapper.Object, http.Object, coctailMapper.Object);
-                //await sut.CreateAsync(bar);
+                var dbResult = await context.Bars.FirstOrDefaultAsync(x => x.Name == bar.Name);
 
-                //var dbResult = await context.Bars.FirstOrDefaultAsync(x => x.Name == bar.Name);
+                Assert.AreEqual(dbResult.Name, record.Name);
+                Assert.AreEqual(dbResult.Rating, record.Rating);
+                Assert.AreEqual(dbResult.TimesRated, record.TimesRated);
+                Assert.AreEqual(dbResult.ImageSrc, record.ImageSrc);
+                Assert.AreEqual(dbResult.IsDeleted, false);
+                Assert.AreEqual(dbResult.Address, record.Address);
+                Assert.AreEqual(dbResult.Country, record.Country);
+                Assert.AreEqual(dbResult.District, record.District);
+                Assert.AreEqual(dbResult.Email, record.Email);
+                Assert.AreEqual(dbResult.Phone, record.Phone);
+                Assert.AreEqual(dbResult.Town, record.Town);
+            }
+        }
 
-                //Assert.AreEqual(dbResult.Name, record.Name);
-                //Assert.AreEqual(dbResult.Rating, record.Rating);
-                //Assert.AreEqual(dbResult.TimesRated, record.TimesRated);
-                //Assert.AreEqual(dbResult.ImageSrc, record.ImageSrc);
-                //Assert.AreEqual(dbResult.IsDeleted, false);
-                //Assert.AreEqual(dbResult.Address, record.Address);
-                //Assert.AreEqual(dbResult.Country, record.Country);
-                //Assert.AreEqual(dbResult.District, record.District);
-                //Assert.AreEqual(dbResult.Email, record.Email);
-                //Assert.AreEqual(dbResult.Phone, record.Phone);
-                //Assert.AreEqual(dbResult.Town, record.Town);
+        [TestMethod]
+        public async Task ReturnBarDTO_WhenSuccesfull()
+        {
+            //Arrange
+            var options = Utils.GetOptions(nameof(ReturnBarDTO_WhenSuccesfull));
+
+
+            using (var context = new BCcontext(options))
+            {
+            }
+
+            var bar = new BarDTO()
+            {
+                Name = "BestBar",
+                Rating = 4,
+                TimesRated = 1,
+                ImageSrc = null,
+                IsDeleted = false,
+                Address = "Галичица 17",
+                Country = "България",
+                District = "Лозенец",
+                Email = "some@mail.bg",
+                Phone = "088888888",
+                Town = "София"
+            };
+
+            var mockMapper = new Mock<IBarMapper>();
+
+
+            mockMapper.Setup((x) => x.MapEntityToDTO(It.IsAny<Bar>()))
+                .Returns((Bar b) => new BarDTO()
+                {
+                    Id = b.Id,
+                    Name = b.Name,
+                    Rating = b.Rating,
+                    TimesRated = b.TimesRated,
+                    ImageSrc = b.ImageSrc,
+                    IsDeleted = b.IsDeleted,
+                    Address = b.Address,
+                    Country = b.Country,
+                    District = b.District,
+                    Email = b.Email,
+                    LocationId = b.LocationId,
+                    Phone = b.Phone,
+                    Town = b.Town
+                });
+
+            mockMapper.Setup((x) => x.MapDTOToEntity(It.IsAny<BarDTO>()))
+               .Returns((BarDTO b) => new Bar()
+               {
+                   Id = b.Id,
+                   Name = b.Name,
+                   Rating = b.Rating,
+                   TimesRated = b.TimesRated,
+                   ImageSrc = b.ImageSrc,
+                   IsDeleted = b.IsDeleted,
+                   Address = b.Address,
+                   Country = b.Country,
+                   District = b.District,
+                   Email = b.Email,
+                   LocationId = b.LocationId,
+                   Phone = b.Phone,
+                   Town = b.Town
+               });
+
+            var http = new Mock<IHttpClientFactory>();
+            var coctailMapper = new Mock<ICocktailMapper>();
+
+            //Act & Assert
+            using (var context = new BCcontext(options))
+            {
+                var sut = new BarsService(context, mockMapper.Object, http.Object, coctailMapper.Object);
+                var result = await sut.CreateAsync(bar);
+
+                var dbResult = await context.Bars.FirstOrDefaultAsync(x => x.Name == bar.Name);
+
+                Assert.IsInstanceOfType(result, typeof(BarDTO));
+            }
+        }
+
+        [TestMethod]
+        public async Task ThrowArgumentNullException_WhenArgumentNull()
+        {
+            //Arrange
+            var options = Utils.GetOptions("RecordsBar_WhenBarDoesntExist");
+
+
+            using (var context = new BCcontext(options))
+            {
+            }
+
+            var mockMapper = new Mock<IBarMapper>();
+            var http = new Mock<IHttpClientFactory>();
+            var coctailMapper = new Mock<ICocktailMapper>();
+
+            //Act & Assert
+            using (var context = new BCcontext(options))
+            {
+                var sut = new BarsService(context, mockMapper.Object, http.Object, coctailMapper.Object);
+
+                await Assert.ThrowsExceptionAsync<ArgumentNullException>(async () => await sut.CreateAsync(null));
             }
         }
     }

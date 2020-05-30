@@ -6,7 +6,7 @@ using System.Text;
 namespace BarCrawlers.Tests.BarsServiceTests
 {
     [TestClass]
-    public class RateBarAsync_Should
+    public class SetLocation_Should
     {
     }
 }
