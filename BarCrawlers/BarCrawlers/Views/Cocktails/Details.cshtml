@@ -22,15 +22,32 @@
                     <img class="img-responsive w-100" alt="@Model.Name" src="@Model.ImageSrc">
                 </a>
             }
-            <div class="figure-caption">
-                <h3 class="float-lg-right">Rating: @Model.Rating / 5 (@Model.TimesRated rates)</h3>
+            else
+            {
+                <a href="#">
+                    <img class="card-img-top  w-100" src="~/img/defaultCocktailImg.jpg" alt="Card image cap">
+                </a>
+            }
+        <div>
+            <h3>Rating: @Model.Rating</h3>
+            <h5>@Model.Rating /5 (@Model.TimesRated rates)</h5>
+            @if (User.Identity.IsAuthenticated)
+            {
+                var user = await UserManager.GetUserAsync(User);
+                var userId = user.Id;
 
-               
-            </div>
+                <form asp-controller="Cocktails" asp-action="Rate" asp-route-cocktailId="@Model.Id" asp-route-userId="@userId">
+                    <p>
+                        <input type="number" min=1 max=5 class="form-control mb-2 mr-sm-2" placeholder="rating" name="rating">
+                        <input type="submit" value="Rate" class="btn btn-primary" />
+                    </p>
+                </form>
+            }
+        </div>
         </div>
 
     </div>
-    <div class="col-md-4 col-sm-4">
+    <div class="col-md-6 col-sm-6">
         <h1 itemprop="name">@Model.Name</h1>
         <h3>Ingredients:</h3>
         <ul>
@@ -153,10 +170,22 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
 <div>
+    @if (User.IsInRole("Magician"))
+    {
+        <a asp-controller="Cocktails" asp-action="Edit" asp-route-Id="@Model.Id" class="btn btn-primary">Edit</a>
+
+        @if (Model.IsDeleted == false)
+        {
+            <a asp-controller="Cocktails" asp-action="Delete" class="btn btn-danger" asp-route-Id="@Model.Id">Unlist</a>
+        }
+        else
+        {
+            <a asp-controller="Cocktails" asp-action="Create" class="btn btn-success" asp-route-Id="@Model.Id">Show</a>
+        }
+    }
     <a class="btn btn-primary" asp-controller="CocktailComments" asp-action="Index" asp-route-cocktailId="@Model.Id">Comments</a>
     <a class="btn btn-primary" asp-controller="Cocktails" asp-action="LoadBars" asp-route-id="@Model.Id">Bars serving</a>
 </div>
