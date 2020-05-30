@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Text.Json;
+using System.Diagnostics.Contracts;
 
 namespace BarCrawlers.Services
 {
@@ -36,38 +37,45 @@ namespace BarCrawlers.Services
         /// <returns>The created bar.</returns>
         public async Task<BarDTO> CreateAsync(BarDTO barDTO)
         {
-            if (await BarExistsByName(barDTO.Name))
+            try
             {
-                var theBar = await this._context.Bars
-                    .FirstOrDefaultAsync(c => c.Name.Equals(barDTO.Name));
-                if (theBar.IsDeleted == true)
+                if (await BarExistsByName(barDTO.Name))
                 {
-                    theBar.IsDeleted = false;
+                    var theBar = await this._context.Bars
+                        .FirstOrDefaultAsync(c => c.Name.Equals(barDTO.Name));
+                    if (theBar.IsDeleted == true)
+                    {
+                        theBar.IsDeleted = false;
+                    }
+                    return this._mapper.MapEntityToDTO(theBar);
                 }
-                return this._mapper.MapEntityToDTO(theBar);
-            }
-            else
-            {
-                var bar = this._mapper.MapDTOToEntity(barDTO);
+                else
+                {
+                    var bar = this._mapper.MapDTOToEntity(barDTO);
                     
-                this._context.Bars.Add(bar);
+                    this._context.Bars.Add(bar);
 
-                await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync();
 
-                bar = await this._context.Bars.FirstOrDefaultAsync(b => b.Name == barDTO.Name);
+                    bar = await this._context.Bars.FirstOrDefaultAsync(b => b.Name == barDTO.Name);
 
-                return this._mapper.MapEntityToDTO(bar);
+                    return this._mapper.MapEntityToDTO(bar);
+                }
+            }
+            catch (Exception)
+            {
+                throw new ArgumentNullException("Fail to create bar");
             }
         }
 
-        private async Task<bool> BarExistsByName(string name)
+        /// <summary>
+        /// Check if bar with the name already exist.
+        /// </summary>
+        /// <param name="name">Name of Bar</param>
+        /// <returns>Boolean</returns>
+        public async Task<bool> BarExistsByName(string name)
         {
-            var result = await _context.Bars.FirstOrDefaultAsync(b => b.Name == name);
-            if (result == null)
-            {
-                return false;
-            }
-            return true;
+            return await _context.Bars.AnyAsync(b => b.Name == name);
         }
 
         /// <summary>
@@ -172,7 +180,6 @@ namespace BarCrawlers.Services
                 bar.Name = barDTO.Name;
                 bar.Phone = barDTO.Phone;
                 bar.Town = barDTO.Town;
-                barDTO = await SetLocation(barDTO);
 
                 _context.Update(bar);
 
@@ -182,7 +189,7 @@ namespace BarCrawlers.Services
             }
             catch (Exception)
             {
-                return new BarDTO();
+                throw new ArgumentNullException("Failed to update");
             }
         }
 
@@ -202,8 +209,6 @@ namespace BarCrawlers.Services
                 {
                     var barRating = new UserBarRating
                     {
-                        //BarId = barId,
-                        //UserId = userId,
                         Rating = rating
                     };
 
@@ -309,10 +314,6 @@ namespace BarCrawlers.Services
                         barDTO.Location = locationDTO;
                     }
                 }
-            }
-            else
-            {
-                throw new HttpRequestException();
             }
 
             return barDTO;
