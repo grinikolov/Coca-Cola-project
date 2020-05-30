@@ -42,9 +42,9 @@ namespace BarCrawlers.Data
 
             base.OnModelCreating(builder);
 
-            //Global filters for IsDeleted == false:
-            builder.Entity<Cocktail>().HasQueryFilter(c => !c.IsDeleted);
-            builder.Entity<Bar>().HasQueryFilter(b => !b.IsDeleted);
+            ////Global filters for IsDeleted == false:
+            //builder.Entity<Cocktail>().HasQueryFilter(c => !c.IsDeleted);
+            //builder.Entity<Bar>().HasQueryFilter(b => !b.IsDeleted);
 
         }
 
