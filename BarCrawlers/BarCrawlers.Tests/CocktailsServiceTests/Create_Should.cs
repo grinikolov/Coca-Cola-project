@@ -44,12 +44,12 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
             mockMapper.Setup(x => x.MapDTOToEntity(It.IsAny<CocktailDTO>()))
                 .Returns((CocktailDTO x) => new Cocktail()
                 {
-                    Name = testCocktailName,
+                    Name = x.Name,
                 });
             mockMapper.Setup(x => x.MapEntityToDTO(It.IsAny<Cocktail>()))
-                .Returns((Cocktail i) => new CocktailDTO()
+                .Returns((Cocktail x) => new CocktailDTO()
                 {
-                    Name = testCocktailName,
+                    Name = x.Name,
                 });
 
 
@@ -120,12 +120,12 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
             mockMapper.Setup(x => x.MapDTOToEntity(It.IsAny<CocktailDTO>()))
                 .Returns((CocktailDTO x) => new Cocktail()
                 {
-                    Name = testCocktailName,
+                    Name = x.Name,
                 });
             mockMapper.Setup(x => x.MapEntityToDTO(It.IsAny<Cocktail>()))
-                .Returns((Cocktail i) => new CocktailDTO()
+                .Returns((Cocktail x) => new CocktailDTO()
                 {
-                    Name = testCocktailName,
+                    Name = x.Name,
                 });
 
 
