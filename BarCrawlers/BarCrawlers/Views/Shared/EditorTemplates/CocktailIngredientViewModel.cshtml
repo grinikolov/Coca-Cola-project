@@ -5,14 +5,17 @@
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group">
             <label asp-for="IngredientId" class="control-label">Ingredient</label>
-            <select asp-for="IngredientId" asp-items="ViewBag.Ingredients" class="form-control"></select>
+            <select asp-for="IngredientId" asp-items="ViewBag.Ingredients" class="form-control">
+                <option selected>Choose an ingredient:</option>
+            </select>
+
             <span asp-validation-for="IngredientId" class="text-danger"></span>
         </div>
     </div>
     <div class="col-md-4">
         <div class="form-group">
             <label asp-for="Parts" class="control-label">Parts</label>
-            <input type="number" min=1 max=12 class="form-control mb-2 mr-sm-2" id="inlineFormInputName2" placeholder="Parts">
+            <input asp-for="Parts"  type="number" min=1 max=12 class="form-control mb-2 mr-sm-2" placeholder="Parts">
             <span asp-validation-for="Parts" class="text-danger"></span>
         </div>
     </div>

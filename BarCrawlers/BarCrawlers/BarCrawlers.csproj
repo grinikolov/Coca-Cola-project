@@ -28,4 +28,10 @@
     <Folder Include="Areas\Magician\Data\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Views\Cocktail\CocktailIngredients.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+  </ItemGroup>
+
 </Project>

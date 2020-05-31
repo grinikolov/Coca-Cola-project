@@ -22,7 +22,7 @@ namespace BarCrawlers.Services
         private readonly ICocktailsService _cocktailsService;
         private readonly ICocktailMapper _cocktailMapper;
         //private readonly IBarCommentMapper _barCommentMapper;
-        private readonly IBarMapper _barMapper;
+        //private readonly IBarMapper _barMapper;
 
         public UserInteractionsService(BCcontext context
             , IUserMapper userMapper
@@ -30,8 +30,7 @@ namespace BarCrawlers.Services
             , IUsersService usersService
             , ICocktailsService cocktailsService
             , ICocktailMapper cocktailMapper
-            
-            , IBarMapper barMapper)
+            )
         {
             this._context = context ?? throw new ArgumentNullException(nameof(context));
             this._userMapper = userMapper ?? throw new ArgumentNullException(nameof(userMapper));
@@ -40,7 +39,7 @@ namespace BarCrawlers.Services
             this._cocktailsService = cocktailsService ?? throw new ArgumentNullException(nameof(cocktailsService));
             this._cocktailMapper = cocktailMapper ?? throw new ArgumentNullException(nameof(cocktailMapper));
             //this._barCommentMapper = barCommentMapper ?? throw new ArgumentNullException(nameof(barCommentMapper));
-            this._barMapper = barMapper ?? throw new ArgumentNullException(nameof(barMapper));
+            //this._barMapper = barMapper ?? throw new ArgumentNullException(nameof(barMapper));
 
             //throw new NotImplementedException(" Service for Commenting / Rating Cocktails/Bars");
         }
@@ -52,7 +51,7 @@ namespace BarCrawlers.Services
         /// <param name="cocktailId">Cocktail Id, Guid</param>
         /// <param name="theRating">Rating, 1 to 5 </param>
         /// <returns>The cocktail rated, DTO</returns>
-        public async Task<CocktailDTO> RateCocktail(Guid userId, Guid cocktailId, int theRating)
+        public async Task<CocktailDTO> RateCocktail(int theRating, Guid cocktailId, Guid userId)
         {
             var user = await this._context.Users
                 .FirstOrDefaultAsync(u => u.Id == userId);
@@ -65,7 +64,7 @@ namespace BarCrawlers.Services
             //bool isRated = this._context.CocktailRatings
             //    .Select(r => r.UserId == userId && r.CocktailId == cocktailId)
             //    .Count() == 1;
-            
+
             if (existingRating != null)
             {
                 existingRating.Rating = theRating;
@@ -119,7 +118,7 @@ namespace BarCrawlers.Services
             var recalculatedRating = await this._context.CocktailRatings
                 .Where(r => r.CocktailId == cocktailId)
                 .Select(r => r.Rating).AverageAsync();
-            
+
             recalculatedRating = Math.Round(recalculatedRating, 2);
             return recalculatedRating;
         }
@@ -146,6 +145,7 @@ namespace BarCrawlers.Services
         }
 
 
+        /*
         /// <summary>
         /// User rates a bar
         /// </summary>
@@ -215,6 +215,6 @@ namespace BarCrawlers.Services
 
             //return this._barCommentMapper.MapEntityToDTO(comment);
         }
-
+        */
     }
 }
