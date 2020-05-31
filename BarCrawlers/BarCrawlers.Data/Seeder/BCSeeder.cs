@@ -25,6 +25,7 @@ namespace BarCrawlers.Data.Seeder
             //await SeedCountriesAsync(context);
             await SeedIngredientsAsync(context);
             await SeedFirstAdmin(userManager);
+            await SeedBars(context);
             //await SeedBreweriesAsync(context);
             //await SeedBeersAsync(context);
 
@@ -351,6 +352,38 @@ namespace BarCrawlers.Data.Seeder
             //await context.SaveChangesAsync();
         }
 
+
+        private static async Task SeedBars(BCcontext context)
+        {
+            if (!(await context.Bars.AnyAsync()))
+            {
+                var barList = new List<Bar>();
+                for (int i = 1; i < 20; i++)
+                {
+                    var bar = new Bar()
+                    {
+                        Name = "BestBar" + i,
+                        Rating = 4,
+                        TimesRated = 1,
+                        ImageSrc = null,
+                        IsDeleted = false,
+                        Address = "Street " + i,
+                        Country = "България",
+                        District = "District " + i,
+                        Email = "some@mail.bg",
+                        Phone = "+ " + i + "8888888",
+                        Town = "София",
+                        LocationId = null,
+                    };
+
+                    barList.Add(bar);
+                }
+
+                await context.Bars.AddRangeAsync(barList);
+                await context.SaveChangesAsync();
+            }
+
+        }
         //private static async Task SeedBreweriesAsync(BOContext context)
         //{
         //    if (context.Breweries.Any())
