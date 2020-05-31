@@ -62,7 +62,7 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
         public void DeleteCocktail_ReturnFalse_when_NotValidID()
         {
             //Arrange
-            var options = Utils.GetOptions(nameof(DeleteCocktail_ReturnFalse_when_NotValidID));
+            var options = Utils.GetOptions("DeleteCocktail_ReturnFalse_when_NotValidID");
             //var entity = new
             var mockMapper = new Mock<ICocktailMapper>();
 

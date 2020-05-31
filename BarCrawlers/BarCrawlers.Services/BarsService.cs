@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Text.Json;
+using System.Diagnostics.Contracts;
 
 namespace BarCrawlers.Services
 {
@@ -36,49 +37,45 @@ namespace BarCrawlers.Services
         /// <returns>The created bar.</returns>
         public async Task<BarDTO> CreateAsync(BarDTO barDTO)
         {
-            //try
-        //{
-            if (BarExistsByName(barDTO.Name))
+            try
             {
-                var theBar = await this._context.Bars
-                    .FirstOrDefaultAsync(c => c.Name.Equals(barDTO.Name));
-                if (theBar.IsDeleted == true)
+                if (await BarExistsByName(barDTO.Name))
                 {
-                    theBar.IsDeleted = false;
+                    var theBar = await this._context.Bars
+                        .FirstOrDefaultAsync(c => c.Name.Equals(barDTO.Name));
+                    if (theBar.IsDeleted == true)
+                    {
+                        theBar.IsDeleted = false;
+                    }
+                    return this._mapper.MapEntityToDTO(theBar);
                 }
-                return this._mapper.MapEntityToDTO(theBar);
-            }
-            else
-            {
-                //barDTO = await SetLocation(barDTO); 
-                var bar = this._mapper.MapDTOToEntity(barDTO);
-                //TODO: Get the location from address
-
-                this._context.Locations.Add(new Location { Lattitude =1,Longtitude = 1});
-                await _context.SaveChangesAsync();
-
-                var location = _context.Locations.FirstOrDefault(l => l.Longtitude == 1);
-
-                bar.LocationId = location.Id;
+                else
+                {
+                    var bar = this._mapper.MapDTOToEntity(barDTO);
                     
-                this._context.Bars.Add(bar);
+                    this._context.Bars.Add(bar);
 
-                await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync();
 
-                bar = await this._context.Bars.FirstOrDefaultAsync(b => b.Name == barDTO.Name);
+                    bar = await this._context.Bars.FirstOrDefaultAsync(b => b.Name == barDTO.Name);
 
-                return this._mapper.MapEntityToDTO(bar);
+                    return this._mapper.MapEntityToDTO(bar);
+                }
             }
-            //}
-            //catch (Exception)
-            //{
-            //    throw new Exception();
-            //}
+            catch (Exception)
+            {
+                throw new ArgumentNullException("Fail to create bar");
+            }
         }
 
-        private bool BarExistsByName(string name)
+        /// <summary>
+        /// Check if bar with the name already exist.
+        /// </summary>
+        /// <param name="name">Name of Bar</param>
+        /// <returns>Boolean</returns>
+        public async Task<bool> BarExistsByName(string name)
         {
-            return _context.Bars.Any(b => b.Name == name);
+            return await _context.Bars.AnyAsync(b => b.Name == name);
         }
 
         /// <summary>
@@ -103,7 +100,7 @@ namespace BarCrawlers.Services
         /// Gets all bars from the database.
         /// </summary>
         /// <returns>List of bars, DTOs</returns>
-        public async Task<IEnumerable<BarDTO>> GetAllAsync(string page, string itemsOnPage, string search)
+        public async Task<IEnumerable<BarDTO>> GetAllAsync(string page, string itemsOnPage, string search, string order , bool access)
         {
             try
             {
@@ -114,10 +111,23 @@ namespace BarCrawlers.Services
                                     .Include(b => b.Comments)
                                     .Include(b => b.Location)
                                     .Include(b => b.BarRatings).AsQueryable();
+                if (!access)
+                {
+                    bars = bars.Where(b => b.IsDeleted == false);
+                }
 
                 if (!string.IsNullOrEmpty(search))
                 {
                     bars = bars.Where(b => b.Name.Contains(search));
+                }
+
+                if (order == "desc")
+                {
+                    bars = bars.OrderByDescending(b => b.Name);
+                }
+                else
+                {
+                    bars = bars.OrderBy(b => b.Name);
                 }
 
                 bars = bars.Skip(p * item)
@@ -131,7 +141,7 @@ namespace BarCrawlers.Services
             }
             catch (Exception)
             {
-                return new List<BarDTO>();
+                throw new ArgumentException("Failed to get list");
             }
         }
 
@@ -183,7 +193,7 @@ namespace BarCrawlers.Services
                 bar.Name = barDTO.Name;
                 bar.Phone = barDTO.Phone;
                 bar.Town = barDTO.Town;
-                //TODO: Update location from new address
+
                 _context.Update(bar);
 
                 await _context.SaveChangesAsync();
@@ -192,7 +202,7 @@ namespace BarCrawlers.Services
             }
             catch (Exception)
             {
-                return new BarDTO();
+                throw new ArgumentNullException("Failed to update");
             }
         }
 
@@ -212,8 +222,6 @@ namespace BarCrawlers.Services
                 {
                     var barRating = new UserBarRating
                     {
-                        //BarId = barId,
-                        //UserId = userId,
                         Rating = rating
                     };
 
@@ -276,7 +284,7 @@ namespace BarCrawlers.Services
             return Math.Round( await _context.BarRatings.Where(b => b.BarId == id).AverageAsync(b => b.Rating), 2);
         }
 
-        private async Task<BarDTO> SetLocation(BarDTO barDTO)
+        public async Task<BarDTO> SetLocation(BarDTO barDTO)
         {
             var street = barDTO.Address.Split();
             var httpStreet = string.Join("+", street);
@@ -295,13 +303,30 @@ namespace BarCrawlers.Services
 
             if (response.IsSuccessStatusCode)
             {
-                using var responseStream = await response.Content.ReadAsStreamAsync();
-                var coordinates = await JsonSerializer.DeserializeAsync
-                    <IEnumerable<object>>(responseStream);
-             //var lat = coordinates.[0]
-            }
-            else
-            {
+                using (var responseStream = await response.Content.ReadAsStreamAsync())
+                {
+                    var coordinates = await JsonSerializer.DeserializeAsync
+                      <IEnumerable<LocationDTO>>(responseStream);
+
+                    if (coordinates.Count() > 0)
+                    {
+                        var lat = coordinates.First().Lat;
+                        var lon = coordinates.First().Lon;
+                        var result = await _context.Locations.FirstOrDefaultAsync(l => l.Lattitude == lat && l.Longtitude == lon);
+                        if (result == null)
+                        {
+                            var location = new Location { Longtitude = lon, Lattitude = lat };
+                            _context.Locations.Add(location);
+                            await _context.SaveChangesAsync();
+                            result = await _context.Locations.FirstOrDefaultAsync(l => l.Lattitude == lat && l.Longtitude == lon);
+                        }
+                        var locationDTO = new LocationDTO();
+                        locationDTO.Lat = result.Lattitude;
+                        locationDTO.Lon = result.Longtitude;
+                        barDTO.LocationId = result.Id;
+                        barDTO.Location = locationDTO;
+                    }
+                }
             }
 
             return barDTO;

@@ -4,14 +4,16 @@ using BarCrawlers.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace BarCrawlers.Data.Migrations
 {
     [DbContext(typeof(BCcontext))]
-    partial class BCcontextModelSnapshot : ModelSnapshot
+    [Migration("20200528091757_FixLocation")]
+    partial class FixLocation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -240,13 +242,11 @@ namespace BarCrawlers.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Lattitude")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<double>("Lattitude")
+                        .HasColumnType("float");
 
-                    b.Property<string>("Longtitude")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<double>("Longtitude")
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 

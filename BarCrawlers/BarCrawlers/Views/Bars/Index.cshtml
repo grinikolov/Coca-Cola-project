@@ -11,6 +11,15 @@
     <p>
         Bar: <input type="text" name="SearchString">
         <input type="submit" value="Search" class="btn btn-primary" />
+    @*</p>
+    <p>*@
+        Order: 
+        <a class="btn btn-primary" asp-controller="Bars" asp-action="Index" 
+                    asp-route-page=@ViewBag.CurrentPage asp-route-searchstring=@ViewBag.SearchString
+                    asp-route-order="asc">Asc</a>
+        <a class="btn btn-primary" asp-controller="Bars" asp-action="Index" 
+                    asp-route-page=@ViewBag.CurrentPage asp-route-searchstring=@ViewBag.SearchString
+                    asp-route-order="desc">Desc</a>
     </p>
 </form>
 
@@ -122,10 +131,10 @@
 <div>
     @if (@ViewBag.CurrentPage > 0)
     {
-        <a class="btn btn-primary" href="/Bar/Index?page=@(@ViewBag.CurrentPage - 1)&searchstring=@ViewBag.SearchString">Previous</a>
+        <a class="btn btn-primary" href="/Bars/Index?page=@(@ViewBag.CurrentPage - 1)&searchstring=@ViewBag.SearchString&order=@ViewBag.Order">Previous</a>
     }
     @if (!(@Model.Count() < @ViewBag.ItemsOnPage))
     {
-        <a class="btn btn-primary" href="/Bar/Index?page=@(@ViewBag.CurrentPage + 1)&searchstring=@ViewBag.SearchString">Next</a>
+        <a class="btn btn-primary" href="/Bars/Index?page=@(@ViewBag.CurrentPage + 1)&searchstring=@ViewBag.SearchString&order=@ViewBag.Order">Next</a>
     }
 </div>
