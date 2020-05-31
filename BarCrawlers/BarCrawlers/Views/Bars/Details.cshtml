@@ -35,12 +35,16 @@
             @Html.DisplayFor(model => model.Rating)
         </dd>
         <dd class="col-sm-9">
+            @if (User.Identity.IsAuthenticated)
+            {
             <form asp-action="Rate" asp-route-Id=@Model.Id asp-route-userId=@currentUser.Id method="post">
                 @*<input type="hidden" asp-for="barId" />
-                <input type="hidden" asp-for="UserId" />*@
+            <input type="hidden" asp-for="UserId" />*@
                 <input asp-for="Rating" type="text">
-                <input type="submit" value="Rate" class="btn btn-primary"/>
+                <input type="submit" value="Rate" class="btn btn-primary" />
             </form>
+
+            }
             @*<input asp-for="Rating" class="col-sm-1">*@
             @*<>*@
             @*<a class="btn btn-primary" asp-action="Rate" asp-route-barId=@Model.Id asp-route-userId=@currentUser.Id >Rate</a>*@

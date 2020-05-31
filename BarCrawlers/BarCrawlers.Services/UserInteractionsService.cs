@@ -201,7 +201,7 @@ namespace BarCrawlers.Services
             return recalculatedRating;
         }
 
-        public /*async*/ Task<BarUserCommentDTO> AddBarComment(BarUserCommentDTO commentDTO, Guid barId, Guid userId)
+        public async Task<BarUserCommentDTO> AddBarComment(BarUserCommentDTO commentDTO, Guid barId, Guid userId)
         {
             throw new NotImplementedException(nameof(AddBarComment));
             //var bar = await this._context.Bars
