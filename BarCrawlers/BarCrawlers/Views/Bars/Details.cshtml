@@ -37,12 +37,12 @@
         <dd class="col-sm-9">
             @if (User.Identity.IsAuthenticated)
             {
-            <form asp-action="Rate" asp-route-Id=@Model.Id asp-route-userId=@currentUser.Id method="post">
-                @*<input type="hidden" asp-for="barId" />
-            <input type="hidden" asp-for="UserId" />*@
-                <input asp-for="Rating" type="text">
-                <input type="submit" value="Rate" class="btn btn-primary" />
-            </form>
+                <form asp-action="Rate" asp-route-Id=@Model.Id asp-route-userId=@currentUser.Id method="post">
+                    @*<input type="hidden" asp-for="barId" />
+                        <input type="hidden" asp-for="UserId" />*@
+                    <input asp-for="Rating" type="text">
+                    <input type="submit" value="Rate" class="btn btn-primary" />
+                </form>
 
             }
             @*<input asp-for="Rating" class="col-sm-1">*@
@@ -69,12 +69,18 @@
                 <img src="@Model.ImageSrc" height="50" width="50">
             }
         </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.IsDeleted)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.IsDeleted)
-        </dd>
+        @if (User.Identity.IsAuthenticated)
+        {
+            @if (await _userManager.IsInRoleAsync(currentUser, "Magician"))
+            {
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.IsDeleted)
+                </dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.IsDeleted)
+                </dd>
+            }
+        }
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Phone)
         </dt>
@@ -120,8 +126,14 @@
     </dl>
 </div>
 <div>
-    <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
-    <a class="btn btn-primary" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
+    @if (User.Identity.IsAuthenticated)
+    {
+        @if (await _userManager.IsInRoleAsync(currentUser, "Magician"))
+        {
+            <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+            <a class="btn btn-primary" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
+        }
+    }
     <a class="btn btn-primary" asp-action="Index">Back to List</a>
 </div>
 <br>
