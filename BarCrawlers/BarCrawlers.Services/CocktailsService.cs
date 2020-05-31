@@ -39,7 +39,7 @@ namespace BarCrawlers.Services
                 .Include(c => c.Comments)
                     .ThenInclude(c => c.User)
                 .Include(c => c.Bars)
-                .ToListAsync() ;
+                .ToListAsync();
 
             return cocktails.Select(x => this._mapper.MapEntityToDTO(x)).ToList();
         }
@@ -112,7 +112,7 @@ namespace BarCrawlers.Services
             if (CocktailExistsByName(cocktailDTO.Name))
             {
                 var theCocktail = await this._context.Cocktails
-                    .FirstOrDefaultAsync(c => c.Name.Equals(cocktailDTO.Name));
+                    .FirstOrDefaultAsync(c => c.Name.Equals(cocktailDTO.Name, StringComparison.OrdinalIgnoreCase));
                 if (theCocktail.IsDeleted == true)
                 {
                     theCocktail.IsDeleted = false;
@@ -121,7 +121,6 @@ namespace BarCrawlers.Services
             }
             else
             {
-
                 var cocktail = this._mapper.MapDTOToEntity(cocktailDTO);
                 this._context.Cocktails.Add(cocktail);
 
@@ -130,16 +129,19 @@ namespace BarCrawlers.Services
                 cocktail = await this._context.Cocktails.FirstOrDefaultAsync(c => c.Name == cocktailDTO.Name);
                 foreach (var item in cocktailDTO.Ingredients)
                 {
-                    bool isAdded = await AddIngredientsToCocktail(cocktail.Id, cocktail, item.IngredientId, item.Parts);
-                    
-                    //var cocktailIngredient = new CocktailIngredient
-                    //{
-                    //    CocktailId = cocktail.Id,
-                    //    IngredientId = item.IngredientId,
-                    //    Parts = item.Parts,
-                    //};
-                    //this._context.CocktailIngredients.Add(cocktailIngredient);
+                    bool isAdded = await AddIngredientsToCocktail(cocktail, item.IngredientId, item.Parts);
                 }
+
+
+                if (cocktail.Ingredients.Select(x => x.Ingredient).Any(i => i.IsAlcoholic))
+                {
+                    cocktail.IsAlcoholic = true;
+                }
+                else
+                {
+                    cocktail.IsAlcoholic = false;
+                }
+                this._context.Update(cocktail);
                 await this._context.SaveChangesAsync();
 
                 cocktail = await this._context.Cocktails.FirstOrDefaultAsync(x => x.Name.ToLower() == cocktailDTO.Name.ToLower());
@@ -148,29 +150,24 @@ namespace BarCrawlers.Services
             }
         }
 
-        public async Task<int> CountAll(string role)
-        {
-            var cocktails = this._context.Cocktails
-                .AsQueryable();
-
-            if (role == "Magician" )
-            {
-                cocktails =  cocktails.Where(x => x.IsDeleted == true);
-            }
-            return await cocktails.CountAsync();
-        }
-
-        private async Task<bool> AddIngredientsToCocktail(Guid cocktailId,Cocktail cocktail, Guid ingredientId, int? parts)
+        /// <summary>
+        /// When creating a cocktail, it adds its CocktailIngredients to the database
+        /// </summary>
+        /// <param name="cocktail">The cocktail entity</param>
+        /// <param name="ingredientId">Ingredient Id</param>
+        /// <param name="parts">Parts of the ingredient in the cocktail</param>
+        /// <returns></returns>
+        public async Task<bool> AddIngredientsToCocktail(Cocktail cocktail, Guid ingredientId, int? parts)
         {
             try
             {
                 var ingredient = await this._context.Ingredients
-                    .FirstOrDefaultAsync(i=> i.Id == ingredientId);
+                    .FirstOrDefaultAsync(i => i.Id == ingredientId);
                 var cocktailIngredient = new CocktailIngredient
                 {
                     IngredientId = ingredientId,
                     Ingredient = ingredient,
-                    CocktailId = cocktailId,
+                    CocktailId = cocktail.Id,
                     Cocktail = cocktail,
                     Parts = parts,
                 };
@@ -178,10 +175,26 @@ namespace BarCrawlers.Services
                 await this._context.SaveChangesAsync();
                 return true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return false;
             }
+        }
+        /// <summary>
+        /// Gets the count of all the cocktails in the database, depending on the user role.
+        /// </summary>
+        /// <param name="role"></param>
+        /// <returns>Number of all entities, when user is admin; the number of listed cocktails only for normal user</returns>
+        public async Task<int> CountAll(string role)
+        {
+            var cocktails = this._context.Cocktails
+                .AsQueryable();
+
+            if (role == "Magician")
+            {
+                cocktails = cocktails.Where(x => x.IsDeleted == true);
+            }
+            return await cocktails.CountAsync();
         }
         //public async Task<bool> AddIngredientsToCocktail(Guid ingredientID, Guid cocktailId)
         //{
@@ -201,7 +214,12 @@ namespace BarCrawlers.Services
         //        return false;
         //    }
         //}
-
+        /// <summary>
+        /// Updates existing cocktail
+        /// </summary>
+        /// <param name="id">ID of the cocktail</param>
+        /// <param name="cocktailDTO">The cocktail with the modifications</param>
+        /// <returns>Cocktail DTO.model</returns>
         public async Task<CocktailDTO> UpdateAsync(Guid id, CocktailDTO cocktailDTO)
         {
             var cocktail = await this._context.Cocktails.FindAsync(id);
@@ -215,7 +233,7 @@ namespace BarCrawlers.Services
 
                 await this._context.SaveChangesAsync();
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 //TODO: think what to return and when?
                 if (!CocktailExists(id))
@@ -231,7 +249,11 @@ namespace BarCrawlers.Services
             return this._mapper.MapEntityToDTO(cocktail);
         }
 
-
+        /// <summary>
+        /// Marks cocktail as IsDeleted
+        /// </summary>
+        /// <param name="id">ID of the cocktail</param>
+        /// <returns>True when successful, false otherwise</returns>
         public async Task<bool> DeleteAsync(Guid id)
         {
             var cocktail = await this._context.Cocktails.FindAsync(id);
@@ -247,14 +269,14 @@ namespace BarCrawlers.Services
         }
 
 
-        private bool CocktailExists(Guid id)
+        public bool CocktailExists(Guid id)
         {
             return _context.Cocktails.Any(e => e.Id == id);
         }
-        private bool CocktailExistsByName(string name)
+        public bool CocktailExistsByName(string name)
         {
-            return _context.Cocktails.Any(e => e.Name == name);
+            return _context.Cocktails.Any(e => e.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         }
 
-        }
+    }
 }

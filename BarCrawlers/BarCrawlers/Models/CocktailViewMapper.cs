@@ -20,7 +20,7 @@ namespace BarCrawlers.Models
                     ImageSrc = dto.ImageSrc,
                     IsDeleted = dto.IsDeleted,
                     IsAlcoholic = dto.IsAlcoholic,
-
+                    Instructions = dto.Instructions,
                     Ingredients = dto.Ingredients.Select(i => new CocktailIngredientViewModel()
                     {
                         IngredientId = i.IngredientId,

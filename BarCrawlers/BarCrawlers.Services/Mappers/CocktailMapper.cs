@@ -23,7 +23,7 @@ namespace BarCrawlers.Services.Mappers
                     ImageSrc = dto.ImageSrc,
                     IsDeleted = dto.IsDeleted,
                     IsAlcoholic = dto.IsAlcoholic,
-
+                    Instructions = dto.Instructions,
                     //Ingredients = dto.Ingredients,
 
                     //TODO: Mapping lists ?

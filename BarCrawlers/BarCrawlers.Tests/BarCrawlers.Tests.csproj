@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -19,6 +19,10 @@
   <ItemGroup>
     <ProjectReference Include="..\BarCrawlers.Data\BarCrawlers.Data.csproj" />
     <ProjectReference Include="..\BarCrawlers.Services\BarCrawlers.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="BarsServiceTests\" />
   </ItemGroup>
 
 </Project>

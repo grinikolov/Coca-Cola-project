@@ -21,7 +21,7 @@ namespace BarCrawlers.Tests.IngredientsServiceTests
         public void ReturnCorrectIngredients_when_AllValid()
         {
             //Arrange
-            var options = Utils.GetOptions(nameof(ReturnCorrectIngredients_when_AllValid)); ;
+            var options = Utils.GetOptions("ReturnCorrectIngredients_when_AllValid"); ;
             var entity1 = new Ingredient
             {
                 Name = "Lime",

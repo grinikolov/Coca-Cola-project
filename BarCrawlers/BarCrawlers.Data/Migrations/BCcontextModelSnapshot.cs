@@ -48,7 +48,7 @@ namespace BarCrawlers.Data.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<Guid>("LocationId")
+                    b.Property<Guid?>("LocationId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
@@ -240,11 +240,13 @@ namespace BarCrawlers.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<double>("Lattitude")
-                        .HasColumnType("float");
+                    b.Property<string>("Lattitude")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Longtitude")
-                        .HasColumnType("float");
+                    b.Property<string>("Longtitude")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -489,9 +491,7 @@ namespace BarCrawlers.Data.Migrations
                 {
                     b.HasOne("BarCrawlers.Data.DBModels.Location", "Location")
                         .WithMany()
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("LocationId");
                 });
 
             modelBuilder.Entity("BarCrawlers.Data.DBModels.BarUserComment", b =>
@@ -542,7 +542,7 @@ namespace BarCrawlers.Data.Migrations
             modelBuilder.Entity("BarCrawlers.Data.DBModels.CocktailUserComment", b =>
                 {
                     b.HasOne("BarCrawlers.Data.DBModels.Cocktail", "Cocktail")
-                        .WithMany("Comment")
+                        .WithMany("Comments")
                         .HasForeignKey("CocktailId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

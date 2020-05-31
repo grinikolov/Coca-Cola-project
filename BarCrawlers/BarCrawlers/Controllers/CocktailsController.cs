@@ -23,6 +23,7 @@ namespace BarCrawlers.Controllers
         private readonly ICocktailViewMapper _mapper;
         private readonly IIngredientsService _ingredientsService;
         private readonly IUserInteractionsService _userInteractionsService;
+        private static IEnumerable<IngredientDTO> _ingredients;
         public CocktailsController(ICocktailsService service,
              ICocktailViewMapper mapper,
              IIngredientsService ingredientsService,
@@ -33,6 +34,12 @@ namespace BarCrawlers.Controllers
             this._ingredientsService = ingredientsService ?? throw new ArgumentNullException(nameof(ingredientsService));
             this._userInteractionsService = userInteractionsService ?? throw new ArgumentNullException(nameof(userInteractionsService));
         }
+        public  IEnumerable<IngredientDTO> Ingredients
+        {
+            get => _ingredients;
+            private set => _ingredients = value;
+        }
+
 
         // GET: Cocktails
         public async Task<IActionResult> Index(string page = "0", string itemsOnPage = "12", string searchString = null)
@@ -89,9 +96,9 @@ namespace BarCrawlers.Controllers
         public async Task<IActionResult> Create()
         {
             //ViewData["Ingredient"] = new SelectList( await this._ingredientsService.GetAllAsync(), "ID", "Name");
-            var ingredients = await this._ingredientsService.GetAllAsync();
-
-            ViewData["Ingredients"] = ingredients.Select(x => new SelectListItem(x.Name, x.Id.ToString()));
+           
+            Ingredients = await this._ingredientsService.GetAllAsync();
+            ViewData["Ingredients"] = Ingredients.Select(x => new SelectListItem(x.Name, x.Id.ToString()));
 
             return View();
         }
@@ -137,8 +144,8 @@ namespace BarCrawlers.Controllers
         [Authorize(Roles = "Magician")]
         public async Task<ActionResult> AddCocktailIngredient([Bind("Ingredients")] CocktailCreateViewModel cocktailVM)//[Bind("Ingredients")] 
         {
-            var ingredients = await this._ingredientsService.GetAllAsync();
-            ViewData["Ingredients"] = ingredients.Select(x => new SelectListItem(x.Name, x.Id.ToString()));
+            //var ingredients = await this._ingredientsService.GetAllAsync();
+            ViewData["Ingredients"] = Ingredients.Select(x => new SelectListItem(x.Name, x.Id.ToString()));
 
             cocktailVM.Ingredients.Add(new CocktailIngredientViewModel());
             return PartialView("CocktailIngredients", cocktailVM);

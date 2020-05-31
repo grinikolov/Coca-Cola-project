@@ -1,9 +1,16 @@
 ﻿
 @model IEnumerable<BarCrawlers.Models.CocktailViewModel>
 
+@using Microsoft.AspNetCore.Identity
+@using BarCrawlers.Data.DBModels
+
+
+@inject UserManager<User> _userManager
+
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var currentUser = await _userManager.GetUserAsync(User);
 }
 
 <h1>Index</h1>
@@ -48,42 +55,42 @@
     <tbody>
         @foreach (var item in Model)
         {
-        <tr onclick="window.location = '/Cocktails/Details/@item.Id'">
-            <td>
-                <div class="container">
-                    @if (string.IsNullOrEmpty(item.ImageSrc))
-                    {
-                        <img class="img-fluid" src="~/img/BarSiluet.jpg" height="50" width="50">
+            <tr onclick="window.location = '/Cocktails/Details/@item.Id'">
+                <td>
+                    <div class="container">
+                        @if (string.IsNullOrEmpty(item.ImageSrc))
+                        {
+                            <img class="img-fluid" src="~/img/BarSiluet.jpg" height="50" width="50">
 
-                    }
-                    else
-                    {
-                        <img src="@item.ImageSrc" height="50" width="50">
-                    }
-                </div>
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Rating)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TimesRated)
-            </td>
-            @*<td>
-                @Html.DisplayFor(modelItem => item.ImageSrc)
-            </td>*@
-            <td>
-                @Html.DisplayFor(modelItem => item.IsDeleted)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsAlcoholic)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Instructions)
-            </td>
-        </tr>
+                        }
+                        else
+                        {
+                            <img src="@item.ImageSrc" height="50" width="50">
+                        }
+                    </div>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Rating)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TimesRated)
+                </td>
+                @*<td>
+                        @Html.DisplayFor(modelItem => item.ImageSrc)
+                    </td>*@
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsDeleted)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsAlcoholic)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Instructions)
+                </td>
+            </tr>
         }
     </tbody>
 </table>
@@ -96,6 +103,14 @@
     @if (!(@Model.Count() < @ViewBag.ItemsOnPage))
     {
         <a class="btn btn-primary" href="/Bar/LoadCocktails?id=@ViewBag.CurrentBarId&page=@(@ViewBag.CurrentPage + 1)&searchstring=@ViewBag.SearchString">Next</a>
+    }
+</div>
+
+<div>
+    @if (await _userManager.IsInRoleAsync(currentUser,"Magician"))
+    {
+        <a class="btn btn-primary">Add</a>
+        <a class="btn btn-primary">Remove</a>
     }
 </div>
 

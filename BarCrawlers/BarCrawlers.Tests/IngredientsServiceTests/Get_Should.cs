@@ -21,7 +21,7 @@ namespace BarCrawlers.Tests.IngredientsServiceTests
         public async System.Threading.Tasks.Task ReturnCorrectIngredient_when_ValidAsync()
         {
             //Arrange
-            var options = Utils.GetOptions(nameof(ReturnCorrectIngredient_when_ValidAsync));
+            var options = Utils.GetOptions("ReturnCorrectIngredient_when_ValidAsync");
             var entity = new Ingredient
             {
                 Id = Utils.MySampleGuid(),
