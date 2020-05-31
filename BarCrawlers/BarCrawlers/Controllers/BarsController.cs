@@ -28,16 +28,22 @@ namespace BarCrawlers.Controllers
         }
 
         // GET: Bars
-        public async Task<IActionResult> Index(string page = "0", string itemsOnPage = "12", string searchString = null)
+        public async Task<IActionResult> Index(string page = "0", string itemsOnPage = "12", string searchString = null, string order = "asc")
         {
             try
             {
-                var bars = await this._service.GetAllAsync(page, itemsOnPage, searchString);
+                var access = false;
+                if (HttpContext.User.IsInRole("Magician"))
+                {
+                    access = true;
+                }
+                var bars = await this._service.GetAllAsync(page, itemsOnPage, searchString, order, access);
 
                 ViewBag.Count = bars.Count();
                 ViewBag.CurrentPage = int.Parse(page);
                 ViewBag.ItemsOnPage = int.Parse(itemsOnPage);
                 ViewBag.SearchString = searchString;
+                ViewBag.Order = order;
 
                 return View(bars.Select(b => this._mapper.MapDTOToView(b)));
             }

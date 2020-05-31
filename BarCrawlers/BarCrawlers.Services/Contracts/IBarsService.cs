@@ -8,7 +8,7 @@ namespace BarCrawlers.Services.Contracts
 {
     public interface IBarsService
     {
-        Task<IEnumerable<BarDTO>> GetAllAsync(string page, string itemsOnPage, string search);
+        Task<IEnumerable<BarDTO>> GetAllAsync(string page, string itemsOnPage, string search, string order, bool access);
         Task<BarDTO> GetAsync(Guid id);
         Task<BarDTO> CreateAsync(BarDTO barDTO);
         Task<BarDTO> UpdateAsync(Guid id, BarDTO barDTO);

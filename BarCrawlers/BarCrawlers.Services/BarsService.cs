@@ -100,7 +100,7 @@ namespace BarCrawlers.Services
         /// Gets all bars from the database.
         /// </summary>
         /// <returns>List of bars, DTOs</returns>
-        public async Task<IEnumerable<BarDTO>> GetAllAsync(string page, string itemsOnPage, string search)
+        public async Task<IEnumerable<BarDTO>> GetAllAsync(string page, string itemsOnPage, string search, string order , bool access)
         {
             try
             {
@@ -111,10 +111,23 @@ namespace BarCrawlers.Services
                                     .Include(b => b.Comments)
                                     .Include(b => b.Location)
                                     .Include(b => b.BarRatings).AsQueryable();
+                if (!access)
+                {
+                    bars = bars.Where(b => b.IsDeleted == false);
+                }
 
                 if (!string.IsNullOrEmpty(search))
                 {
                     bars = bars.Where(b => b.Name.Contains(search));
+                }
+
+                if (order == "desc")
+                {
+                    bars = bars.OrderByDescending(b => b.Name);
+                }
+                else
+                {
+                    bars = bars.OrderBy(b => b.Name);
                 }
 
                 bars = bars.Skip(p * item)
@@ -128,7 +141,7 @@ namespace BarCrawlers.Services
             }
             catch (Exception)
             {
-                return new List<BarDTO>();
+                throw new ArgumentException("Failed to get list");
             }
         }
 
