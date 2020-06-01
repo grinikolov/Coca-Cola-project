@@ -47,30 +47,50 @@ namespace BarCrawlers.Services
         /// Gets page of cocktails from the database.
         /// </summary>
         /// <returns>List of cocktails, DTOs</returns>
-        public async Task<IEnumerable<CocktailDTO>> GetAllAsync(string page, string itemsOnPage, string searchString)
+        public async Task<IEnumerable<CocktailDTO>> GetAllAsync(string page, string itemsOnPage, string searchString, string order, bool access)
         {
-            var p = int.Parse(page);
-            var items = int.Parse(itemsOnPage);
-
-            var cocktails = _context.Cocktails
-                .Include(c => c.Ingredients)
-                    .ThenInclude(c => c.Ingredient)
-                .Include(c => c.Comments)
-                    .ThenInclude(c => c.User)
-                .Include(c => c.Bars)
-                .AsQueryable();
-
-            if (!string.IsNullOrEmpty(searchString))
+            try
             {
-                cocktails = cocktails.Where(u => u.Name.Contains(searchString));
+                var p = int.Parse(page);
+                var items = int.Parse(itemsOnPage);
+
+                var cocktails = _context.Cocktails
+                    .Include(c => c.Ingredients)
+                        .ThenInclude(c => c.Ingredient)
+                    .Include(c => c.Comments)
+                        .ThenInclude(c => c.User)
+                    .Include(c => c.Bars)
+                    .AsQueryable();
+                if (!access)
+                {
+                    cocktails = cocktails.Where(b => b.IsDeleted == false);
+                }
+
+                if (!string.IsNullOrEmpty(searchString))
+                {
+                    cocktails = cocktails.Where(u => u.Name.Contains(searchString));
+                }
+
+                if (order == "desc")
+                {
+                    cocktails = cocktails.OrderByDescending(b => b.Name);
+                }
+                else
+                {
+                    cocktails = cocktails.OrderBy(b => b.Name);
+                }
+
+                cocktails = cocktails.Skip(p * items)
+                                .Take(items);
+
+                var result = await cocktails.ToListAsync();
+
+                return result.Select(x => this._mapper.MapEntityToDTO(x)).ToList();
             }
-
-            cocktails = cocktails.Skip(p * items)
-                            .Take(items);
-
-            var result = await cocktails.ToListAsync();
-
-            return result.Select(x => this._mapper.MapEntityToDTO(x)).ToList();
+            catch (Exception)
+            {
+                throw new ArgumentException("Failed to get list");
+            }
         }
 
         /// <summary>
