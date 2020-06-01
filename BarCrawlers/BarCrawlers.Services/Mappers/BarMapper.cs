@@ -40,7 +40,7 @@ namespace BarCrawlers.Services.Mappers
         {
             try
             {
-                return new BarDTO
+                var dto = new BarDTO
                 {
                     Id = entity.Id,
                     Name = entity.Name,
@@ -56,6 +56,15 @@ namespace BarCrawlers.Services.Mappers
                     Phone = entity.Phone,
                     Town = entity.Town
                 };
+                if (entity.Location != null)
+                {
+                    dto.Location = new LocationDTO()
+                    {
+                        Lat = entity.Location.Lattitude,
+                        Lon = entity.Location.Longtitude,
+                    };
+                }
+                    return dto;
             }
             catch (Exception)
             {

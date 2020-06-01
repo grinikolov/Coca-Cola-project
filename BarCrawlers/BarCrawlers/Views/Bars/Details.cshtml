@@ -37,10 +37,10 @@
                     var user = await UserManager.GetUserAsync(User);
                     var userId = user.Id;
 
-                    <form asp-controller="Bars" asp-action="Rate" asp-route-barId=@Model.Id asp-route-userId=@currentUser.Id method="post">
+                    @*<form asp-controller="Bars" asp-action="Rate" asp-route-barId=@Model.Id asp-route-userId=@currentUser.Id method="post">
                         <input asp-for="Rating" type="text">
                         <input type="submit" value="Rate" class="btn btn-primary" />
-                    </form>
+                    </form>*@
                     <form asp-controller="Bars" asp-action="Rate" asp-route-cocktailId="@Model.Id" asp-route-userId="@userId">
                         <p>
                             <input type="number" min=1 max=5 class="form-control mb-2 mr-sm-2" placeholder="rating" name="rating">
@@ -56,49 +56,48 @@
         <h1 itemprop="name">@Model.Name</h1>
         <h3>Contact</h3>
         <p>
-            @Model.Address, @Model.Town, @Model.Country <br>
-            @Model.Phone
+            @Model.Phone,  @Model.Email <br />
+            @Model.Address, @Model.Town, @Model.Country <br />
         </p>
-        @if (@Model.LocationId != null)
+        @if (@Model.Location != null)
         {
-            var locationString = @Model.Location.Lat + "~" + @Model.Location.Lon
+            var locationSrc= Model.Location.Src;
+            var LargeMapLink= Model.Location.LargeMapLink;
+            var DirMapLink = Model.Location.DirMapLink;
+
             <div>
-                <iframe width="325" height="280" frameborder="0" src="https://www.bing.com/maps/embed?
-h=280&w=325&cp={LAT~LON}&lvl=16&typ=s&sty=r&src=SHELL&FORM=MBEDV8"
+                <iframe width="325" height="280" frameborder="0" src=@locationSrc
                         scrolling="no">
                 </iframe>
                 <div style="white-space: nowrap; text-align: center; width: 325px; padding: 6px 0;">
-                    <a id="largeMapLink" target="_blank" href="https://www.bing.com/maps?
-cp={LAT~LON}&amp;sty=r&amp;lvl=16&amp;FORM=MBEDLD">View Larger Map</a> &nbsp; |
+                    <a id="largeMapLink" target="_blank" href=@LargeMapLink>View Larger Map</a> &nbsp; |
                     &nbsp;
-                    <a id="dirMapLink" target="_blank" href="https://www.bing.com/maps/directions?
-cp={LAT~LON}&amp;sty=r&amp;lvl=16&amp;rtp=~pos.
-{LAT~LON}____&amp;FORM=MBEDLD">Get Directions</a>
+                    <a id="dirMapLink" target="_blank" href=@DirMapLink>Get Directions</a>
                 </div>
             </div>
 
         }
-        <h3>How to mix:</h3>
+        @*<h3>How to mix:</h3>
         <div itemprop="recipeInstructions">
             <p>
-                @Model.Instructions
+                @Model.
             </p>
 
-        </div>
+        </div>*@
     </div>
 
 </div>
 
-<ul>
+@*<ul>
     @foreach (var item in Model.Cocktails)
     {
         <li itemprop="ingredients">
             <h4>
-                @*@item.CocktailName,*@
+                @item.CocktailName,
             </h4>
         </li>
     }
-</ul>
+</ul>*@
 
 
 
