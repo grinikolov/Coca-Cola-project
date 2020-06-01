@@ -106,15 +106,5 @@
     }
 </div>
 
-<div>
-    @if (User.Identity.IsAuthenticated)
-    {
-        @if (await _userManager.IsInRoleAsync(currentUser, "Magician"))
-        {
-            <a class="btn btn-primary">Add</a>
-            <a class="btn btn-primary">Remove</a>
-        }
-    }
-</div>
 
 

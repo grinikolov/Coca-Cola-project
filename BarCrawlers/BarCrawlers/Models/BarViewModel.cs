@@ -7,6 +7,10 @@ namespace BarCrawlers.Models
 {
     public class BarViewModel
     {
+        public BarViewModel()
+        {
+            this.Cocktails = new List<CocktailBarView>();
+        }
         public Guid Id { get; set; }
         public string Name { get; set; }
         public double Rating { get; set; }

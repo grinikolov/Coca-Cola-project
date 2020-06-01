@@ -34,11 +34,6 @@
                 <input asp-for="ImageSrc" class="form-control" />
                 <span asp-validation-for="ImageSrc" class="text-danger"></span>
             </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsDeleted" /> @Html.DisplayNameFor(model => model.IsDeleted)
-                </label>
-            </div>
             <div class="form-group">
                 <label asp-for="Phone" class="control-label"></label>
                 <input asp-for="Phone" class="form-control" />
@@ -70,10 +65,23 @@
                 <span asp-validation-for="Country" class="text-danger"></span>
             </div>
             @*<div class="form-group">
-                <label asp-for="LocationId" class="control-label"></label>
-                <select asp-for="LocationId" class="form-control" asp-items="ViewBag.LocationId"></select>
-                <span asp-validation-for="LocationId" class="text-danger"></span>
-            </div>*@
+                    <label asp-for="LocationId" class="control-label"></label>
+                    <select asp-for="LocationId" class="form-control" asp-items="ViewBag.LocationId"></select>
+                    <span asp-validation-for="LocationId" class="text-danger"></span>
+                </div>*@
+            <div id="BarCocktailsContainer">
+                @Html.EditorFor(model => model.Cocktails)
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <input class="btn btn-primary" type="button" id="btnAdd" value="Add Cocktail" />     @*onclick="@counter++" />*@
+                </div>
+                <div class="col-md-4">
+                    <input class="btn btn-primary" type="button" id="btnRemove" value="Remove Cocktail" />     @*onclick="@counter++" />*@
+                </div>
+            </div>
+
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
@@ -87,4 +95,6 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript" src="~/js/Bars/AddCocktail.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/js/Bars/RemoveCocktail.js" asp-append-version="true"></script>
 }

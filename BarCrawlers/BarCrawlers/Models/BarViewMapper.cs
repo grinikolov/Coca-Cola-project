@@ -27,7 +27,8 @@ namespace BarCrawlers.Models
                     Email = dto.Email,
                     LocationId = dto.LocationId,
                     Phone = dto.Phone,
-                    Town = dto.Town
+                    Town = dto.Town,
+
                 };
             }
             catch (Exception)
@@ -54,7 +55,14 @@ namespace BarCrawlers.Models
                     Email = view.Email,
                     LocationId = view.LocationId,
                     Phone = view.Phone,
-                    Town = view.Town
+                    Town = view.Town,
+                    Cocktails = view.Cocktails.Select(c => new CocktailBarDTO()
+                    {
+                        BarId = c.BarId,
+                        BarName = c.BarName,
+                        CocktailId = c.CocktailId,
+                        CocktailName = c.CocktailName
+                    }).ToList()
                 };
             }
             catch (Exception)
