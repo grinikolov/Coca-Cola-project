@@ -147,6 +147,27 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
         }
 
         [TestMethod]
+        public async Task ReturnNull_noSearch_whenNoCocktails()
+        {
+            var options = Utils.GetOptions(nameof(ReturnNull_noSearch_whenNoCocktails));
+
+            var mockMapper = new Mock<ICocktailMapper>();
+
+            using (var arrangeContext = new BCcontext(options))
+            {
+            }
+
+            using (var actContext = new BCcontext(options))
+            {
+                var sut = new CocktailsService(actContext, mockMapper.Object);
+                var cocktail = await sut.GetAllAsync("0", "12","","", false);
+
+                Assert.IsNotNull(cocktail);
+                Assert.AreEqual(0, actContext.Cocktails.Count());
+            }
+        }
+
+        [TestMethod]
         public async Task ReturnNull_withSearch_whenNoCocktail()
         {
             var options = Utils.GetOptions(nameof(ReturnNull_withSearch_whenNoCocktail));
@@ -159,8 +180,9 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
 
             using (var actContext = new BCcontext(options))
             {
+                string order = "asc";
                 var sut = new CocktailsService(actContext, mockMapper.Object);
-                var cocktail = await sut.GetAllAsync("0", "12","searchString");
+                var cocktail = await sut.GetAllAsync("0", "12","searchString", order, true);
 
                 Assert.IsNotNull(cocktail);
                 Assert.AreEqual(0, actContext.Cocktails.Count());

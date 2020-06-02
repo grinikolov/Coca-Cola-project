@@ -14,8 +14,8 @@ namespace BarCrawlers.Models
         public bool IsDeleted { get; set; }
         public bool IsAlcoholic { get; set; }
         public ICollection<CocktailIngredientViewModel> Ingredients { get; set; }
-        public ICollection<CocktailBarDTO> Bars { get; set; }
-        public ICollection<CocktailUserCommentDTO> Comments { get; set; }
+        public ICollection<CocktailBarView> Bars { get; set; }
+        public ICollection<CocktailUserCommentVM> Comments { get; set; }
         public ICollection<UserCocktailRatingDTO> CocktailRatings { get; set; }
         public string Instructions { get; set; }
 

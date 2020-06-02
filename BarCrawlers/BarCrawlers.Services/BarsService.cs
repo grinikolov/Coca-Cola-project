@@ -167,7 +167,7 @@ namespace BarCrawlers.Services
             }
             catch (Exception)
             {
-                return new BarDTO();
+                throw new ArgumentException();
             }
         }
 
@@ -198,6 +198,32 @@ namespace BarCrawlers.Services
 
                 await _context.SaveChangesAsync();
 
+                foreach (var item in barDTO.Cocktails)
+                {
+                    var dbItem = await _context.CocktailBars
+                        .Include(c => c.Bar)
+                        .Include(c => c.Cocktail)
+                        .FirstOrDefaultAsync(i => i.CocktailId == item.CocktailId && i.BarId == id);
+                    if (dbItem == null)
+                    {
+                        var cocktail = new CocktailBar();// { CocktailId = item.CocktailId, BarId = id };
+                        cocktail.Bar = await _context.Bars.FindAsync(id);
+                        cocktail.BarId = cocktail.Bar.Id;
+                        cocktail.Cocktail = await _context.Cocktails.FindAsync(item.CocktailId);
+                        cocktail.CocktailId = cocktail.Cocktail.Id;
+                        await _context.CocktailBars.AddAsync(cocktail);
+                    }
+                    else
+                    {
+                        if (item.Remove)
+                        {
+                            _context.CocktailBars.Remove(dbItem);
+                        }
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+
                 return barDTO;
             }
             catch (Exception)
@@ -206,6 +232,13 @@ namespace BarCrawlers.Services
             }
         }
 
+        /// <summary>
+        /// Set a Rating to bar and updates properties acording to new set
+        /// </summary>
+        /// <param name="barId">Bar Id to be rated</param>
+        /// <param name="userId">User Id making the rating</param>
+        /// <param name="rating">Value of rating</param>
+        /// <returns>BarDTO</returns>
         public async Task<BarDTO> RateBarAsync(Guid barId, Guid userId,  int rating)
         {
             try
@@ -252,21 +285,36 @@ namespace BarCrawlers.Services
 
         }
 
-
+        /// <summary>
+        /// Get a list of cocktails offerred in a bar with a search constraint
+        /// </summary>
+        /// <param name="id">Bar Id to be checked</param>
+        /// <param name="page">Number of viewable page</param>
+        /// <param name="itemsOnPage">Number of cocktails to be shown</param>
+        /// <param name="search">Additional search constraints</param>
+        /// <returns>Collection of CocktailDTO</returns>
         public async Task<IEnumerable<CocktailDTO>> GetCocktailsAsync(Guid id, string page, string itemsOnPage, string search)
         {
             try
             {
-                var cocktails = await _context.Cocktails
-                 .Include(c => c.Ingredients)
-                     .ThenInclude(c => c.Ingredient)
-                 .Include(c => c.Comments)
-                     .ThenInclude(c => c.User)
-                 .Include(c => c.Bars)
-                 .Where(c => c.Id == id)
-                 .ToListAsync();
+                //var joined = await _context.CocktailBars.Where(j => j.BarId == id).ToListAsync();
 
-                return cocktails.Select(x => this._cocktailMapper.MapEntityToDTO(x));
+                var cocktails = await _context.CocktailBars
+                    .Include(c => c.Cocktail)
+                        .ThenInclude(c => c.Ingredients)
+                            .ThenInclude(i => i.Ingredient)
+                    .Include(c => c.Cocktail)
+                        .ThenInclude(c => c.Comments)
+                            .ThenInclude(c => c.User)
+                    .Include(c => c.Cocktail)
+                        .ThenInclude(c => c.CocktailRatings)
+                            .ThenInclude(r => r.User)
+                    .Include(c => c.Bar)
+                        .ThenInclude(b => b.Location)
+                    .Where(c => c.BarId == id)
+                    .ToListAsync();
+
+                return cocktails.Select(x => this._cocktailMapper.MapEntityToDTO(x.Cocktail)).ToList();
             }
             catch (Exception)
             {
@@ -274,16 +322,66 @@ namespace BarCrawlers.Services
             }
         }
 
+        /// <summary>
+        /// Get a list of cocktails offerred in a bar with a search constraint
+        /// </summary>
+        /// <param name="id">Bar Id to be checked</param>
+        /// <param name="page">Number of viewable page</param>
+        /// <param name="itemsOnPage">Number of cocktails to be shown</param>
+        /// <param name="search">Additional search constraints</param>
+        /// <returns>Collection of CocktailDTO</returns>
+        public async Task<IEnumerable<CocktailDTO>> GetCocktailsAsync(Guid id)
+        {
+            try
+            {
+                var cocktails = await _context.CocktailBars
+                    .Include(c => c.Cocktail)
+                        .ThenInclude(c => c.Ingredients)
+                            .ThenInclude(i => i.Ingredient)
+                    .Include(c => c.Cocktail)
+                        .ThenInclude(c => c.Comments)
+                            .ThenInclude(c => c.User)
+                    .Include(c => c.Cocktail)
+                        .ThenInclude(c => c.CocktailRatings)
+                            .ThenInclude(r => r.User)
+                    .Include(c => c.Bar)
+                        .ThenInclude(b => b.Location)
+                    .Where(c => c.BarId == id)
+                    .ToListAsync();
+
+                return cocktails.Select(x => this._cocktailMapper.MapEntityToDTO(x.Cocktail)).ToList();
+            }
+            catch (Exception)
+            {
+                return new List<CocktailDTO>();
+            }
+        }
+
+        /// <summary>
+        /// Counts the made ratings for a bar
+        /// </summary>
+        /// <param name="barId">Bar Id to be checked</param>
+        /// <returns>Int</returns>
         private async Task<int> CountRates(Guid barId)
         {
             return await _context.BarRatings.Where(b => b.BarId == barId).CountAsync();
         }
 
+        /// <summary>
+        /// Calculates the average rating of bar
+        /// </summary>
+        /// <param name="id">Bar Id to be checked</param>
+        /// <returns>Double</returns>
         private async Task<double> CalculateRating(Guid id)
         {
             return Math.Round( await _context.BarRatings.Where(b => b.BarId == id).AverageAsync(b => b.Rating), 2);
         }
 
+        /// <summary>
+        /// Finds coordinates for given adress, creates database location object and set it to bar
+        /// </summary>
+        /// <param name="barDTO">The bar object to be set with location</param>
+        /// <returns>BarDTO</returns>
         public async Task<BarDTO> SetLocation(BarDTO barDTO)
         {
             var street = barDTO.Address.Split();

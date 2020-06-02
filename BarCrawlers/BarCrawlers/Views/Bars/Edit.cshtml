@@ -9,17 +9,18 @@
 
 <h4>Bar</h4>
 <hr />
+
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" id="form_edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Id"/>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            @*<div class="form-group">
                 <label asp-for="Rating" class="control-label"></label>
                 <input asp-for="Rating" class="form-control" />
                 <span asp-validation-for="Rating" class="text-danger"></span>
@@ -28,16 +29,11 @@
                 <label asp-for="TimesRated" class="control-label"></label>
                 <input asp-for="TimesRated" class="form-control" />
                 <span asp-validation-for="TimesRated" class="text-danger"></span>
-            </div>
+            </div>*@
             <div class="form-group">
                 <label asp-for="ImageSrc" class="control-label"></label>
                 <input asp-for="ImageSrc" class="form-control" />
                 <span asp-validation-for="ImageSrc" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsDeleted" /> @Html.DisplayNameFor(model => model.IsDeleted)
-                </label>
             </div>
             <div class="form-group">
                 <label asp-for="Phone" class="control-label"></label>
@@ -69,11 +65,27 @@
                 <input asp-for="Country" class="form-control" />
                 <span asp-validation-for="Country" class="text-danger"></span>
             </div>
-            @*<div class="form-group">
-                <label asp-for="LocationId" class="control-label"></label>
-                <select asp-for="LocationId" class="form-control" asp-items="ViewBag.LocationId"></select>
-                <span asp-validation-for="LocationId" class="text-danger"></span>
-            </div>*@
+            <p>
+                @*<div>*@  
+                    <div id="BarCocktailsContainer">
+                        @Html.EditorFor(model => model.Cocktails)
+                        @Model.Cocktails
+                    </div>
+                    @*<div id="BarCocktailsContainerRemove">
+                        @Html.EditorFor(model => model.Cocktails)
+                    </div>*@
+                @*</div>*@
+                <div class="row">
+                    <div class="col-md-4">
+                        <input class="btn btn-primary" type="button" id="btnAdd" value="Add Cocktail" />
+                    </div>
+                    @*</div>
+            <div class="row">*@
+                    <div class="col-md-4">
+                        <input class="btn btn-primary" type="button" id="btnRemove" value="Remove Cocktail" />
+                    </div>
+                </div>
+            </p>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
@@ -87,4 +99,6 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript" src="~/js/Bars/AddCocktail.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/js/Bars/RemoveCocktail.js" asp-append-version="true"></script>
 }

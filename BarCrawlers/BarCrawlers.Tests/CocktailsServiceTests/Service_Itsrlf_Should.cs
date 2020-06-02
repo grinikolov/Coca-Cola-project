@@ -66,42 +66,42 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
             }
         }
 
-        [TestMethod]
-        public async Task CocktailExistsByName_True_whenExisting()
-        {
-            var options = Utils.GetOptions(nameof(CocktailExistsByName_True_whenExisting));
-            var mockMapper = new Mock<ICocktailMapper>();
-            var testCocktailName = "TestCocktailName";
-            var cocktail = new Cocktail() { Name = testCocktailName };
-            using (var arrangeContext = new BCcontext(options))
-            {
-                await arrangeContext.Cocktails.AddAsync(cocktail);
-                await arrangeContext.SaveChangesAsync();
-            }
+        //[TestMethod]
+        //public async Task CocktailExistsByName_True_whenExisting()
+        //{
+        //    var options = Utils.GetOptions(nameof(CocktailExistsByName_True_whenExisting));
+        //    var mockMapper = new Mock<ICocktailMapper>();
+        //    var testCocktailName = "TestCocktailName";
+        //    var cocktail = new Cocktail() { Name = testCocktailName };
+        //    using (var arrangeContext = new BCcontext(options))
+        //    {
+        //        await arrangeContext.Cocktails.AddAsync(cocktail);
+        //        await arrangeContext.SaveChangesAsync();
+        //    }
 
-            //Act and Assert
-            using (var context = new BCcontext(options))
-            {
-                var sut = new CocktailsService(context, mockMapper.Object);
+        //    //Act and Assert
+        //    using (var context = new BCcontext(options))
+        //    {
+        //        var sut = new CocktailsService(context, mockMapper.Object);
 
-                var result = sut.CocktailExistsByName("TestCocktailName");
-                Assert.IsTrue(result);
-            }
-        }
-        [TestMethod]
-        public void CocktailExistsByName_False_whenNotExisting()
-        {
-            var options = Utils.GetOptions(nameof(CocktailExistsByName_False_whenNotExisting));
-            var mockMapper = new Mock<ICocktailMapper>();
+        //        var result = sut.CocktailExistsByName("TestCocktailName");
+        //        Assert.IsTrue(result);
+        //    }
+        //}
+        //[TestMethod]
+        //public void CocktailExistsByName_False_whenNotExisting()
+        //{
+        //    var options = Utils.GetOptions(nameof(CocktailExistsByName_False_whenNotExisting));
+        //    var mockMapper = new Mock<ICocktailMapper>();
 
-            //Act and Assert
-            using (var context = new BCcontext(options))
-            {
-                var sut = new CocktailsService(context, mockMapper.Object);
+        //    //Act and Assert
+        //    using (var context = new BCcontext(options))
+        //    {
+        //        var sut = new CocktailsService(context, mockMapper.Object);
 
-                var result = sut.CocktailExistsByName("TestName");
-                Assert.IsFalse(result);
-            }
-        }
+        //        var result = sut.CocktailExistsByName("TestName");
+        //        Assert.IsFalse(result);
+        //    }
+        //}
     }
 }

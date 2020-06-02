@@ -9,5 +9,6 @@ namespace BarCrawlers.Services.DTOs
         public string BarName { get; set; }
         public Guid CocktailId { get; set; }
         public string CocktailName { get; set; }
+        public bool Remove { get; set; }
     }
 }

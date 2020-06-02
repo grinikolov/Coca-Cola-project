@@ -42,15 +42,17 @@ namespace BarCrawlers.Controllers
 
 
         // GET: Cocktails
-        public async Task<IActionResult> Index(string page = "0", string itemsOnPage = "12", string searchString = null)
+        public async Task<IActionResult> Index(string page = "0", string itemsOnPage = "12", string searchString = null, string order = "asc")
         {
             try
             {
-                ////TODO: searchString cocktails
-                //var role = this.User.FindFirstValue(ClaimTypes.Role);
-                //var count = await this._service.CountAll(role);
+                var access = false;
+                if (HttpContext.User.IsInRole("Magician"))
+                {
+                    access = true;
+                }
 
-                var cocktails = await this._service.GetAllAsync(page, itemsOnPage, searchString);
+                var cocktails = await this._service.GetAllAsync(page, itemsOnPage, searchString, order, access);
                 ViewBag.Count = cocktails.Count();
                 ViewBag.CurrentPage = int.Parse(page);
                 ViewBag.ItemsOnPage = int.Parse(itemsOnPage);
@@ -120,14 +122,6 @@ namespace BarCrawlers.Controllers
                 var cocktailDTO = this._mapper.MapViewToDTO(cocktailView);
                 var cocktail = await this._service.CreateAsync(cocktailDTO);
 
-                //foreach (var item in cocktailView.Ingredients)
-                //{
-                //    //TODO: Parts of ingredient in Cocktail:
-                //    if (!await this._service.AddIngredientsToCocktail(item.IngredientId, cocktail.Id, item.Parts)) //item.IngredientId, cocktail.Id, item.Parts
-                //    {
-                //        return Error();
-                //    }
-                //}
 
                 return RedirectToAction("Index");
                 //}
