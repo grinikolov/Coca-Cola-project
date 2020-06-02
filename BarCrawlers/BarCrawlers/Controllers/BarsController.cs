@@ -211,8 +211,8 @@ namespace BarCrawlers.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Rate(Guid barId, Guid userId, [Bind("Rating")] int rating)
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> Rate(Guid barId, Guid userId, int rating)
         {
             if (barId == null || userId == null)
             {
@@ -223,7 +223,7 @@ namespace BarCrawlers.Controllers
             {
                 await _service.RateBarAsync(barId, userId, rating);
                 return RedirectToAction(nameof(Details), new { id = barId });
-        }
+            }
             catch (Exception)
             {
                 return Error();
