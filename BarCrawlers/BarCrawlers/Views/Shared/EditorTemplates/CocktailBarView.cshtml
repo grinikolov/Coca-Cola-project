@@ -1,14 +1,24 @@
 ﻿
 @model BarCrawlers.Models.CocktailBarView
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-8">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group">
             @*<label asp-for="CocktailId" class="control-label">Cocktail</label>*@
-            <select asp-for="CocktailId" asp-items="ViewBag.Cocktails" class="form-control">
-                <option selected>Choose a cocktail:</option>
-            </select>
-
+            @if (Model.Remove)
+            {
+                <input type="hidden" asp-for="Remove" asp-item=@Model.Remove>
+                <select asp-for="CocktailId" asp-items="ViewBag.CocktailsToRemove" class="form-control">
+                    <option selected>Choose a cocktail:</option>
+                </select>
+            }
+            else
+            {
+                <input type="hidden" asp-for="Remove" asp-item=@Model.Remove>
+                <select asp-for="CocktailId" asp-items="ViewBag.Cocktails" class="form-control">
+                    <option selected>Choose a cocktail:</option>
+                </select>
+            }
             <span asp-validation-for="CocktailId" class="text-danger"></span>
         </div>
     </div>

@@ -23,6 +23,7 @@ namespace BarCrawlers.Controllers
         private readonly ICocktailViewMapper _cocktailMapper;
         private readonly ICocktailsService _cocktailService;
         private static IEnumerable<CocktailDTO> _cocktails;
+        private static IEnumerable<CocktailDTO> _cocktailsToRemove;
 
         public BarsController(IBarsService service, IBarViewMapper mapper, ICocktailViewMapper cocktailMapper, ICocktailsService cocktailService)
         {
@@ -36,6 +37,12 @@ namespace BarCrawlers.Controllers
         {
             get => _cocktails;
             set => _cocktails = value;
+        }
+
+        private IEnumerable<CocktailDTO> CocktailsToRemove
+        {
+            get => _cocktailsToRemove;
+            set => _cocktailsToRemove = value;
         }
 
         // GET: Bars
@@ -136,8 +143,10 @@ namespace BarCrawlers.Controllers
                 return NotFound();
             }
 
+            CocktailsToRemove = await _service.GetCocktailsAsync(id);
             Cocktails = await _cocktailService.GetAllAsync();
-            ViewData["Cocktails"] = Cocktails.Select(c => new SelectListItem(c.Name, c.Id.ToString()));
+            
+            
             return View(_mapper.MapDTOToView(bar));
         }
 
@@ -258,12 +267,24 @@ namespace BarCrawlers.Controllers
         [HttpPost]
         //[ValidateAntiForgeryToken]
         //[Authorize(Roles = "Magician")]
-        public async Task<ActionResult> AddCocktailToBar([Bind("Cocktails")] BarViewModel barVM)//[Bind("Ingredients")] 
+        public ActionResult AddCocktailToBar([Bind("Cocktails")] BarViewModel barVM)//[Bind("Ingredients")] 
         {
             //var ingredients = await this._ingredientsService.GetAllAsync();
+            //ViewData["Cocktails"] = Cocktails.Select(c => new SelectListItem(c.Name, c.Id.ToString()));
             ViewData["Cocktails"] = Cocktails.Select(c => new SelectListItem(c.Name, c.Id.ToString()));
-
+            ViewData["CocktailsToRemove"] = CocktailsToRemove.Select(c => new SelectListItem(c.Name, c.Id.ToString()));
             barVM.Cocktails.Add(new CocktailBarView());
+            return PartialView("BarCocktails", barVM);
+        }
+
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Magician")]
+        public ActionResult RemoveCocktailFromBar([Bind("Cocktails")] BarViewModel barVM)//[Bind("Ingredients")] 
+        {
+            ViewData["CocktailsToRemove"] = CocktailsToRemove.Select(c => new SelectListItem(c.Name, c.Id.ToString()));
+            ViewData["Cocktails"] = Cocktails.Select(c => new SelectListItem(c.Name, c.Id.ToString()));
+            barVM.Cocktails.Add(new CocktailBarView() { Remove = true});
             return PartialView("BarCocktails", barVM);
         }
 

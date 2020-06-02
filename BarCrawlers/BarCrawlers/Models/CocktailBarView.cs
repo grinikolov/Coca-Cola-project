@@ -11,5 +11,7 @@ namespace BarCrawlers.Models
         public Guid BarId { get; set; }
 
         public string BarName { get; set; }
+
+        public bool Remove { get; set; }
     }
 }

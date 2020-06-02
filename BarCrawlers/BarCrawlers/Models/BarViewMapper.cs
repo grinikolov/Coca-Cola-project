@@ -77,7 +77,9 @@ namespace BarCrawlers.Models
                         BarId = c.BarId,
                         BarName = c.BarName,
                         CocktailId = c.CocktailId,
-                        CocktailName = c.CocktailName
+                        CocktailName = c.CocktailName,
+                        Remove = c.Remove
+                        
                     }).ToList()
                 };
             }

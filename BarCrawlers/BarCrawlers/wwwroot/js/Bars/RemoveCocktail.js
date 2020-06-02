@@ -2,15 +2,15 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
-$("#btnAdd").on('click', function () {
+$("#btnRemove").on('click', function () {
     $.ajax({
         async: true,
-        data: $('#form').serialize(),
+        data: $('#form_edit').serialize(),
         type: "POST",
-        url: '/Cocktails/AddCocktailIngredient',
+        url: '/Bars/RemoveCocktailFromBar',
         success: function (partialView) {
             console.log("partialView: " + partialView);
-            $('#CocktailIngredientsContainer').html(partialView);
+            $('#BarCocktailsContainer').html(partialView);
         }
     });
 });
