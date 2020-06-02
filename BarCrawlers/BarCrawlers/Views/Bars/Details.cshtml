@@ -11,7 +11,7 @@
     ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var currentUser = await UserManager.GetUserAsync(User);
-    var userId = currentUser.Id;
+    //var userId = currentUser.Id;
 }
 
 
@@ -31,39 +31,39 @@
                 </a>
             }
             @*<div>
-                <h3>Rating: @Model.Rating</h3>
-                <h5>@Model.Rating /5 (@Model.TimesRated rates)</h5>
-                @if (User.Identity.IsAuthenticated)
-                {
-                    var user = await UserManager.GetUserAsync(User);
-                    //var userId = user.Id;
-                    <form asp-controller="Bars" asp-action="Rate" asp-route-cocktailId="@Model.Id" asp-route-userId="@userId">
-                        <p>
-                            <input type="number" min=1 max=5 class="form-control mb-2 mr-sm-2" placeholder="rating" name="rating">
-                            <input type="submit" value="Rate" class="btn btn-primary" />
-                        </p>
-                    </form>
-                }
-            </div>*@
+                    <h3>Rating: @Model.Rating</h3>
+                    <h5>@Model.Rating /5 (@Model.TimesRated rates)</h5>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        var user = await UserManager.GetUserAsync(User);
+                        //var userId = user.Id;
+                        <form asp-controller="Bars" asp-action="Rate" asp-route-cocktailId="@Model.Id" asp-route-userId="@userId">
+                            <p>
+                                <input type="number" min=1 max=5 class="form-control mb-2 mr-sm-2" placeholder="rating" name="rating">
+                                <input type="submit" value="Rate" class="btn btn-primary" />
+                            </p>
+                        </form>
+                    }
+                </div>*@
             @*<div class="rating-box">*@
-            @if (User.Identity.IsAuthenticated)
-            {
-                <p>
-                    <div class="rating-box">
-                        <h3>Rating: @Model.Rating (@Model.TimesRated rates)</h3>
-                        <div class="ratings">
-                            <span class="fa fa-star-o fa-2x"></span>
-                            <span class="fa fa-star-o fa-2x"></span>
-                            <span class="fa fa-star-o fa-2x"></span>
-                            <span class="fa fa-star-o fa-2x"></span>
-                            <span class="fa fa-star-o fa-2x"></span>
-                        </div>
-                        <input type="hidden" id="rating-value">
+            @*@if (User.Identity.IsAuthenticated)
+                {*@
+            <p>
+                <div class="rating-box">
+                    <h3>Rating: @Model.Rating (@Model.TimesRated rates)</h3>
+                    <div class="ratings">
+                        <span class="fa fa-star-o fa-2x"></span>
+                        <span class="fa fa-star-o fa-2x"></span>
+                        <span class="fa fa-star-o fa-2x"></span>
+                        <span class="fa fa-star-o fa-2x"></span>
+                        <span class="fa fa-star-o fa-2x"></span>
                     </div>
-                </p>
-            }
-                @*</div>*@
-            </div>
+                    <input type="hidden" id="rating-value">
+                </div>
+            </p>
+            @*}*@
+            @*</div>*@
+        </div>
 
     </div>
     <div class="col-md-6 col-sm-6">
@@ -116,6 +116,15 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     @if (User.Identity.IsAuthenticated)
     {
-        <script src="~/js/site.js" id="vars" data-barId="@Model.Id" data-userId="@userId"></script>
+        <script src="~/js/site.js" id="vars"
+                data-id="@Model.Id"
+                data-userId="@currentUser.Id"
+                data-record="@Model.Rating"
+                data-url="/Bars/Rate"></script>
+    }
+    else
+    {
+        <script src="~/js/colorrating.js" id="vars"
+            data-record="@Model.Rating"></script>
     }
 }

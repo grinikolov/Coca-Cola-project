@@ -212,17 +212,17 @@ namespace BarCrawlers.Controllers
 
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Rate(Guid barId, Guid userId, int rating)
+        public async Task<IActionResult> Rate(Guid id, Guid userId, int rating)
         {
-            if (barId == null || userId == null)
+            if (id == null || userId == null)
             {
                 return NotFound();
             }
 
             try
             {
-                await _service.RateBarAsync(barId, userId, rating);
-                return RedirectToAction(nameof(Details), new { id = barId });
+                await _service.RateBarAsync(id, userId, rating);
+                return RedirectToAction(nameof(Details), new { id = id });
             }
             catch (Exception)
             {
