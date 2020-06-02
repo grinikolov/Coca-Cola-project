@@ -36,11 +36,6 @@
                 {
                     var user = await UserManager.GetUserAsync(User);
                     var userId = user.Id;
-
-                    @*<form asp-controller="Bars" asp-action="Rate" asp-route-barId=@Model.Id asp-route-userId=@currentUser.Id method="post">
-                        <input asp-for="Rating" type="text">
-                        <input type="submit" value="Rate" class="btn btn-primary" />
-                    </form>*@
                     <form asp-controller="Bars" asp-action="Rate" asp-route-cocktailId="@Model.Id" asp-route-userId="@userId">
                         <p>
                             <input type="number" min=1 max=5 class="form-control mb-2 mr-sm-2" placeholder="rating" name="rating">
@@ -77,39 +72,11 @@
             </div>
 
         }
-        @*<h3>How to mix:</h3>
-        <div itemprop="recipeInstructions">
-            <p>
-                @Model.
-            </p>
-
-        </div>*@
     </div>
 
 </div>
 
-@*<ul>
-    @foreach (var item in Model.Cocktails)
-    {
-        <li itemprop="ingredients">
-            <h4>
-                @item.CocktailName,
-            </h4>
-        </li>
-    }
-</ul>*@
-
-
-
-
-
-
-
-
-
-
-
-<h1>Details</h1>
+@*<h1>Details</h1>
 
 <div>
     <h4>Bar</h4>
@@ -124,10 +91,6 @@
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Rating)
         </dt>
-        @*<dt class="col-sm-2">
-                <input asp-for="Rating">
-                <input type="submit" value="Rate" class="btn btn-primary" />
-            </dt>*@
         <dd class="col-sm-1">
             @Html.DisplayFor(model => model.Rating)
         </dd>
@@ -135,16 +98,11 @@
             @if (User.Identity.IsAuthenticated)
             {
                 <form asp-action="Rate" asp-route-Id=@Model.Id asp-route-userId=@currentUser.Id method="post">
-                    @*<input type="hidden" asp-for="barId" />
-                        <input type="hidden" asp-for="UserId" />*@
                     <input asp-for="Rating" type="text">
                     <input type="submit" value="Rate" class="btn btn-primary" />
                 </form>
 
             }
-            @*<input asp-for="Rating" class="col-sm-1">*@
-            @*<>*@
-            @*<a class="btn btn-primary" asp-action="Rate" asp-route-barId=@Model.Id asp-route-userId=@currentUser.Id >Rate</a>*@
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.TimesRated)
@@ -168,7 +126,7 @@
         </dd>
         @if (User.Identity.IsAuthenticated)
         {
-            @if (await _userManager.IsInRoleAsync(currentUser, "Magician"))
+            @if (await UserManager.IsInRoleAsync(currentUser, "Magician"))
             {
                 <dt class="col-sm-2">
                     @Html.DisplayNameFor(model => model.IsDeleted)
@@ -214,18 +172,12 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Country)
         </dd>
-        @*<dt class = "col-sm-2">
-                @Html.DisplayNameFor(model => model.Location)
-            </dt>
-            <dd class = "col-sm-10">
-                @Html.DisplayFor(model => model.Location.Id)
-            </dd>*@
     </dl>
-</div>
+</div>*@
 <div>
     @if (User.Identity.IsAuthenticated)
     {
-        @if (await _userManager.IsInRoleAsync(currentUser, "Magician"))
+        @if (await UserManager.IsInRoleAsync(currentUser, "Magician"))
         {
             <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
             <a class="btn btn-primary" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
