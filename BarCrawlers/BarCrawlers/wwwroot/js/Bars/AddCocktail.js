@@ -5,7 +5,7 @@
 $("#btnAdd").on('click', function () {
     $.ajax({
         async: true,
-        data: $('#form').serialize(),
+        data: $('#form_edit').serialize(),
         type: "POST",
         url: '/Bars/AddCocktailToBar',
         success: function (partialView) {
