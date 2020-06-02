@@ -7,25 +7,33 @@
 
 <h1>Index</h1>
 
-<form asp-controller="Bars" asp-action="Index">
+<div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+    <div class="input-group">
+        <form asp-controller="Bars" asp-action="Index">
+            <p>
+                Bar: <input type="text" name="SearchString">
+                <input type="submit" value="Search" class="btn btn-primary" />
+                @*</p>
+                    <p>*@
+            </p>
+        </form>
+    </div>
+    <div>
+        @*Sort:*@
+        <a class="btn btn-primary" asp-controller="Bars" asp-action="Index"
+           asp-route-page=@ViewBag.CurrentPage asp-route-searchstring=@ViewBag.SearchString
+           asp-route-order="asc">asc &gt</a>
+        <a class="btn btn-primary" asp-controller="Bars" asp-action="Index"
+           asp-route-page=@ViewBag.CurrentPage asp-route-searchstring=@ViewBag.SearchString
+           asp-route-order="desc">&lt desc</a>
+    </div>
+</div>
+@if (User.IsInRole("Magician"))
+{
     <p>
-        Bar: <input type="text" name="SearchString">
-        <input type="submit" value="Search" class="btn btn-primary" />
-    @*</p>
-    <p>*@
-        Order: 
-        <a class="btn btn-primary" asp-controller="Bars" asp-action="Index" 
-                    asp-route-page=@ViewBag.CurrentPage asp-route-searchstring=@ViewBag.SearchString
-                    asp-route-order="asc">Asc</a>
-        <a class="btn btn-primary" asp-controller="Bars" asp-action="Index" 
-                    asp-route-page=@ViewBag.CurrentPage asp-route-searchstring=@ViewBag.SearchString
-                    asp-route-order="desc">Desc</a>
+        <a asp-action="Create">Create New</a>
     </p>
-</form>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+}
 <table class="table table-hover table-sm">
     <thead>
         <tr>

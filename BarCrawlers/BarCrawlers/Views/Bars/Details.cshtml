@@ -4,13 +4,110 @@
 @using BarCrawlers.Data.DBModels
 
 
-@inject UserManager<User> _userManager
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
 
 @{
     ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    var currentUser = await _userManager.GetUserAsync(User);
+    var currentUser = await UserManager.GetUserAsync(User);
 }
+
+
+<div class=" row pt-3">
+    <div class="col-md4 col-sm-4">
+        <div class="figure-img">
+            @if (Model.ImageSrc != null)
+            {
+                <a href="#">
+                    <img class="img-responsive w-100" alt="@Model.Name" src="@Model.ImageSrc">
+                </a>
+            }
+            else
+            {
+                <a href="#">
+                    <img class="card-img-top  w-100" src="~/img/BarBackground.jpg">
+                </a>
+            }
+            <div>
+                <h3>Rating: @Model.Rating</h3>
+                <h5>@Model.Rating /5 (@Model.TimesRated rates)</h5>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    var user = await UserManager.GetUserAsync(User);
+                    var userId = user.Id;
+
+                    @*<form asp-controller="Bars" asp-action="Rate" asp-route-barId=@Model.Id asp-route-userId=@currentUser.Id method="post">
+                        <input asp-for="Rating" type="text">
+                        <input type="submit" value="Rate" class="btn btn-primary" />
+                    </form>*@
+                    <form asp-controller="Bars" asp-action="Rate" asp-route-cocktailId="@Model.Id" asp-route-userId="@userId">
+                        <p>
+                            <input type="number" min=1 max=5 class="form-control mb-2 mr-sm-2" placeholder="rating" name="rating">
+                            <input type="submit" value="Rate" class="btn btn-primary" />
+                        </p>
+                    </form>
+                }
+            </div>
+        </div>
+
+    </div>
+    <div class="col-md-6 col-sm-6">
+        <h1 itemprop="name">@Model.Name</h1>
+        <h3>Contact</h3>
+        <p>
+            @Model.Phone,  @Model.Email <br />
+            @Model.Address, @Model.Town, @Model.Country <br />
+        </p>
+        @if (@Model.Location != null)
+        {
+            var locationSrc= Model.Location.Src;
+            var LargeMapLink= Model.Location.LargeMapLink;
+            var DirMapLink = Model.Location.DirMapLink;
+
+            <div>
+                <iframe width="325" height="280" frameborder="0" src=@locationSrc
+                        scrolling="no">
+                </iframe>
+                <div style="white-space: nowrap; text-align: center; width: 325px; padding: 6px 0;">
+                    <a id="largeMapLink" target="_blank" href=@LargeMapLink>View Larger Map</a> &nbsp; |
+                    &nbsp;
+                    <a id="dirMapLink" target="_blank" href=@DirMapLink>Get Directions</a>
+                </div>
+            </div>
+
+        }
+        @*<h3>How to mix:</h3>
+        <div itemprop="recipeInstructions">
+            <p>
+                @Model.
+            </p>
+
+        </div>*@
+    </div>
+
+</div>
+
+@*<ul>
+    @foreach (var item in Model.Cocktails)
+    {
+        <li itemprop="ingredients">
+            <h4>
+                @item.CocktailName,
+            </h4>
+        </li>
+    }
+</ul>*@
+
+
+
+
+
+
+
+
+
+
 
 <h1>Details</h1>
 
