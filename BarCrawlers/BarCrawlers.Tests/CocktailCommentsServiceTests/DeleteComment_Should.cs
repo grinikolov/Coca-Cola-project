@@ -19,11 +19,11 @@ namespace BarCrawlers.Tests.CocktailCommentsServiceTests
     public class DeleteComment_Should
     {
         [TestMethod]
-        public async Task DeleteCocktailComment_Successfuly()
+        public async Task DeleteCocktailComment_Success()
         {
             var testCocktailName = "TestCocktailName";
             var testUserName = "TestUserName";
-            var options = Utils.GetOptions(nameof(DeleteCocktailComment_Successfuly));
+            var options = Utils.GetOptions(nameof(DeleteCocktailComment_Success));
 
             var testUser = new User()
             {
