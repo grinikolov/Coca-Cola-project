@@ -46,7 +46,7 @@ namespace BarCrawlers.Controllers
         }
 
         // GET: Bars
-        public async Task<IActionResult> Index(string page = "0", string itemsOnPage = "12", string searchString = null, string order = "asc")
+        public async Task<IActionResult> Index(string page = "0", string itemsOnPage = "8", string searchString = null, string order = "asc")
         {
             try
             {
