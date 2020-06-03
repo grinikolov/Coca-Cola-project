@@ -47,7 +47,6 @@ namespace BarCrawlers.Services
             }
             catch (Exception)
             {
-
                 return new CocktailUserCommentDTO();
             }
         }
