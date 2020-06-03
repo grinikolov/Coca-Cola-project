@@ -14,6 +14,6 @@ namespace BarCrawlers.Services.Contracts
         Task<CocktailDTO> CreateAsync(CocktailDTO cocktailDTO);
         Task<CocktailDTO> UpdateAsync(Guid id, CocktailDTO cocktailDTO);
         Task<bool> DeleteAsync(Guid id);
-        Task<int> CountAll(string role);
+        //Task<int> CountAll(string role);
     }
 }

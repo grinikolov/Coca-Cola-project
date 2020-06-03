@@ -128,45 +128,51 @@ namespace BarCrawlers.Services
         /// <returns>The created cocktail.</returns>
         public async Task<CocktailDTO> CreateAsync(CocktailDTO cocktailDTO)
         {
-            //TODO: Check if exists and recover
-            if (CocktailExistsByName(cocktailDTO.Name))
+            try
             {
-                var theCocktail = await this._context.Cocktails
-                    .FirstOrDefaultAsync(c => c.Name.Equals(cocktailDTO.Name, StringComparison.OrdinalIgnoreCase));
-                if (theCocktail.IsDeleted == true)
+                //TODO: Check if exists and recover
+                if (CocktailExistsByName(cocktailDTO.Name))
                 {
-                    theCocktail.IsDeleted = false;
-                }
-                return this._mapper.MapEntityToDTO(theCocktail);
-            }
-            else
-            {
-                var cocktail = this._mapper.MapDTOToEntity(cocktailDTO);
-                this._context.Cocktails.Add(cocktail);
-
-                await _context.SaveChangesAsync();
-
-                cocktail = await this._context.Cocktails.FirstOrDefaultAsync(c => c.Name == cocktailDTO.Name);
-                foreach (var item in cocktailDTO.Ingredients)
-                {
-                    bool isAdded = await AddIngredientsToCocktail(cocktail, item.IngredientId, item.Parts);
-                }
-
-
-                if (cocktail.Ingredients.Select(x => x.Ingredient).Any(i => i.IsAlcoholic))
-                {
-                    cocktail.IsAlcoholic = true;
+                    var theCocktail = await this._context.Cocktails
+                        .FirstOrDefaultAsync(c => c.Name.Equals(cocktailDTO.Name, StringComparison.OrdinalIgnoreCase));
+                    if (theCocktail.IsDeleted == true)
+                    {
+                        theCocktail.IsDeleted = false;
+                    }
+                    return this._mapper.MapEntityToDTO(theCocktail);
                 }
                 else
                 {
-                    cocktail.IsAlcoholic = false;
+                    var cocktail = this._mapper.MapDTOToEntity(cocktailDTO);
+                    this._context.Cocktails.Add(cocktail);
+
+                    await _context.SaveChangesAsync();
+
+                    cocktail = await this._context.Cocktails.FirstOrDefaultAsync(c => c.Name == cocktailDTO.Name);
+                    foreach (var item in cocktailDTO.Ingredients)
+                    {
+                        bool isAdded = await AddIngredientsToCocktail(cocktail, item.IngredientId, item.Parts);
+                    }
+
+                    if (cocktail.Ingredients.Select(x => x.Ingredient).Any(i => i.IsAlcoholic))
+                    {
+                        cocktail.IsAlcoholic = true;
+                    }
+                    else
+                    {
+                        cocktail.IsAlcoholic = false;
+                    }
+                    this._context.Update(cocktail);
+                    await this._context.SaveChangesAsync();
+
+                    cocktail = await this._context.Cocktails.FirstOrDefaultAsync(x => x.Name.ToLower() == cocktailDTO.Name.ToLower());
+
+                    return this._mapper.MapEntityToDTO(cocktail);
                 }
-                this._context.Update(cocktail);
-                await this._context.SaveChangesAsync();
-
-                cocktail = await this._context.Cocktails.FirstOrDefaultAsync(x => x.Name.ToLower() == cocktailDTO.Name.ToLower());
-
-                return this._mapper.MapEntityToDTO(cocktail);
+            }
+            catch
+            {
+                throw new OperationCanceledException("Fail to create cocktail");
             }
         }
 
@@ -200,22 +206,22 @@ namespace BarCrawlers.Services
                 return false;
             }
         }
-        /// <summary>
-        /// Gets the count of all the cocktails in the database, depending on the user role.
-        /// </summary>
-        /// <param name="role"></param>
-        /// <returns>Number of all entities, when user is admin; the number of listed cocktails only for normal user</returns>
-        public async Task<int> CountAll(string role)
-        {
-            var cocktails = this._context.Cocktails
-                .AsQueryable();
+        ///// <summary>
+        ///// Gets the count of all the cocktails in the database, depending on the user role.
+        ///// </summary>
+        ///// <param name="role"></param>
+        ///// <returns>Number of all entities, when user is admin; the number of listed cocktails only for normal user</returns>
+        //public async Task<int> CountAll(string role)
+        //{
+        //    var cocktails = this._context.Cocktails
+        //        .AsQueryable();
 
-            if (role == "Magician")
-            {
-                cocktails = cocktails.Where(x => x.IsDeleted == true);
-            }
-            return await cocktails.CountAsync();
-        }
+        //    if (role == "Magician")
+        //    {
+        //        cocktails = cocktails.Where(x => x.IsDeleted == true);
+        //    }
+        //    return await cocktails.CountAsync();
+        //}
         //public async Task<bool> AddIngredientsToCocktail(Guid ingredientID, Guid cocktailId)
         //{
         //    try
