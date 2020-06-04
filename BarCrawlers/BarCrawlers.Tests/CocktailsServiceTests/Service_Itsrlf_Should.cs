@@ -84,12 +84,12 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
             {
                 var sut = new CocktailsService(context, mockMapper.Object);
 
-                var result = sut.CocktailExistsByName("TestCocktailName");
+                var result = await sut.CocktailExistsByNameAsync("TestCocktailName");
                 Assert.IsTrue(result);
             }
         }
         [TestMethod]
-        public void CocktailExistsByName_False_whenNotExisting()
+        public async Task CocktailExistsByName_False_whenNotExisting()
         {
             var options = Utils.GetOptions(nameof(CocktailExistsByName_False_whenNotExisting));
             var mockMapper = new Mock<ICocktailMapper>();
@@ -99,7 +99,7 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
             {
                 var sut = new CocktailsService(context, mockMapper.Object);
 
-                var result = sut.CocktailExistsByName("TestName");
+                var result = await sut.CocktailExistsByNameAsync("TestName");
                 Assert.IsFalse(result);
             }
         }

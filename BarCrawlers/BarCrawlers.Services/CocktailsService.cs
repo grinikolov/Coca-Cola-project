@@ -131,7 +131,7 @@ namespace BarCrawlers.Services
             try
             {
                 //TODO: Check if exists and recover
-                if (CocktailExistsByName(cocktailDTO.Name))
+                if (await CocktailExistsByNameAsync(cocktailDTO.Name))
                 {
                     var theCocktail = await this._context.Cocktails
                         .FirstOrDefaultAsync(c => c.Name.Equals(cocktailDTO.Name));
@@ -299,9 +299,9 @@ namespace BarCrawlers.Services
         {
             return _context.Cocktails.Any(e => e.Id == id);
         }
-        public bool CocktailExistsByName(string name)
+        public async Task<bool> CocktailExistsByNameAsync(string name)
         {
-            return _context.Cocktails.Any(e => e.Name.Equals(name));
+            return await _context.Cocktails.AnyAsync(e => e.Name.Equals(name));
         }
 
     }
