@@ -134,7 +134,7 @@ namespace BarCrawlers.Services
                 if (CocktailExistsByName(cocktailDTO.Name))
                 {
                     var theCocktail = await this._context.Cocktails
-                        .FirstOrDefaultAsync(c => c.Name.Equals(cocktailDTO.Name, StringComparison.OrdinalIgnoreCase));
+                        .FirstOrDefaultAsync(c => c.Name.Equals(cocktailDTO.Name));
                     if (theCocktail.IsDeleted == true)
                     {
                         theCocktail.IsDeleted = false;
@@ -148,7 +148,7 @@ namespace BarCrawlers.Services
 
                     await _context.SaveChangesAsync();
 
-                    cocktail = await this._context.Cocktails.FirstOrDefaultAsync(c => c.Name == cocktailDTO.Name);
+                    cocktail = await this._context.Cocktails.FirstOrDefaultAsync(c => c.Name.Equals(cocktailDTO.Name));
                     foreach (var item in cocktailDTO.Ingredients)
                     {
                         bool isAdded = await AddIngredientsToCocktail(cocktail, item.IngredientId, item.Parts);
@@ -170,7 +170,7 @@ namespace BarCrawlers.Services
                     return this._mapper.MapEntityToDTO(cocktail);
                 }
             }
-            catch
+            catch (Exception e)
             {
                 throw new OperationCanceledException("Fail to create cocktail");
             }
@@ -301,7 +301,7 @@ namespace BarCrawlers.Services
         }
         public bool CocktailExistsByName(string name)
         {
-            return _context.Cocktails.Any(e => e.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+            return _context.Cocktails.Any(e => e.Name.Equals(name));
         }
 
     }
