@@ -27,8 +27,34 @@ namespace BarCrawlers.Models
                         IngredientName = i.IngredientName,
                         Parts = i.Parts
                     }).ToList(),
-                    Comments = dto.Comments,
+                    //Comments = dto.Comments,
                     //TODO: Mapping lists ?
+                    Bars = dto.Bars.Select(b => new CocktailBarView
+                    {
+                        BarId = b.BarId,
+                        BarName = b.BarName,
+                        CocktailId = b.CocktailId,
+                        CocktailName = b.CocktailName,
+                    }).ToList(),
+                    Comments = dto.Comments.Select(c => new CocktailUserCommentVM
+                    {
+                        CocktailId = c.CocktailId,
+                        CocktailName = c.CocktailName,
+                        UserId = c.UserId,
+                        UserName = c.UserName,
+                        Text = c.Text,
+                        IsFlagged = c.IsFlagged,
+                    }).ToList(),
+                    CocktailRatings = dto.CocktailRatings.Select(r => new UserCocktailRatingDTO
+                    {
+                        CocktailId = r.CocktailId,
+                        CocktailName = r.CocktailName,
+                        UserId = r.UserId,
+                        UserName = r.UserName,
+                        Rating = r.Rating,
+
+                    }).ToList(),
+                    //Instructions = dto.Instructions,
                 };
             }
             catch (Exception)

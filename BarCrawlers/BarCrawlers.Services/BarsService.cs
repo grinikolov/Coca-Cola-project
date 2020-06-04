@@ -198,6 +198,32 @@ namespace BarCrawlers.Services
 
                 await _context.SaveChangesAsync();
 
+                foreach (var item in barDTO.Cocktails)
+                {
+                    var dbItem = await _context.CocktailBars
+                        .Include(c => c.Bar)
+                        .Include(c => c.Cocktail)
+                        .FirstOrDefaultAsync(i => i.CocktailId == item.CocktailId && i.BarId == id);
+                    if (dbItem == null)
+                    {
+                        var cocktail = new CocktailBar();// { CocktailId = item.CocktailId, BarId = id };
+                        cocktail.Bar = await _context.Bars.FindAsync(id);
+                        cocktail.BarId = cocktail.Bar.Id;
+                        cocktail.Cocktail = await _context.Cocktails.FindAsync(item.CocktailId);
+                        cocktail.CocktailId = cocktail.Cocktail.Id;
+                        await _context.CocktailBars.AddAsync(cocktail);
+                    }
+                    else
+                    {
+                        if (item.Remove)
+                        {
+                            _context.CocktailBars.Remove(dbItem);
+                        }
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+
                 return barDTO;
             }
             catch (Exception)
@@ -271,16 +297,59 @@ namespace BarCrawlers.Services
         {
             try
             {
-                var cocktails = await _context.Cocktails
-                 .Include(c => c.Ingredients)
-                     .ThenInclude(c => c.Ingredient)
-                 .Include(c => c.Comments)
-                     .ThenInclude(c => c.User)
-                 .Include(c => c.Bars)
-                 .Where(c => c.Id == id)
-                 .ToListAsync();
+                //var joined = await _context.CocktailBars.Where(j => j.BarId == id).ToListAsync();
 
-                return cocktails.Select(x => this._cocktailMapper.MapEntityToDTO(x));
+                var cocktails = await _context.CocktailBars
+                    .Include(c => c.Cocktail)
+                        .ThenInclude(c => c.Ingredients)
+                            .ThenInclude(i => i.Ingredient)
+                    .Include(c => c.Cocktail)
+                        .ThenInclude(c => c.Comments)
+                            .ThenInclude(c => c.User)
+                    .Include(c => c.Cocktail)
+                        .ThenInclude(c => c.CocktailRatings)
+                            .ThenInclude(r => r.User)
+                    .Include(c => c.Bar)
+                        .ThenInclude(b => b.Location)
+                    .Where(c => c.BarId == id)
+                    .ToListAsync();
+
+                return cocktails.Select(x => this._cocktailMapper.MapEntityToDTO(x.Cocktail)).ToList();
+            }
+            catch (Exception)
+            {
+                return new List<CocktailDTO>();
+            }
+        }
+
+        /// <summary>
+        /// Get a list of cocktails offerred in a bar with a search constraint
+        /// </summary>
+        /// <param name="id">Bar Id to be checked</param>
+        /// <param name="page">Number of viewable page</param>
+        /// <param name="itemsOnPage">Number of cocktails to be shown</param>
+        /// <param name="search">Additional search constraints</param>
+        /// <returns>Collection of CocktailDTO</returns>
+        public async Task<IEnumerable<CocktailDTO>> GetCocktailsAsync(Guid id)
+        {
+            try
+            {
+                var cocktails = await _context.CocktailBars
+                    .Include(c => c.Cocktail)
+                        .ThenInclude(c => c.Ingredients)
+                            .ThenInclude(i => i.Ingredient)
+                    .Include(c => c.Cocktail)
+                        .ThenInclude(c => c.Comments)
+                            .ThenInclude(c => c.User)
+                    .Include(c => c.Cocktail)
+                        .ThenInclude(c => c.CocktailRatings)
+                            .ThenInclude(r => r.User)
+                    .Include(c => c.Bar)
+                        .ThenInclude(b => b.Location)
+                    .Where(c => c.BarId == id)
+                    .ToListAsync();
+
+                return cocktails.Select(x => this._cocktailMapper.MapEntityToDTO(x.Cocktail)).ToList();
             }
             catch (Exception)
             {
@@ -359,6 +428,34 @@ namespace BarCrawlers.Services
             }
 
             return barDTO;
+        }
+
+        /// <summary>
+        /// Gets all bars from the database.
+        /// </summary>
+        /// <returns>List of bars, DTOs</returns>
+        public async Task<IEnumerable<BarDTO>> GetBestBarsAsync()
+        {
+            try
+            {
+                var bars = await _context.Bars
+                                    .Include(b => b.Cocktails)
+                                    .Include(b => b.Comments)
+                                    .Include(b => b.Location)
+                                    .Include(b => b.BarRatings)
+                                    .Where(b => b.IsDeleted == false)
+                                    .OrderBy(b => b.TimesRated)
+                                    .ThenByDescending(b => b.Rating)
+                                    .Take(3).ToListAsync();
+
+                var barsDTO = bars.Select(b => _mapper.MapEntityToDTO(b));
+
+                return barsDTO;
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException("Failed to get list");
+            }
         }
     }
 }

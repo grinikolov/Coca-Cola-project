@@ -73,15 +73,15 @@ namespace BarCrawlers.Services.Mappers
                         Text = c.Text,
                         IsFlagged = c.IsFlagged,
                     }).ToList(),
-                    //CocktailRatings = entity.CocktailRatings.Select(r => new UserCocktailRatingDTO
-                    //{
-                    //    CocktailId = r.CocktailId,
-                    //    CocktailName = r.Cocktail.Name,
-                    //    UserId = r.UserId,
-                    //    UserName = r.User.UserName,
-                    //    Rating = r.Rating,
+                    CocktailRatings = entity.CocktailRatings.Select(r => new UserCocktailRatingDTO
+                    {
+                        CocktailId = r.CocktailId,
+                        CocktailName = r.Cocktail.Name,
+                        UserId = r.UserId,
+                        UserName = r.User.UserName,
+                        Rating = r.Rating,
 
-                    //}).ToList(),
+                    }).ToList(),
                     Instructions = entity.Instructions,
 
                 };

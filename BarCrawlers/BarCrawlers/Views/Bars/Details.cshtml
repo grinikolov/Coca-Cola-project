@@ -11,6 +11,7 @@
     ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var currentUser = await UserManager.GetUserAsync(User);
+    //var userId = currentUser.Id;
 }
 
 
@@ -29,26 +30,39 @@
                     <img class="card-img-top  w-100" src="~/img/BarBackground.jpg">
                 </a>
             }
-            <div>
-                <h3>Rating: @Model.Rating</h3>
-                <h5>@Model.Rating /5 (@Model.TimesRated rates)</h5>
-                @if (User.Identity.IsAuthenticated)
-                {
-                    var user = await UserManager.GetUserAsync(User);
-                    var userId = user.Id;
-
-                    @*<form asp-controller="Bars" asp-action="Rate" asp-route-barId=@Model.Id asp-route-userId=@currentUser.Id method="post">
-                        <input asp-for="Rating" type="text">
-                        <input type="submit" value="Rate" class="btn btn-primary" />
-                    </form>*@
-                    <form asp-controller="Bars" asp-action="Rate" asp-route-cocktailId="@Model.Id" asp-route-userId="@userId">
-                        <p>
-                            <input type="number" min=1 max=5 class="form-control mb-2 mr-sm-2" placeholder="rating" name="rating">
-                            <input type="submit" value="Rate" class="btn btn-primary" />
-                        </p>
-                    </form>
-                }
-            </div>
+            @*<div>
+                    <h3>Rating: @Model.Rating</h3>
+                    <h5>@Model.Rating /5 (@Model.TimesRated rates)</h5>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        var user = await UserManager.GetUserAsync(User);
+                        //var userId = user.Id;
+                        <form asp-controller="Bars" asp-action="Rate" asp-route-cocktailId="@Model.Id" asp-route-userId="@userId">
+                            <p>
+                                <input type="number" min=1 max=5 class="form-control mb-2 mr-sm-2" placeholder="rating" name="rating">
+                                <input type="submit" value="Rate" class="btn btn-primary" />
+                            </p>
+                        </form>
+                    }
+                </div>*@
+            @*<div class="rating-box">*@
+            @*@if (User.Identity.IsAuthenticated)
+                {*@
+            <p>
+                <div class="rating-box">
+                    <h3>Rating: @Model.Rating (@Model.TimesRated rates)</h3>
+                    <div class="ratings">
+                        <span class="fa fa-star-o fa-2x"></span>
+                        <span class="fa fa-star-o fa-2x"></span>
+                        <span class="fa fa-star-o fa-2x"></span>
+                        <span class="fa fa-star-o fa-2x"></span>
+                        <span class="fa fa-star-o fa-2x"></span>
+                    </div>
+                    <input type="hidden" id="rating-value">
+                </div>
+            </p>
+            @*}*@
+            @*</div>*@
         </div>
 
     </div>
@@ -61,8 +75,8 @@
         </p>
         @if (@Model.Location != null)
         {
-            var locationSrc= Model.Location.Src;
-            var LargeMapLink= Model.Location.LargeMapLink;
+            var locationSrc = Model.Location.Src;
+            var LargeMapLink = Model.Location.LargeMapLink;
             var DirMapLink = Model.Location.DirMapLink;
 
             <div>
@@ -77,151 +91,10 @@
             </div>
 
         }
-        @*<h3>How to mix:</h3>
-        <div itemprop="recipeInstructions">
-            <p>
-                @Model.
-            </p>
-
-        </div>*@
     </div>
 
 </div>
 
-@*<ul>
-    @foreach (var item in Model.Cocktails)
-    {
-        <li itemprop="ingredients">
-            <h4>
-                @item.CocktailName,
-            </h4>
-        </li>
-    }
-</ul>*@
-
-
-
-
-
-
-
-
-
-
-
-<h1>Details</h1>
-
-<div>
-    <h4>Bar</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Rating)
-        </dt>
-        @*<dt class="col-sm-2">
-                <input asp-for="Rating">
-                <input type="submit" value="Rate" class="btn btn-primary" />
-            </dt>*@
-        <dd class="col-sm-1">
-            @Html.DisplayFor(model => model.Rating)
-        </dd>
-        <dd class="col-sm-9">
-            @if (User.Identity.IsAuthenticated)
-            {
-                <form asp-action="Rate" asp-route-Id=@Model.Id asp-route-userId=@currentUser.Id method="post">
-                    @*<input type="hidden" asp-for="barId" />
-                        <input type="hidden" asp-for="UserId" />*@
-                    <input asp-for="Rating" type="text">
-                    <input type="submit" value="Rate" class="btn btn-primary" />
-                </form>
-
-            }
-            @*<input asp-for="Rating" class="col-sm-1">*@
-            @*<>*@
-            @*<a class="btn btn-primary" asp-action="Rate" asp-route-barId=@Model.Id asp-route-userId=@currentUser.Id >Rate</a>*@
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.TimesRated)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.TimesRated)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageSrc)
-        </dt>
-        <dd class="col-sm-10">
-            @if (string.IsNullOrEmpty(Model.ImageSrc))
-            {
-                <img class="img-fluid" src="~/img/BarSiluet.jpg" height="50" width="50">
-
-            }
-            else
-            {
-                <img src="@Model.ImageSrc" height="50" width="50">
-            }
-        </dd>
-        @if (User.Identity.IsAuthenticated)
-        {
-            @if (await UserManager.IsInRoleAsync(currentUser, "Magician"))
-            {
-                <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.IsDeleted)
-                </dt>
-                <dd class="col-sm-10">
-                    @Html.DisplayFor(model => model.IsDeleted)
-                </dd>
-            }
-        }
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Phone)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Phone)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Address)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Address)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.District)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.District)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Town)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Town)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Country)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Country)
-        </dd>
-        @*<dt class = "col-sm-2">
-                @Html.DisplayNameFor(model => model.Location)
-            </dt>
-            <dd class = "col-sm-10">
-                @Html.DisplayFor(model => model.Location.Id)
-            </dd>*@
-    </dl>
-</div>
 <div>
     @if (User.Identity.IsAuthenticated)
     {
@@ -230,11 +103,28 @@
             <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
             <a class="btn btn-primary" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
         }
-    }
-    <a class="btn btn-primary" asp-action="Index">Back to List</a>
+    }    
+  <a class="btn btn-primary" asp-action="Index">Back to List</a>
 </div>
 <br>
 <div>
     <a class="btn btn-primary" asp-controller="BarUserComments" asp-action="Index" asp-route-barId="@Model.Id">Comments</a>
     <a class="btn btn-primary" asp-controller="Bars" asp-action="LoadCocktails" asp-route-id="@Model.Id">Cocktails</a>
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @if (User.Identity.IsAuthenticated)
+    {
+        <script src="~/js/site.js" id="vars"
+                data-id="@Model.Id"
+                data-userId="@currentUser.Id"
+                data-record="@Model.Rating"
+                data-url="/Bars/Rate"></script>
+    }
+    else
+    {
+        <script src="~/js/colorrating.js" id="vars"
+            data-record="@Model.Rating"></script>
+    }
+}

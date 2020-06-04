@@ -11,6 +11,8 @@ using BarCrawlers.Services.Contracts;
 using BarCrawlers.Models.Contracts;
 using System.Diagnostics;
 using BarCrawlers.Models;
+using Microsoft.AspNetCore.Authorization;
+using BarCrawlers.Services.DTOs;
 
 namespace BarCrawlers.Controllers
 {
@@ -19,16 +21,32 @@ namespace BarCrawlers.Controllers
         private readonly IBarsService _service;
         private readonly IBarViewMapper _mapper;
         private readonly ICocktailViewMapper _cocktailMapper;
+        private readonly ICocktailsService _cocktailService;
+        private static IEnumerable<CocktailDTO> _cocktails;
+        private static IEnumerable<CocktailDTO> _cocktailsToRemove;
 
-        public BarsController(IBarsService service, IBarViewMapper mapper, ICocktailViewMapper cocktailMapper)
+        public BarsController(IBarsService service, IBarViewMapper mapper, ICocktailViewMapper cocktailMapper, ICocktailsService cocktailService)
         {
             _service = service ?? throw new ArgumentNullException("Bar service not found");
             _mapper = mapper ?? throw new ArgumentNullException("Mapper not found");
             _cocktailMapper = cocktailMapper ?? throw new ArgumentNullException("Mapper not found");
+            _cocktailService = cocktailService ?? throw new ArgumentNullException("Cocktail service not found");
+        }
+
+        private IEnumerable<CocktailDTO> Cocktails
+        {
+            get => _cocktails;
+            set => _cocktails = value;
+        }
+
+        private IEnumerable<CocktailDTO> CocktailsToRemove
+        {
+            get => _cocktailsToRemove;
+            set => _cocktailsToRemove = value;
         }
 
         // GET: Bars
-        public async Task<IActionResult> Index(string page = "0", string itemsOnPage = "12", string searchString = null, string order = "asc")
+        public async Task<IActionResult> Index(string page = "0", string itemsOnPage = "8", string searchString = null, string order = "asc")
         {
             try
             {
@@ -124,7 +142,11 @@ namespace BarCrawlers.Controllers
             {
                 return NotFound();
             }
-            //ViewData["LocationId"] = new SelectList(_context.Locations, "Id", "Id", bar.LocationId);
+
+            CocktailsToRemove = await _service.GetCocktailsAsync(id);
+            Cocktails = await _cocktailService.GetAllAsync();
+            
+            
             return View(_mapper.MapDTOToView(bar));
         }
 
@@ -133,7 +155,7 @@ namespace BarCrawlers.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Rating,TimesRated,ImageSrc,IsDeleted,Phone,Email,Address,District,Town,Country,LocationId")] BarViewModel bar)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Rating,TimesRated,ImageSrc,IsDeleted,Phone,Email,Address,District,Town,Country,LocationId,Cocktails")] BarViewModel bar)
         {
             if (id != bar.Id)
             {
@@ -189,19 +211,19 @@ namespace BarCrawlers.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Rate(Guid barId, Guid userId, [Bind("Rating")] int rating)
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> Rate(Guid id, Guid userId, int rating)
         {
-            if (barId == null || userId == null)
+            if (id == null || userId == null)
             {
                 return NotFound();
             }
 
             try
             {
-                await _service.RateBarAsync(barId, userId, rating);
-                return RedirectToAction(nameof(Details), new { id = barId });
-        }
+                await _service.RateBarAsync(id, userId, rating);
+                return RedirectToAction(nameof(Details), new { id = id });
+            }
             catch (Exception)
             {
                 return Error();
@@ -241,6 +263,30 @@ namespace BarCrawlers.Controllers
         //{
         //    return _context.Bars.Any(e => e.Id == id);
         //}
+
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Magician")]
+        public ActionResult AddCocktailToBar([Bind("Cocktails")] BarViewModel barVM)//[Bind("Ingredients")] 
+        {
+            //var ingredients = await this._ingredientsService.GetAllAsync();
+            //ViewData["Cocktails"] = Cocktails.Select(c => new SelectListItem(c.Name, c.Id.ToString()));
+            ViewData["Cocktails"] = Cocktails.Select(c => new SelectListItem(c.Name, c.Id.ToString()));
+            ViewData["CocktailsToRemove"] = CocktailsToRemove.Select(c => new SelectListItem(c.Name, c.Id.ToString()));
+            barVM.Cocktails.Add(new CocktailBarView());
+            return PartialView("BarCocktails", barVM);
+        }
+
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Magician")]
+        public ActionResult RemoveCocktailFromBar([Bind("Cocktails")] BarViewModel barVM)//[Bind("Ingredients")] 
+        {
+            ViewData["CocktailsToRemove"] = CocktailsToRemove.Select(c => new SelectListItem(c.Name, c.Id.ToString()));
+            ViewData["Cocktails"] = Cocktails.Select(c => new SelectListItem(c.Name, c.Id.ToString()));
+            barVM.Cocktails.Add(new CocktailBarView() { Remove = true});
+            return PartialView("BarCocktails", barVM);
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

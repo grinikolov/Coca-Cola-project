@@ -65,7 +65,6 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
                 Assert.IsFalse(result);
             }
         }
-
         [TestMethod]
         public async Task CocktailExistsByName_True_whenExisting()
         {
@@ -103,5 +102,6 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
                 Assert.IsFalse(result);
             }
         }
+
     }
 }

@@ -1,0 +1,61 @@
+﻿@model BarViewModel
+
+<div class="col-sm-3 col-lg-3 col-md-3" align="center">
+    <div class="margin-bar-card shadow">
+        <div class="caption">
+            <h3>
+                <a asp-controller="Bars" asp-action="Details" asp-route-id="@Model.Id">@Model.Name</a>
+            </h3>
+        </div>
+        @if (Model.ImageSrc != null)
+        {
+            <a asp-controller="Bars" asp-action="Details" asp-route-id="@Model.Id">
+                <h5 class="card-title">  <img class="card-img-top w-50" src="@Model.ImageSrc" alt="Card image cap"></h5>
+            </a>
+        }
+        else
+        {
+            <a asp-controller="Bars" asp-action="Details" asp-route-id="@Model.Id">
+                <img class="card-img-top  w-50" src="~/img/BarSiluet.jpg" alt="Card image cap">
+            </a>
+        }
+
+        <div class="rating-box">
+            <h3>Rating: @Model.Rating (@Model.TimesRated rates)</h3>
+            <div class="ratings">
+                @for (int i = 0; i < Convert.ToInt32(@Model.Rating); i++)
+                {
+                    <span class="fa fa-star fa-2x"></span>
+                }
+                @for (int i = Convert.ToInt32(@Model.Rating); i < 5; i++)
+                {
+                    <span class="fa fa-star-o fa-2x"></span>
+                }
+            </div>
+            <input type="hidden" id="rating-value">
+        </div>
+
+        @*<h3>@Model.Rating </h3>
+        <h5>@Model.Rating / 5 (@Model.TimesRated rates)</h5>*@
+        <p>
+            <div class="container">
+
+                <a class="btn btn-primary" asp-controller="BarUserComments" asp-action="Index" asp-route-cocktailId="@Model.Id">Comments</a>
+                <a class="btn btn-primary" asp-controller="Bars" asp-action="LoadCocktails" asp-route-id="@Model.Id">Served Cocktails</a>
+                @if (User.IsInRole("Magician"))
+                {
+                    <a asp-controller="Bars" asp-action="Edit" asp-route-Id="@Model.Id" class="btn btn-primary">Edit</a>
+
+                    @if (Model.IsDeleted == false)
+                    {
+                        <a asp-controller="Bars" asp-action="Delete" class="btn btn-danger" asp-route-Id="@Model.Id">Unlist</a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Bars" asp-action="Create" class="btn btn-success" asp-route-Id="@Model.Id">Show</a>
+                    }
+                }
+            </div>
+        </p>
+    </div>
+</div>

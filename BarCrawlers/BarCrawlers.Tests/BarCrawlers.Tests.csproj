@@ -21,8 +21,4 @@
     <ProjectReference Include="..\BarCrawlers.Services\BarCrawlers.Services.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="BarsServiceTests\" />
-  </ItemGroup>
-
 </Project>

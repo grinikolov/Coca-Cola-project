@@ -9,6 +9,9 @@ namespace BarCrawlers.Services.Contracts
     public interface ICocktailsService
     {
         Task<IEnumerable<CocktailDTO>> GetAllAsync(string page, string itemsOnPage);
+
+        Task<IEnumerable<CocktailDTO>> GetAllAsync();
+        //Task<IEnumerable<CocktailDTO>> GetAllAsync(string page, string itemsOnPage, string searchString);
         Task<IEnumerable<CocktailDTO>> GetAllAsync(string page, string itemsOnPage, string searchString, string order, bool access);
         Task<CocktailDTO> GetAsync(Guid id);
         Task<CocktailDTO> CreateAsync(CocktailDTO cocktailDTO);
