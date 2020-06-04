@@ -32,7 +32,7 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
             };
             var ingredient2 = new Ingredient()
             {
-                Id = Utils.MySampleGuid(),
+                Id = Utils.MySampleGuid2(),
                 Name = "SampleIngredientName",
                 IsAlcoholic = true,
             };

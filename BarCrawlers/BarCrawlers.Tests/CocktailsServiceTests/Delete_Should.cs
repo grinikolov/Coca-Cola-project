@@ -16,45 +16,53 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
     [TestClass]
     public class Delete_Should
     {
-        //[TestMethod]
-        //public async Task DeleteCocktail_ShouldReturnTrue_when_ValidAsync()
-        //{
+        [TestMethod]
+        public async Task DeleteCocktail_ShouldReturnTrue_when_ValidAsync()
+        {
 
-        //    //Arrange
-        //    var options = Utils.GetOptions(nameof(DeleteCocktail_ShouldReturnTrue_when_ValidAsync));
-        //    // TODO: Create some ingredients
-        //    var mockIngredient1 = new Mock<Ingredient>();
-        //    mockIngredient1.Setup(x=> x.Id).Returns(Utils.MySampleGuid2());
-            
-        //    var mockIngredient2 = new Mock<Ingredient>();
-        //    mockIngredient2.Setup(x => x.Id).Returns(Utils.MySampleGuid3());
+            //Arrange
+            var options = Utils.GetOptions(nameof(DeleteCocktail_ShouldReturnTrue_when_ValidAsync));
 
-        //    var entity = new Cocktail
-        //    {
-        //        Id = Utils.MySampleGuid(),
-        //        Name = "Mohito",
-                
-        //    };
-            
-        //    var mockMapper = new Mock<ICocktailMapper>();
+            var entity = new Cocktail
+            {
+                Id = Utils.MySampleGuid(),
+                Name = "Mohito",
+                IsDeleted = false,
+            };
 
-        //    using (var arrangeContext = new BCcontext(options))
-        //    {
+            var mockMapper = new Mock<ICocktailMapper>();
+            mockMapper.Setup(x => x.MapDTOToEntity(It.IsAny<CocktailDTO>()))
+                .Returns((CocktailDTO x) => new Cocktail()
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    TimesRated = x.TimesRated,
 
-        //        arrangeContext.Cocktails.Add(entity);
-        //        arrangeContext.SaveChanges();
-        //    }
+                });
+            mockMapper.Setup(x => x.MapEntityToDTO(It.IsAny<Cocktail>()))
+                .Returns((Cocktail x) => new CocktailDTO()
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    TimesRated = x.TimesRated,
+                });
 
-        //    //Act & Assert
-        //    using (var context = new BCcontext(options))
-        //    {
-        //        var sut = new CocktailsService(context, mockMapper.Object);
+            using (var arrangeContext = new BCcontext(options))
+            {
+                arrangeContext.Cocktails.Add(entity);
+                arrangeContext.SaveChanges();
+            }
 
-        //        var result = await sut.DeleteAsync(Utils.MySampleGuid());
+            //Act & Assert
+            using (var context = new BCcontext(options))
+            {
+                var sut = new CocktailsService(context, mockMapper.Object);
 
-        //        Assert.IsTrue(result);
-        //    }
-        //}
+                var result = await sut.DeleteAsync(Utils.MySampleGuid());
+
+                Assert.IsTrue(result);
+            }
+        }
 
 
 

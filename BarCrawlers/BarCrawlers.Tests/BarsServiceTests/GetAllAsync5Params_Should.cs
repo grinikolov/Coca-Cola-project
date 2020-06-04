@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 namespace BarCrawlers.Tests.BarsServiceTests
 {
     [TestClass]
-    public class GetAllAsync_Should
+    public class GetAllAsync5Params_Should
     {
         [TestMethod]
         public async Task ReturnAllRecords_IfAdmin()

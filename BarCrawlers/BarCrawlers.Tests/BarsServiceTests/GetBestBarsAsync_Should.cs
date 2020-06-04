@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BarCrawlers.Tests.BarUserCommentsService
+namespace BarCrawlers.Tests.BarsServiceTests
 {
-    class DeleteAsync_Should
+    class GetBestBarsAsync_Should
     {
     }
 }

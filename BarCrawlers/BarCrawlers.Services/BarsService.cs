@@ -429,5 +429,33 @@ namespace BarCrawlers.Services
 
             return barDTO;
         }
+
+        /// <summary>
+        /// Gets all bars from the database.
+        /// </summary>
+        /// <returns>List of bars, DTOs</returns>
+        public async Task<IEnumerable<BarDTO>> GetBestBarsAsync()
+        {
+            try
+            {
+                var bars = await _context.Bars
+                                    .Include(b => b.Cocktails)
+                                    .Include(b => b.Comments)
+                                    .Include(b => b.Location)
+                                    .Include(b => b.BarRatings)
+                                    .Where(b => b.IsDeleted == false)
+                                    .OrderBy(b => b.TimesRated)
+                                    .ThenByDescending(b => b.Rating)
+                                    .Take(3).ToListAsync();
+
+                var barsDTO = bars.Select(b => _mapper.MapEntityToDTO(b));
+
+                return barsDTO;
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException("Failed to get list");
+            }
+        }
     }
 }
