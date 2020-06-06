@@ -47,6 +47,8 @@ namespace BarCrawlers.Services
                     {
                         theBar.IsDeleted = false;
                     }
+                    _context.Bars.Update(theBar);
+                    await _context.SaveChangesAsync();
                     return this._mapper.MapEntityToDTO(theBar);
                 }
                 else

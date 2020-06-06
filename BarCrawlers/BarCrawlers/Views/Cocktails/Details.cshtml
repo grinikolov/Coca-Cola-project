@@ -28,22 +28,22 @@
                     <img class="card-img-top  w-100" src="~/img/defaultCocktailImg.jpg">
                 </a>
             }
-        <div>
-            <h3>Rating: @Model.Rating</h3>
-            <h5>@Model.Rating /5 (@Model.TimesRated rates)</h5>
-            @if (User.Identity.IsAuthenticated)
-            {
-                var user = await UserManager.GetUserAsync(User);
-                var userId = user.Id;
+            <div>
+                <h3>Rating: @Model.Rating</h3>
+                <h5>@Model.Rating /5 (@Model.TimesRated rates)</h5>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    var user = await UserManager.GetUserAsync(User);
+                    var userId = user.Id;
 
-                <form asp-controller="Cocktails" asp-action="Rate" asp-route-cocktailId="@Model.Id" asp-route-userId="@userId">
-                    <p>
-                        <input type="number" min=1 max=5 class="form-control mb-2 mr-sm-2" placeholder="rating" name="rating">
-                        <input type="submit" value="Rate" class="btn btn-primary" />
-                    </p>
-                </form>
-            }
-        </div>
+                    <form asp-controller="Cocktails" asp-action="Rate" asp-route-cocktailId="@Model.Id" asp-route-userId="@userId">
+                        <p>
+                            <input type="number" min=1 max=5 class="form-control mb-2 mr-sm-2" placeholder="rating" name="rating">
+                            <input type="submit" value="Rate" class="btn btn-primary" />
+                        </p>
+                    </form>
+                }
+            </div>
         </div>
 
     </div>
@@ -177,13 +177,17 @@
     {
         <a asp-controller="Cocktails" asp-action="Edit" asp-route-Id="@Model.Id" class="btn btn-primary">Edit</a>
 
-        @if (Model.IsDeleted == false)
+        @if (@Model.IsDeleted)
         {
-            <a asp-controller="Cocktails" asp-action="Delete" class="btn btn-danger" asp-route-Id="@Model.Id">Unlist</a>
+            <form id="form_recover">
+                <input type="hidden" asp-for="Id" value="@Model.Id">
+                <input class="btn btn-primary" type="button" id="btnRecover" value="Recover" />
+            </form>
         }
         else
         {
-            <a asp-controller="Cocktails" asp-action="Create" class="btn btn-success" asp-route-Id="@Model.Id">Show</a>
+            <a class="btn btn-primary" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
+            @*<a asp-controller="Cocktails" asp-action="Create" class="btn btn-success" asp-route-Id="@Model.Id">Show</a>*@
         }
     }
     <a class="btn btn-primary" asp-controller="CocktailComments" asp-action="Index" asp-route-cocktailId="@Model.Id">Comments</a>
@@ -210,3 +214,11 @@
         }
     </dl>
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @if (User.Identity.IsAuthenticated)
+    {
+        <script src="~/js/Cocktails/Recover.js"></script>
+    }
+}

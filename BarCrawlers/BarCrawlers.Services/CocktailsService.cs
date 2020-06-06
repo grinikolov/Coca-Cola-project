@@ -136,10 +136,10 @@ namespace BarCrawlers.Services
             {
                 return null;
             }
-            if (cocktail.IsDeleted == true)
-            {
-                throw new UnauthorizedAccessException("Not authorized to access this resource.");
-            }
+            //if (cocktail.IsDeleted == true)
+            //{
+            //    throw new UnauthorizedAccessException("Not authorized to access this resource.");
+            //}
 
             cocktail.Rating = Math.Round(cocktail.Rating, 2);
 
@@ -155,11 +155,13 @@ namespace BarCrawlers.Services
             if (await CocktailExistsByName(cocktailDTO.Name))
             {
                 var theCocktail = await this._context.Cocktails
-                    .FirstOrDefaultAsync(c => c.Name.Equals(cocktailDTO.Name, StringComparison.OrdinalIgnoreCase));
+                    .FirstOrDefaultAsync(c => c.Name.Equals(cocktailDTO.Name));
                 if (theCocktail.IsDeleted == true)
                 {
                     theCocktail.IsDeleted = false;
                 }
+                _context.Cocktails.Update(theCocktail);
+                await _context.SaveChangesAsync();
                 return this._mapper.MapEntityToDTO(theCocktail);
             }
             else

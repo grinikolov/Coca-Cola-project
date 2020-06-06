@@ -288,6 +288,35 @@ namespace BarCrawlers.Controllers
             return PartialView("BarCocktails", barVM);
         }
 
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        [Authorize(Roles = "Magician")]
+        public async Task<IActionResult> Recover([Bind("Id")] Guid id)
+        {
+            try
+            {
+                if (id == null)
+                {
+                    return NotFound();
+                }
+
+                var bar = await _service.GetAsync(id);
+                if (bar == null)
+                {
+                    return NotFound();
+                }
+
+                await _service.CreateAsync(bar);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Error");
+            }
+
+
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

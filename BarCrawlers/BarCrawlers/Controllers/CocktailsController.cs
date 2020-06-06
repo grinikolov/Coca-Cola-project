@@ -273,7 +273,34 @@ namespace BarCrawlers.Controllers
         //    }
         //}
 
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        [Authorize(Roles = "Magician")]
+        public async Task<IActionResult> Recover([Bind("Id")] Guid id)
+        {
+            try
+            {
+                if (id == null)
+                {
+                    return NotFound();
+                }
 
+                var cocktail = await _service.GetAsync(id);
+                if (cocktail == null)
+                {
+                    return NotFound();
+                }
+
+                await _service.CreateAsync(cocktail);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Error");
+            }
+
+
+        }
 
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
