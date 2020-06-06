@@ -28,6 +28,8 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
 
             var mockMapper = new Mock<ICocktailMapper>();
 
+            var mockBarMapper = new Mock<IBarMapper>();
+
             using (var arrangeContext = new BCcontext(options))
             {
                 await arrangeContext.Cocktails.AddAsync(cocktail);
@@ -37,7 +39,7 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
             //Act and Assert
             using (var context = new BCcontext(options))
             {
-                var sut = new CocktailsService(context, mockMapper.Object);
+                var sut = new CocktailsService(context, mockMapper.Object, mockBarMapper.Object);
 
                 var result = sut.CocktailExists(testCocktailId);
                 Assert.IsTrue(result);
@@ -52,6 +54,8 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
             var testCocktailId = Utils.MySampleGuid();
             var mockMapper = new Mock<ICocktailMapper>();
 
+            var mockBarMapper = new Mock<IBarMapper>();
+
             using (var arrangeContext = new BCcontext(options))
             {
             }
@@ -59,7 +63,7 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
             //Act and Assert
             using (var context = new BCcontext(options))
             {
-                var sut = new CocktailsService(context, mockMapper.Object);
+                var sut = new CocktailsService(context, mockMapper.Object, mockBarMapper.Object);
 
                 var result = sut.CocktailExists(testCocktailId);
                 Assert.IsFalse(result);
@@ -70,6 +74,8 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
         {
             var options = Utils.GetOptions(nameof(CocktailExistsByName_True_whenExisting));
             var mockMapper = new Mock<ICocktailMapper>();
+            var mockBarMapper = new Mock<IBarMapper>();
+
             var testCocktailName = "TestCocktailName";
             var cocktail = new Cocktail() { Name = testCocktailName };
             using (var arrangeContext = new BCcontext(options))
@@ -81,7 +87,7 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
             //Act and Assert
             using (var context = new BCcontext(options))
             {
-                var sut = new CocktailsService(context, mockMapper.Object);
+                var sut = new CocktailsService(context, mockMapper.Object, mockBarMapper.Object);
 
                 var result = await sut.CocktailExistsByNameAsync("TestCocktailName");
                 Assert.IsTrue(result);
@@ -92,11 +98,13 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
         {
             var options = Utils.GetOptions(nameof(CocktailExistsByName_False_whenNotExisting));
             var mockMapper = new Mock<ICocktailMapper>();
+            var mockBarMapper = new Mock<IBarMapper>();
+
 
             //Act and Assert
             using (var context = new BCcontext(options))
             {
-                var sut = new CocktailsService(context, mockMapper.Object);
+                var sut = new CocktailsService(context, mockMapper.Object,mockBarMapper.Object);
 
                 var result = await sut.CocktailExistsByNameAsync("TestName");
                 Assert.IsFalse(result);

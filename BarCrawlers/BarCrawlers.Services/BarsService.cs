@@ -161,6 +161,7 @@ namespace BarCrawlers.Services
                                     .Include(b => b.BarRatings)
                                     .FirstOrDefaultAsync(b => b.Id == id);
 
+                bar.Rating = Math.Round(bar.Rating, 2);
                 var barDTO = _mapper.MapEntityToDTO(bar);
 
                 return barDTO;

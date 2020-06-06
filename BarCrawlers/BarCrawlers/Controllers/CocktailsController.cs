@@ -21,20 +21,23 @@ namespace BarCrawlers.Controllers
     {
         private readonly ICocktailsService _service;
         private readonly ICocktailViewMapper _mapper;
+        private readonly IBarViewMapper _barMapper;
         private readonly IIngredientsService _ingredientsService;
         private readonly IUserInteractionsService _userInteractionsService;
         private static IEnumerable<IngredientDTO> _ingredients;
         public CocktailsController(ICocktailsService service,
              ICocktailViewMapper mapper,
              IIngredientsService ingredientsService,
-             IUserInteractionsService userInteractionsService)
+             IUserInteractionsService userInteractionsService,
+             IBarViewMapper barMapper)
         {
             this._service = service ?? throw new ArgumentNullException(nameof(service));
             this._mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             this._ingredientsService = ingredientsService ?? throw new ArgumentNullException(nameof(ingredientsService));
             this._userInteractionsService = userInteractionsService ?? throw new ArgumentNullException(nameof(userInteractionsService));
+            this._barMapper = barMapper ?? throw new ArgumentNullException(nameof(_barMapper));
         }
-        public  IEnumerable<IngredientDTO> Ingredients
+        public IEnumerable<IngredientDTO> Ingredients
         {
             get => _ingredients;
             private set => _ingredients = value;
@@ -98,7 +101,7 @@ namespace BarCrawlers.Controllers
         public async Task<IActionResult> Create()
         {
             //ViewData["Ingredient"] = new SelectList( await this._ingredientsService.GetAllAsync(), "ID", "Name");
-           
+
             Ingredients = await this._ingredientsService.GetAllAsync();
             ViewData["Ingredients"] = Ingredients.Select(x => new SelectListItem(x.Name, x.Id.ToString()));
 
@@ -162,7 +165,10 @@ namespace BarCrawlers.Controllers
                 {
                     return NotFound();
                 }
-                return View(cocktail);
+                Ingredients= Ingredients ?? await this._ingredientsService.GetAllAsync();
+                ViewData["Ingredients"] = Ingredients.Select(x => new SelectListItem(x.Name, x.Id.ToString()));
+
+                return View(this._mapper.MapDTOToView(cocktail));
             }
             catch (Exception)
             {
@@ -176,26 +182,16 @@ namespace BarCrawlers.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Magician")]
-        public async Task<IActionResult> Edit(Guid id, CocktailDTO cocktailDTO)
+        public async Task<IActionResult> Edit(Guid id, CocktailViewModel cocktailVM)
         {
-            if (id != cocktailDTO.Id)
+            if (id != cocktailVM.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    var cocktail = await this._service.UpdateAsync(id, cocktailDTO);
-                }
-                catch (Exception)
-                {
-                    return Error();
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(cocktailDTO);
+            var cocktail = await this._service.UpdateAsync(id, this._mapper.MapViewToDTO(cocktailVM));
+
+            return View(this._mapper.MapDTOToView(cocktail));
         }
 
         // GET: Cocktails/Delete/5
@@ -258,7 +254,34 @@ namespace BarCrawlers.Controllers
                 return NotFound(e.Message);
             }
         }
+        public async Task<IActionResult> LoadBars(Guid id, string page = "0", string itemsOnPage = "12", string searchString = null)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
+            try
+            {
+                var bars = await this._service.GetBarsAsync(id, page, itemsOnPage, searchString);
+
+                ViewBag.Count = bars.Count();
+                ViewBag.CurrentPage = int.Parse(page);
+                ViewBag.ItemsOnPage = int.Parse(itemsOnPage);
+                ViewBag.SearchString = searchString;
+                ViewBag.CurrentCocktail = id;
+
+                return View(bars.Select(b => this._barMapper.MapDTOToView(b)));
+            }
+            catch (Exception)
+            {
+                return Error();
+            }
+
+            //var result = await _service.GetCocktails();
+
+            //return View();
+        }
         //public async Task<IActionResult> Comment(Guid userId, Guid cocktailId, CocktailUserCommentVM commentVm)
         //{
         //    try

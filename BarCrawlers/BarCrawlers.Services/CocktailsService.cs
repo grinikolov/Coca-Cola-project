@@ -18,13 +18,15 @@ namespace BarCrawlers.Services
     {
         private readonly BCcontext _context;
         private readonly ICocktailMapper _mapper;
-
+        private readonly IBarMapper _barMapper;
 
         public CocktailsService(BCcontext context,
-            ICocktailMapper mapper)
+            ICocktailMapper mapper,
+            IBarMapper barMapper)
         {
             this._context = context ?? throw new ArgumentNullException(nameof(context));
             this._mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            this._barMapper = barMapper ?? throw new ArgumentNullException(nameof(barMapper));
         }
 
         /// <summary>
@@ -70,23 +72,23 @@ namespace BarCrawlers.Services
             {
                 var p = int.Parse(page);
                 var items = int.Parse(itemsOnPage);
-                    
-                 var cocktails = _context.Cocktails
-                .Include(c => c.Ingredients)
-                    .ThenInclude(c => c.Ingredient)
-                .Include(c => c.CocktailRatings)
-                    .ThenInclude(r => r.User)
-                .Include(c => c.Comments)
-                    .ThenInclude(c => c.User)
-                .Include(c => c.Bars)
-                    .ThenInclude(b => b.Bar)
-                .AsQueryable();
+
+                var cocktails = _context.Cocktails
+               .Include(c => c.Ingredients)
+                   .ThenInclude(c => c.Ingredient)
+               .Include(c => c.CocktailRatings)
+                   .ThenInclude(r => r.User)
+               .Include(c => c.Comments)
+                   .ThenInclude(c => c.User)
+               .Include(c => c.Bars)
+                   .ThenInclude(b => b.Bar)
+               .AsQueryable();
 
                 if (!access)
                 {
                     cocktails = cocktails.Where(b => b.IsDeleted == false);
                 }
-                
+
                 if (!string.IsNullOrEmpty(searchString))
                 {
                     cocktails = cocktails.Where(u => u.Name.Contains(searchString));
@@ -132,14 +134,14 @@ namespace BarCrawlers.Services
                     .ThenInclude(b => b.Bar)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
-            if (cocktail == null)
-            {
-                return null;
-            }
-            if (cocktail.IsDeleted == true)
-            {
-                throw new UnauthorizedAccessException("Not authorized to access this resource.");
-            }
+            //if (cocktail == null)
+            //{
+            //    return null;
+            //}
+            //if (cocktail.IsDeleted == true)
+            //{
+            //    throw new UnauthorizedAccessException("Not authorized to access this resource.");
+            //}
 
             cocktail.Rating = Math.Round(cocktail.Rating, 2);
 
@@ -174,14 +176,18 @@ namespace BarCrawlers.Services
                     await _context.SaveChangesAsync();
 
                     cocktail = await this._context.Cocktails
-                    .Include(c=> c.Ingredients)
+                    .Include(c => c.Ingredients)
                     .FirstOrDefaultAsync(c => c.Name.Equals(cocktailDTO.Name));
                     foreach (var item in cocktailDTO.Ingredients)
                     {
-                      if (item.IngredientId != Guid.Empty)
-                      {
-                          bool isAdded = await AddIngredientsToCocktail(cocktail, item.IngredientId, item.Parts);
-                      }                    
+                        if (item.IngredientId != Guid.Empty)
+                        {
+                            bool isAdded = await AddIngredientsToCocktail(cocktail, item.IngredientId, item.Parts);
+                            if (isAdded == false)
+                            {
+                                throw new OperationCanceledException("Adding cocktail ingredient failed.");
+                            }
+                        }
                     }
 
                     if (cocktail.Ingredients.Select(x => x.Ingredient).Any(i => i.IsAlcoholic))
@@ -278,31 +284,63 @@ namespace BarCrawlers.Services
         /// <returns>Cocktail DTO.model</returns>
         public async Task<CocktailDTO> UpdateAsync(Guid id, CocktailDTO cocktailDTO)
         {
-            var cocktail = await this._context.Cocktails.FindAsync(id);
-            if (cocktail == null) return null;
-
             try
             {
+                if (cocktailDTO == null)
+                {
+                    throw new ArgumentNullException("Cocktail DTO to update is null.");
+                }
+                var cocktail = await this._context.Cocktails.FindAsync(id);
+
                 this._context.Entry(cocktail).State = EntityState.Modified;
 
-                cocktail = this._mapper.MapDTOToEntity(cocktailDTO);
+                //cocktail = this._mapper.MapDTOToEntity(cocktailDTO);
 
-                await this._context.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                //TODO: think what to return and when?
-                if (!CocktailExists(id))
+                cocktail.Id = cocktailDTO.Id;
+                cocktail.Name = cocktailDTO.Name;
+                cocktail.Rating = cocktailDTO.Rating;
+                cocktail.TimesRated = cocktailDTO.TimesRated;
+                cocktail.ImageSrc = cocktailDTO.ImageSrc;
+                cocktail.IsDeleted = cocktailDTO.IsDeleted;
+                cocktail.IsAlcoholic = cocktailDTO.IsAlcoholic;
+                cocktail.Instructions = cocktailDTO.Instructions;
+
+                //remove ingredients
+                var previousIngredients = this._context.CocktailIngredients
+                    .Where(i => i.CocktailId == cocktail.Id)
+                    .AsQueryable();
+                this._context.CocktailIngredients.RemoveRange(previousIngredients);
+
+                //add new ingredients
+                foreach (var item in cocktailDTO.Ingredients)
                 {
-                    return null;
+                    if (item.IngredientId != Guid.Empty)
+                    {
+                        bool isAdded = await AddIngredientsToCocktail(cocktail, item.IngredientId, item.Parts);
+                        if (isAdded == false)
+                        {
+                            throw new OperationCanceledException("Adding cocktail ingredient failed.");
+                        }
+                    }
+                }
+
+                if (cocktail.Ingredients.Select(x => x.Ingredient).Any(i => i.IsAlcoholic))
+                {
+                    cocktail.IsAlcoholic = true;
                 }
                 else
                 {
-                    throw;
+                    cocktail.IsAlcoholic = false;
                 }
-            }
+                this._context.Update(cocktail);
+                await this._context.SaveChangesAsync();
 
-            return this._mapper.MapEntityToDTO(cocktail);
+                return this._mapper.MapEntityToDTO(cocktail);
+            }
+            catch (Exception e)
+            {
+                throw new ArgumentNullException();
+            }
         }
 
         /// <summary>
@@ -334,5 +372,31 @@ namespace BarCrawlers.Services
             return await _context.Cocktails.AnyAsync(e => e.Name.Equals(name));
         }
 
+        public async Task<IEnumerable<BarDTO>> GetBarsAsync(Guid id, string page, string itemsOnPage, string searchString)
+        {
+            try
+            {
+                //var joined = await _context.CocktailBars.Where(j => j.BarId == id).ToListAsync();
+
+                var bars = await _context.CocktailBars
+                    .Include(c => c.Bar)
+                        .ThenInclude(b => b.Comments)
+                            .ThenInclude(c => c.User)
+                    .Include(c => c.Bar)
+                        .ThenInclude(b => b.BarRatings)
+                            .ThenInclude(r => r.User)
+                    .Include(c => c.Bar)
+                        .ThenInclude(b => b.Location)
+                    .Where(c => c.CocktailId == id)
+                    .ToListAsync();
+
+                return bars.Select(x => this._barMapper.MapEntityToDTO(x.Bar)).ToList();
+            }
+            catch (Exception e)
+            {
+                return new List<BarDTO>();
+            }
+        }
     }
 }
+
