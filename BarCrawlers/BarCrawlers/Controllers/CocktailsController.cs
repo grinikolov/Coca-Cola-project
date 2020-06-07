@@ -65,7 +65,7 @@ namespace BarCrawlers.Controllers
             }
             catch (Exception)
             {
-                return Error();
+                return RedirectToAction("Error");
             }
         }
 
@@ -92,7 +92,7 @@ namespace BarCrawlers.Controllers
             }
             catch (Exception)
             {
-                return Error();
+                return RedirectToAction("Error");
             }
         }
 
@@ -132,7 +132,7 @@ namespace BarCrawlers.Controllers
             }
             catch (Exception)
             {
-                return Error();
+                return RedirectToAction("Error");
             }
         }
 
@@ -172,7 +172,7 @@ namespace BarCrawlers.Controllers
             }
             catch (Exception)
             {
-                return Error();
+                return RedirectToAction("Error");
             }
         }
 
@@ -215,7 +215,7 @@ namespace BarCrawlers.Controllers
             }
             catch (Exception)
             {
-                return Error();
+                return RedirectToAction("Error");
             }
         }
 
@@ -236,18 +236,17 @@ namespace BarCrawlers.Controllers
             }
         }
 
-        public async Task<IActionResult> Rate(Guid userId, Guid cocktailId, int rating)
+        public async Task<IActionResult> Rate( Guid id, Guid userId, int rating)
         {
-
-            if (rating <= 0 || cocktailId == default || userId == default)
+            if (rating <= 0 || id == default || userId == default)
             {
                 return BadRequest();
             }
 
             try
             {
-                var model = await this._userInteractionsService.RateCocktail(rating, cocktailId, userId);
-                return RedirectToAction("Details", "Cocktails", new { id = cocktailId });
+                var model = await this._userInteractionsService.RateCocktail(rating, id, userId);
+                return RedirectToAction("Details", "Cocktails", new { id = id });
             }
             catch (Exception e)
             {
@@ -263,7 +262,12 @@ namespace BarCrawlers.Controllers
 
             try
             {
-                var bars = await this._service.GetBarsAsync(id, page, itemsOnPage, searchString);
+                var access = false;
+                if (HttpContext.User.IsInRole("Magician"))
+                {
+                    access = true;
+                }
+                var bars = await this._service.GetBarsAsync(id, page, itemsOnPage, searchString, access);
 
                 ViewBag.Count = bars.Count();
                 ViewBag.CurrentPage = int.Parse(page);
@@ -275,7 +279,7 @@ namespace BarCrawlers.Controllers
             }
             catch (Exception)
             {
-                return Error();
+                return RedirectToAction("Error");
             }
 
             //var result = await _service.GetCocktails();

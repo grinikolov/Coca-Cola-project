@@ -31,9 +31,9 @@ namespace BarCrawlers.Controllers
                 var bars = await _service.GetBestBarsAsync();
                 return View(bars.Select(b => this._mapper.MapDTOToView(b)));
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                this._logger.LogError(e.Message);
                 return RedirectToAction("Error");
             }
 

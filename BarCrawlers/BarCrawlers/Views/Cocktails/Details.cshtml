@@ -88,7 +88,7 @@
 
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a class="btn btn-primary" asp-action="Index">Back to List</a>
 </div>
 <div>
     @if (User.IsInRole("Magician"))
@@ -129,13 +129,35 @@
     </dl>
 
     @*<dl class="row">
-        @foreach (var bar in Model.Bars)
-        {
-            <partial name="_BarPartial" model="@bar" />
-        
-        }
-    </dl>*@
+            @foreach (var bar in Model.Bars)
+            {
+                <partial name="_BarPartial" model="@bar" />
+
+            }
+        </dl>*@
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @if (User.Identity.IsAuthenticated)
+    {
+        <script src="~/js/site.js" id="vars"
+                data-id="@Model.Id"
+                data-userId="@currentUser.Id"
+                data-record="@Model.Rating"
+                data-url="/Cocktails/Rate"></script>
+    }
+    else
+    {
+        <script src="~/js/colorrating.js" id="vars"
+                data-record="@Model.Rating"></script>
+    }
+}
+
+
+
+
+
 
 @*
     <h1>Details</h1>

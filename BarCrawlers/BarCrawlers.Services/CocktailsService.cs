@@ -372,13 +372,11 @@ namespace BarCrawlers.Services
             return await _context.Cocktails.AnyAsync(e => e.Name.Equals(name));
         }
 
-        public async Task<IEnumerable<BarDTO>> GetBarsAsync(Guid id, string page, string itemsOnPage, string searchString)
+        public async Task<IEnumerable<BarDTO>> GetBarsAsync(Guid id, string page, string itemsOnPage, string searchString, bool access)
         {
             try
             {
-                //var joined = await _context.CocktailBars.Where(j => j.BarId == id).ToListAsync();
-
-                var bars = await _context.CocktailBars
+                var bars = await this._context.CocktailBars
                     .Include(c => c.Bar)
                         .ThenInclude(b => b.Comments)
                             .ThenInclude(c => c.User)
@@ -388,9 +386,18 @@ namespace BarCrawlers.Services
                     .Include(c => c.Bar)
                         .ThenInclude(b => b.Location)
                     .Where(c => c.CocktailId == id)
+                    .Select(c => c.Bar)
                     .ToListAsync();
 
-                return bars.Select(x => this._barMapper.MapEntityToDTO(x.Bar)).ToList();
+                if (!access)
+                {
+                    bars = bars
+                        .Where(b => b.IsDeleted == false).ToList();
+                };
+
+                //var barsList = await bars.ToListAsync();
+
+                return bars.Select(x => this._barMapper.MapEntityToDTO(x)).ToList();
             }
             catch (Exception e)
             {
