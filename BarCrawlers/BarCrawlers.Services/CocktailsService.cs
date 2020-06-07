@@ -4,6 +4,7 @@ using BarCrawlers.Services.Contracts;
 using BarCrawlers.Services.DTOs;
 using BarCrawlers.Services.Mappers.Contracts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,17 +17,20 @@ namespace BarCrawlers.Services
 {
     public class CocktailsService : ICocktailsService
     {
+        private readonly ILogger<CocktailsService> _logger;
         private readonly BCcontext _context;
         private readonly ICocktailMapper _mapper;
         private readonly IBarMapper _barMapper;
 
         public CocktailsService(BCcontext context,
             ICocktailMapper mapper,
-            IBarMapper barMapper)
+            IBarMapper barMapper,
+            ILogger<CocktailsService> logger)
         {
             this._context = context ?? throw new ArgumentNullException(nameof(context));
             this._mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             this._barMapper = barMapper ?? throw new ArgumentNullException(nameof(barMapper));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>
@@ -110,8 +114,9 @@ namespace BarCrawlers.Services
 
                 return result.Select(x => this._mapper.MapEntityToDTO(x)).ToList();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                this._logger.LogError(e.Message);
                 throw new ArgumentException("Failed to get list");
             }
         }
@@ -208,6 +213,7 @@ namespace BarCrawlers.Services
             }
             catch (Exception e)
             {
+                this._logger.LogError(e.Message);
                 throw new OperationCanceledException("Fail to create cocktail");
             }
         }
@@ -239,43 +245,11 @@ namespace BarCrawlers.Services
             }
             catch (Exception e)
             {
+                this._logger.LogError(e.Message);
                 return false;
             }
         }
-        ///// <summary>
-        ///// Gets the count of all the cocktails in the database, depending on the user role.
-        ///// </summary>
-        ///// <param name="role"></param>
-        ///// <returns>Number of all entities, when user is admin; the number of listed cocktails only for normal user</returns>
-        //public async Task<int> CountAll(string role)
-        //{
-        //    var cocktails = this._context.Cocktails
-        //        .AsQueryable();
 
-        //    if (role == "Magician")
-        //    {
-        //        cocktails = cocktails.Where(x => x.IsDeleted == true);
-        //    }
-        //    return await cocktails.CountAsync();
-        //}
-        //public async Task<bool> AddIngredientsToCocktail(Guid ingredientID, Guid cocktailId)
-        //{
-        //    try
-        //    {
-        //        var cocktailIngredient = new CocktailIngredient
-        //        {
-        //            IngredientId = ingredientID,
-        //            CocktailId = cocktailId,
-        //        };
-        //        this._context.CocktailIngredients.Add(cocktailIngredient);
-        //        await this._context.SaveChangesAsync();
-        //        return true;
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return false;
-        //    }
-        //}
         /// <summary>
         /// Updates existing cocktail
         /// </summary>
@@ -339,6 +313,7 @@ namespace BarCrawlers.Services
             }
             catch (Exception e)
             {
+                this._logger.LogError(e.Message);
                 throw new ArgumentNullException();
             }
         }
@@ -394,14 +369,43 @@ namespace BarCrawlers.Services
                     bars = bars
                         .Where(b => b.IsDeleted == false).ToList();
                 };
-                
+
                 //var barsList = await bars.ToListAsync();
 
                 return bars.Select(x => this._barMapper.MapEntityToDTO(x)).ToList();
             }
             catch (Exception e)
             {
+                this._logger.LogError(e.Message);
                 return new List<BarDTO>();
+            }
+        }
+
+        public async Task<IEnumerable<CocktailDTO>> GetBestCocktailsAsync()
+        {
+            try
+            {
+                var cocktails = await _context.Cocktails
+              .Include(c => c.Ingredients)
+                  .ThenInclude(c => c.Ingredient)
+              .Include(c => c.CocktailRatings)
+                  .ThenInclude(r => r.User)
+              .Include(c => c.Comments)
+                  .ThenInclude(c => c.User)
+              .Include(c => c.Bars)
+                  .ThenInclude(b => b.Bar)
+              .OrderBy(c => c.TimesRated)
+              .ThenByDescending(c => c.Rating)
+              .Take(4).ToListAsync();
+
+                var cocktailsDTO = cocktails.Select(x => this._mapper.MapEntityToDTO(x));
+
+                return cocktailsDTO;
+            }
+            catch (Exception e)
+            {
+                this._logger.LogError(e.Message);
+                throw new ArgumentException("Failed to get list");
             }
         }
     }

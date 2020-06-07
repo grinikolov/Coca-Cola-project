@@ -14,22 +14,37 @@ namespace BarCrawlers.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly IBarsService _service;
-        private readonly IBarViewMapper _mapper;
+        private readonly IBarsService _barsService;
+        private readonly IBarViewMapper _barMapper;
+        private readonly ICocktailsService _cocktailsService;
+        private readonly ICocktailViewMapper _cocktailMapper;
 
-        public HomeController(ILogger<HomeController> logger, IBarsService service, IBarViewMapper mapper)
+        public HomeController(ILogger<HomeController> logger
+            , IBarsService barsService
+            , ICocktailsService cocktailsService
+            , IBarViewMapper barMapper
+            , ICocktailViewMapper cocktailMapper)
         {
-            _logger = logger;
-            _service = service;
-            _mapper = mapper;
+            this._logger = logger;
+            this._barsService = barsService;
+            this._cocktailsService = cocktailsService;
+            this._barMapper = barMapper;
+            this._cocktailMapper = cocktailMapper;
         }
 
-        public async Task<IActionResult> IndexAsync()
+        public async Task<IActionResult> Index()
         {
             try
             {
-                var bars = await _service.GetBestBarsAsync();
-                return View(bars.Select(b => this._mapper.MapDTOToView(b)));
+                HomeIndexViewModel homeModel = new HomeIndexViewModel();
+
+                var bars = await this._barsService.GetBestBarsAsync();
+                homeModel.TopBars = bars.Select(b => this._barMapper.MapDTOToView(b));
+
+                var cocktails = await this._cocktailsService.GetBestCocktailsAsync();
+                homeModel.TopCocktails = cocktails.Select(c => this._cocktailMapper.MapDTOToView(c));
+
+                return View(homeModel);
             }
             catch (Exception e)
             {
