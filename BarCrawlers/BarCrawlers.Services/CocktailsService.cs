@@ -394,7 +394,7 @@ namespace BarCrawlers.Services
                     bars = bars
                         .Where(b => b.IsDeleted == false).ToList();
                 };
-
+                
                 //var barsList = await bars.ToListAsync();
 
                 return bars.Select(x => this._barMapper.MapEntityToDTO(x)).ToList();

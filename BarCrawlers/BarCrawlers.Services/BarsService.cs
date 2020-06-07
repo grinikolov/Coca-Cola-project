@@ -310,12 +310,22 @@ namespace BarCrawlers.Services
                     .Include(c => c.Cocktail)
                         .ThenInclude(c => c.CocktailRatings)
                             .ThenInclude(r => r.User)
+                    .Include(c => c.Cocktail)
+                        .ThenInclude(c => c.Bars)
+                            .ThenInclude(c=> c.Bar)
                     .Include(c => c.Bar)
                         .ThenInclude(b => b.Location)
                     .Where(c => c.BarId == id)
+                    .Select(c=> c.Cocktail)
                     .ToListAsync();
 
-                return cocktails.Select(x => this._cocktailMapper.MapEntityToDTO(x.Cocktail)).ToList();
+                if (!access)
+                {
+                    cocktails = cocktails
+                        .Where(b => b.IsDeleted == false).ToList();
+                };
+
+                return cocktails.Select(x => this._cocktailMapper.MapEntityToDTO(x)).ToList();
             }
             catch (Exception)
             {
