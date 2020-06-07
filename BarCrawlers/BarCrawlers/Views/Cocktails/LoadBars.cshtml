@@ -15,12 +15,21 @@
 
 <h1>Bars</h1>
 
-<form asp-controller="Cocktails" asp-action="Index">
+<form asp-controller="Cocktails" asp-action="LoadBars">
     <p>
         Bar: <input type="text" name="SearchString">
         <input type="submit" value="Search" class="btn btn-primary" />
     </p>
 </form>
+<div class="row">
+    @foreach (var bar in Model)
+    {
+        <partial name="_BarPartial" model="@bar" />
+    }
+</div>
+
+
+
 
 
 <table class="table table-hover table-sm">
