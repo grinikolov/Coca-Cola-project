@@ -4,7 +4,6 @@
 ### -- A18 Team Carlsberg --
 
 ### Access the [Trello board here](https://trello.com/b/7qJ5V83k/coca-cola-project "Trello board").
-
-###Models:
+  
 
 
