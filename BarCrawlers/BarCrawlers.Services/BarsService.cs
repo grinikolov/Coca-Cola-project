@@ -294,7 +294,7 @@ namespace BarCrawlers.Services
         /// <param name="itemsOnPage">Number of cocktails to be shown</param>
         /// <param name="search">Additional search constraints</param>
         /// <returns>Collection of CocktailDTO</returns>
-        public async Task<IEnumerable<CocktailDTO>> GetCocktailsAsync(Guid id, string page, string itemsOnPage, string search)
+        public async Task<IEnumerable<CocktailDTO>> GetCocktailsAsync(Guid id, string page, string itemsOnPage, string search, bool access)
         {
             try
             {

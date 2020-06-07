@@ -245,7 +245,12 @@ namespace BarCrawlers.Controllers
 
             try
             {
-                var bars = await this._service.GetCocktailsAsync(id, page, itemsOnPage, searchString);
+                var access = false;
+                if (HttpContext.User.IsInRole("Magician"))
+                {
+                    access = true;
+                }
+                var bars = await this._service.GetCocktailsAsync(id, page, itemsOnPage, searchString, access);
 
                 ViewBag.Count = bars.Count();
                 ViewBag.CurrentPage = int.Parse(page);
