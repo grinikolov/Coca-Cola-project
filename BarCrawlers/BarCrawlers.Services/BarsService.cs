@@ -343,10 +343,9 @@ namespace BarCrawlers.Services
                 var p = int.Parse(page);
                 var item = int.Parse(itemsOnPage);
 
-                var result = cocktails.Select(x => x.Cocktail).ToList();
-                result = result.Skip(p * item).Take(item).ToList();
+                cocktails = cocktails.Skip(p * item).Take(item).ToList();
 
-                return result.Select(x => this._cocktailMapper.MapEntityToDTO(x));
+                return cocktails.Select(x => this._cocktailMapper.MapEntityToDTO(x));
             }
             catch (Exception)
             {

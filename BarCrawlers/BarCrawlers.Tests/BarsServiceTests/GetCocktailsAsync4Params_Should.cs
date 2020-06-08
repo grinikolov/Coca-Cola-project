@@ -105,7 +105,7 @@ namespace BarCrawlers.Tests.BarsServiceTests
                     .ToListAsync();
                 
                 var dbBar = await context.Bars.FirstOrDefaultAsync();
-                var result = await sut.GetCocktailsAsync(dbBar.Id, "1","8", null);
+                var result = await sut.GetCocktailsAsync(dbBar.Id, "1","8", null, true);
 
                 Assert.AreEqual(result.Count(), dbResult.Count());
                 foreach (var item in dbResult)
@@ -198,7 +198,7 @@ namespace BarCrawlers.Tests.BarsServiceTests
                 var sut = new BarsService(context, mockMapper.Object, http.Object, coctailMapper.Object);
                 var dbBar = await context.Bars.FirstOrDefaultAsync();
 
-                await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await sut.GetCocktailsAsync(dbBar.Id, string.Empty, "8", null));
+                await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await sut.GetCocktailsAsync(dbBar.Id, string.Empty, "8", null, true));
             }
         }
     }
