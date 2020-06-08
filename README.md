@@ -102,7 +102,7 @@
 #Services
     Contracts - Folder contains interfeces implemented in the service classes.
     DTOs - Folder contains classes of intermidiary entity objects used for transfer of data from database to services and vice versa.
-    Mappers - Folder contains simple classes that transform database entity to DTO entity as well as the interfaces implemented in them.
+    Mappers - Folder contains simple classes that transform database entity to DTO entity as well as the interfaces implemented in them in all cases if conversion fails an empty object is returned.
         Contracts - Folder contains the interfaces.
     BarsService - Class dedicated to handling operations with bar entities. Implements IBarService.
         Fields - Private
@@ -253,4 +253,133 @@
             The table for cocktails is called from the database excluding deleted and ordering first by number of ratings and then descending by rating and 3 of them are taken.
             The result is transformed to collection of DTO and returned to caller.
             In case of exception the method throws new ArgumentException("Failed to get list").
-
+    IngredientsService - Class dedicated to handling operations with ingredient entities. Implements IIngredientsService.
+        Fields - Private
+        Constructor - Need 2 parameters of following types.
+            BCcontext - Database context.
+            IIngredientMapper - Object that can transform between Ingredient and IngredientDTO.
+        GetAllAsync - Public asynchronous method dealing with the extraction of set of data from the database. Returns IEnummarable<IngredientDTO>.
+            The Ingredients table is called as query from database including joining entities and materialized.
+            The collection is mapped to DTO and then returned to caller.
+        GetAllAsync - Public asynchronous method dealing with the extraction of set of data from the database. Requires 3 parameters: string, string, string and returns IEnummarable<IngredientDTO>.
+            The parameters for page and displayed data are parsed to integer.
+            The Ingredients table is called as query from database including joining entities.
+            If the search parameter has a value a condition for name is added. 
+            Skip and Take filters are applyied depending on the input parameters.
+            The collection is materialized.
+            New collection is created by mapping each entity to DTO and then returned to caller.
+         GetAsync - Public asynchronous method dealing with the extraction of concrete entity data from the database. Requres 1 parameter of type Guid, returns IngredientDTO.
+            The entity is called from database by id(Guid).
+            If the entity is "null" method returns "null".
+            The entity is transformed to DTO and returned to caller.
+        CreateAsync - Public asynchronous method dealing with the creation of Ingredient. Requires 1 parameter that is of type IngredientDTO, returns object IngredientDTO.
+            The input DTO is transformed to entity and it's list of cocktails is initialized empty. 
+            Object is added and saved.
+            The ingredient is called from database, transformed to DTO and returned to caller.
+        UpdateAsync - Public asynchronous method dealing with the change of already recorded data. Requires 2 parameters Guid and IngredientDTO, returns IngredientDTO.
+            The entity is called from database by id(Guid).
+            If value is "null" method returns "null".
+            The values for name and isachoholic are changed to those coming from the DTO parameter. The entity is updated and saved to database.
+            In case of exception the method checks if ingredient already exist and returns "null" if not. Otherwise throws new ArgumentException().
+            The entity is transformed to DTO and returned to caller.
+        DeleteAsync - Public asynchronous method dealing with the deletion of ingredient entity. Requres 1 parameter of type Guid, returns bool.
+            The entity is called from database by id(Guid).
+            The entity is checked for being "null"
+            If "null" the method returns false.
+            Entity is removed and database is saved.
+            Method returns "true". 
+        IngredientExists - Private method checking for existance of ingredient. Requres 1 parameter of type Guid, returns bool.
+            Returns the result of Any() method by id.
+        CountAll - Public method. Requres 1 parameter string, returns int.
+            Method is not implemented.
+    UsersService - Class dedicated to handling operations with user entities. Implements IUsersService.
+        Fields - Private
+        Constructor - Need 3 parameters of following types.
+            BCcontext - Database context.
+            IUserMapper - Object that can transform between Ingredient and IngredientDTO.
+            ICocktailCommentMapper - Object that can transform between CocktailComment and CocktailCommentDTO.
+        GetAllAsync - Public asynchronous method dealing with the extraction of set of data from the database. Requires 3 parameters: string, string and string, returns IEnummarable<UserDTO>.
+            The parameters for page and displayed data are parsed to integer.
+            The Bars table is called as query from database including related joining tables.
+            If the search parameter has a value a condition for name is added. 
+            Skip and Take filters are applyied depending on the input parameters.
+            The collection is materialized.
+            New collection is created by mapping each entity to DTO and the returned to caller.
+            In case of exception the method throws new ArgumentException("Fail to get list").
+        GetAsync - Public asynchronous method dealing with the extraction of concrete entity data from the database. Requres 1 parameter of type Guid, returns UserDTO.
+            The entity is called from database by id(Guid).
+            The entity is transformed to DTO and returned to caller.
+            In case of exception the method throws new ArgumentException("Fail to get item").
+        UpdateAsync - Public asynchronous method dealing with the lock of already recorded user. Requires 3 parameters Guid, UserDTO and UserManager<User>, returns UserDTO.
+            The entity is called from database by id(Guid).
+            Usermanager is used to lock out user.
+            Changes are saved to database.
+            The input UserDTO object is returned to caller.
+            In case of exception the method throws new ArgumentNullException("Failed to update").
+        UpdateAsync - Public asynchronous method dealing with the unlock of already recorded user. Requires 3 parameters Guid, UserDTO and UserManager<User>, returns UserDTO.
+            The entity is called from database by id(Guid).
+            Usermanager is used to unlock out user.
+            Changes are saved to database.
+            The input UserDTO object is returned to caller.
+            In case of exception the method throws new ArgumentNullException("Failed to update").
+    CocktailCommentsService - Class dedicated to handling operations with comments for cocktails entities. Implements ICocktailCommentsService.
+        Fields - Private
+        Constructor - Need 2 parameters of following types.
+            BCcontext - Database context.
+            ICocktailCommentMapper - Object that can transform between CocktailComment and CocktailCommentDTO.
+        CreateAsync - Public asynchronous method dealing with the creation of CocktailComment. Requires 1 parameter that is of type CocktailCommentDTO, returns object CocktailCommentDTO. 
+            The conbination of cocktail and user id is being checked if it is already recorded:
+            If recorded - empty object is returned.
+            If not recorded - the input DTO is transformed to database entity, then added to context and recorded in database. After the object is returned to caller.
+            In case of exception the method returns empty object.
+        CombinationExistAsync - Private asynchronous method checking for existance of id combination. Requires 2 parameters Guid and Guid, returns bool.
+            Returns the result of AnyAsync() method with the given id's.
+        DeleteAsync - Public asynchronous method dealing with the deletion of cocktailcomment entity. Requires 2 parameters Guid and Guid, returns bool.
+            The entity is called from database by id's(Guid).
+            Entity is removed and database is saved.
+            Method returns "true". 
+            In case of exception the method returns "false".
+        GetAllAsync - Public asynchronous method dealing with the extraction of set of data from the database for concrete cocktail. Requires 3 parameters: Guid string and string, returns IEnummarable<CocktailUserCommentDTO>.
+            The parameters for page and displayed data are parsed to integer.
+            The CocktailComments table is called as query from database including related joining tables.
+            The collection is materialized, mapped to DTO and the returned to caller.
+            In case of exception the method returns empty collection.
+        GetAsync - Public asynchronous method dealing with the extraction of concrete entity data from the database. Requres 2 parameters Guid and Guid, returns CocktailUserCommentDTO.
+            The entity is called from database by id's(Guid).
+            The entity is transformed to DTO and returned to caller.
+            In case of exception the method returns empty object.
+        UpdateAsync - Public asynchronous method dealing with the change of already recorded data. Requires 1 parameters CocktailUserCommentDTO, returns CocktailUserCommentDTO.
+            The entity is called from database by id's(Guid).
+            The values for text and isflagged are changed to those coming from the DTO parameter. The entity is updated and saved to database.
+            In case of exception the method returns empty object.
+    CocktailCommentsService - Class dedicated to handling operations with comments for bars entities. Implements IBarUserCommentsService.
+        Fields - Private
+        Constructor - Need 2 parameters of following types.
+            BCcontext - Database context.
+            IBarCommentMapper - Object that can transform between BarComment and BarCommentDTO.
+        CreateAsync - Public asynchronous method dealing with the creation of BarComment. Requires 1 parameter that is of type BarCommentDTO, returns object BarCommentDTO. 
+            The combination of bar and user id is being checked if it is already recorded:
+            If recorded - empty object is returned.
+            If not recorded - the input DTO is transformed to database entity, then added to context and recorded in database. After the object is returned to caller.
+            In case of exception the method returns empty object.
+        CombinationExistAsync - Private asynchronous method checking for existance of id combination. Requires 2 parameters Guid and Guid, returns bool.
+            Returns the result of AnyAsync() method with the given id's.
+        DeleteAsync - Public asynchronous method dealing with the deletion of barcomment entity. Requires 2 parameters Guid and Guid, returns bool.
+            The entity is called from database by id's(Guid).
+            Entity is removed and database is saved.
+            Method returns "true". 
+            In case of exception the method returns "false".
+        GetAllAsync - Public asynchronous method dealing with the extraction of set of data from the database for concrete cocktail. Requires 3 parameters: Guid string and string, returns IEnummarable<BarUserCommentDTO>.
+            The parameters for page and displayed data are parsed to integer.
+            The BarUserComment table is called as query from database including related joining tables.
+            The collection is materialized, mapped to DTO and the returned to caller.
+            In case of exception the method returns empty collection.
+        GetAsync - Public asynchronous method dealing with the extraction of concrete entity data from the database. Requres 2 parameters Guid and Guid, returns BarUserCommentDTO.
+            The entity is called from database by id's(Guid).
+            The entity is transformed to DTO and returned to caller.
+            In case of exception the method returns empty object.
+        UpdateAsync - Public asynchronous method dealing with the change of already recorded data. Requires 1 parameters BarUserCommentDTO, returns BarUserCommentDTO.
+            The entity is called from database by id's(Guid).
+            The values for text and isflagged are changed to those coming from the DTO parameter. The entity is updated and saved to database.
+            In case of exception the method returns empty object.
+        
