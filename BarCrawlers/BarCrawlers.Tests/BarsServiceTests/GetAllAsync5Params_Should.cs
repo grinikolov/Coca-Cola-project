@@ -18,10 +18,10 @@ namespace BarCrawlers.Tests.BarsServiceTests
     public class GetAllAsync5Params_Should
     {
         [TestMethod]
-        public async Task ReturnAllRecords_IfAdmin()
+        public async Task ReturnDeletedRecordsAlso_IfAdmin()
         {
             //Arrange
-            var options = Utils.GetOptions(nameof(ReturnAllRecords_IfAdmin));
+            var options = Utils.GetOptions(nameof(ReturnDeletedRecordsAlso_IfAdmin));
 
             var barList = new List<Bar>();
             for (int i = 1; i <= 20; i++)

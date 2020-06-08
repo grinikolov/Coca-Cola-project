@@ -60,7 +60,7 @@ namespace BarCrawlers.Services
             }
             catch (Exception)
             {
-                return new List<UserDTO>();
+                throw new ArgumentException();
             }
 
 
@@ -88,7 +88,7 @@ namespace BarCrawlers.Services
             }
             catch (Exception)
             {
-                return new UserDTO();
+                throw new ArgumentException();
             }
         }
 

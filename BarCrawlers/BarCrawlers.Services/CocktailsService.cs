@@ -139,10 +139,11 @@ namespace BarCrawlers.Services
                     .ThenInclude(b => b.Bar)
                 .FirstOrDefaultAsync(c => c.Id == id);
 
-            //if (cocktail == null)
-            //{
-            //    return null;
-            //}
+
+            if (cocktail == null)
+            {
+                return null;
+            }
             //if (cocktail.IsDeleted == true)
             //{
             //    throw new UnauthorizedAccessException("Not authorized to access this resource.");
@@ -170,6 +171,8 @@ namespace BarCrawlers.Services
                     {
                         theCocktail.IsDeleted = false;
                     }
+                     _context.Cocktails.Update(theCocktail);
+                    await _context.SaveChangesAsync();
                     return this._mapper.MapEntityToDTO(theCocktail);
 
                 }
