@@ -236,6 +236,9 @@ namespace BarCrawlers.Controllers
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Rate( Guid id, Guid userId, int rating)
         {
             if (rating <= 0 || id == default || userId == default)
@@ -301,7 +304,7 @@ namespace BarCrawlers.Controllers
         //}
 
         [HttpPost]
-        //[ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         [Authorize(Roles = "Magician")]
         public async Task<IActionResult> Recover([Bind("Id")] Guid id)
         {

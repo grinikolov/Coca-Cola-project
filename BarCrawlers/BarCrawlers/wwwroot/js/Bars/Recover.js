@@ -3,9 +3,10 @@
 
 // Write your JavaScript code.
 $("#btnRecover").on('click', function () {
+    var other = document.querySelector('[name="Id"]').value;
     $.ajax({
         async: true,
-        data: $('#form_recover').serialize(),
+        data: { "id": other, __RequestVerificationToken: $('[name="__RequestVerificationToken"]').val() },
         type: "POST",
         url: '/Bars/Recover',
         success: function (recover) {

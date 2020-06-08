@@ -80,14 +80,27 @@
 <div class="container">
     @*@User user = @await _userManager.FindByIdAsync(Model.Id.ToString())*@
     @*@if (await _signInManager.CanSignInAsync(await _userManager.FindByIdAsync(Model.Id.ToString())) == true)*@
-    @if( _userManager.FindByIdAsync(Model.Id.ToString()).Result.LockoutEnd == null)
+    @if (_userManager.FindByIdAsync(Model.Id.ToString()).Result.LockoutEnd == null)
     {
-        <a class="btn btn-primary" href="/Magician/User/Edit/@Model.Id" @*asp-area="Magician" asp-controller="User" asp-action="Edit" asp-route-id="@Model.Id"*@>Ban</a>
+        <form id="form_ban">
+            <input type="hidden" asp-for="Id" value="@Model.Id">
+            <input class="btn btn-primary" type="button" id="btnBan" value="Ban" />
+        </form>
+        @*<a class="btn btn-primary" href="/Magician/User/Edit/@Model.Id"*@ @*asp-area="Magician" asp-controller="User" asp-action="Edit" asp-route-id="@Model.Id"> Ban </ a >*@
     }
     else
     {
-        <a class="btn btn-primary" href="/Magician/User/Unban/@Model.Id" @*asp-area="Magician" asp-controller="User" asp-action="Edit" asp-route-id="@Model.Id"*@>Unban</a>
+        <form id="form_unban">
+            <input type="hidden" asp-for="Id" value="@Model.Id">
+            <input class="btn btn-primary" type="button" id="btnUnban" value="Unban" />
+        </form>
     }
 
     <a class="btn btn-primary" href="/Magician/User/Index" @*asp-action="Index"*@>Back to List</a>
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/Users/Ban.js"></script>
+    <script src="~/js/Users/Unban.js"></script>
+}

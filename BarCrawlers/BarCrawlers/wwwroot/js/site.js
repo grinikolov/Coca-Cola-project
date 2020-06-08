@@ -5,7 +5,6 @@
 
 const stars = document.querySelector(".ratings").children;
 const ratingValue = document.querySelector("#rating-value");
-//var vars2 = $('#vars').data();
 let index;
 
 window.addEventListener('load', (event) => {
@@ -34,8 +33,12 @@ for (let i = 0; i < stars.length; i++)
         $.ajax({
             async: true,
             type: "POST",
-            data: { "id": $vars.id, "userId": $vars.userid, "rating": ratingValue.value},
+            data: { "id": $vars.id, "userId": $vars.userid, "rating": ratingValue.value, __RequestVerificationToken: $('[name="__RequestVerificationToken"]').val()},
             url: $vars.url,
+            success: function (recover) {
+                console.log("recoverd: " + recover);
+                window.location.replace("/Bars/Details/" + $vars.id)
+            }
         });
     });
     stars[i].addEventListener("mouseout", function () {

@@ -30,24 +30,6 @@
                     <img class="card-img-top  w-100" src="~/img/BarBackground.jpg">
                 </a>
             }
-            @*<div>
-                    <h3>Rating: @Model.Rating</h3>
-                    <h5>@Model.Rating /5 (@Model.TimesRated rates)</h5>
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        var user = await UserManager.GetUserAsync(User);
-                        //var userId = user.Id;
-                        <form asp-controller="Bars" asp-action="Rate" asp-route-cocktailId="@Model.Id" asp-route-userId="@userId">
-                            <p>
-                                <input type="number" min=1 max=5 class="form-control mb-2 mr-sm-2" placeholder="rating" name="rating">
-                                <input type="submit" value="Rate" class="btn btn-primary" />
-                            </p>
-                        </form>
-                    }
-                </div>*@
-            @*<div class="rating-box">*@
-            @*@if (User.Identity.IsAuthenticated)
-                {*@
             <p>
                 <div class="rating-box">
                     <h3>Rating: @Model.Rating (@Model.TimesRated rates)</h3>
@@ -61,8 +43,6 @@
                     <input type="hidden" id="rating-value">
                 </div>
             </p>
-            @*}*@
-            @*</div>*@
         </div>
 
     </div>

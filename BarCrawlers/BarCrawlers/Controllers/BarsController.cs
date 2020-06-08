@@ -67,7 +67,7 @@ namespace BarCrawlers.Controllers
             }
             catch (Exception)
             {
-                return Error();
+                return RedirectToAction("Error"); 
             }
         }
 
@@ -93,7 +93,7 @@ namespace BarCrawlers.Controllers
             }
             catch (Exception)
             {
-                return Error();
+                return RedirectToAction("Error");
             }
         }
 
@@ -124,7 +124,7 @@ namespace BarCrawlers.Controllers
                 }
                     catch (Exception)
                 {
-                    return Error();
+                    return RedirectToAction("Error");
                 }
             }
             //ViewData["LocationId"] = new SelectList(_context.Locations, "Id", "Id", bar.LocationId);
@@ -176,7 +176,7 @@ namespace BarCrawlers.Controllers
                 }
                 catch (Exception)
                 {
-                    return Error();
+                    return RedirectToAction("Error");
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -213,11 +213,12 @@ namespace BarCrawlers.Controllers
             {
                 return RedirectToAction(nameof(Index));
             }
-            return Error();
+            return RedirectToAction("Error");
         }
 
         [HttpPost]
-        //[ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Rate(Guid id, Guid userId, int rating)
         {
             if (id == null || userId == null)
@@ -232,7 +233,7 @@ namespace BarCrawlers.Controllers
             }
             catch (Exception)
             {
-                return Error();
+                return RedirectToAction("Error");
             }
         }
 
@@ -262,26 +263,15 @@ namespace BarCrawlers.Controllers
             }
             catch (Exception)
             {
-                return Error();
+                return RedirectToAction("Error");
             }
-
-            //var result = await _service.GetCocktails();
-
-            //return View();
         }
 
-        //private bool BarExists(Guid id)
-        //{
-        //    return _context.Bars.Any(e => e.Id == id);
-        //}
-
         [HttpPost]
-        //[ValidateAntiForgeryToken]
-        //[Authorize(Roles = "Magician")]
-        public ActionResult AddCocktailToBar([Bind("Cocktails")] BarViewModel barVM)//[Bind("Ingredients")] 
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Magician")]
+        public ActionResult AddCocktailToBar([Bind("Cocktails")] BarViewModel barVM) 
         {
-            //var ingredients = await this._ingredientsService.GetAllAsync();
-            //ViewData["Cocktails"] = Cocktails.Select(c => new SelectListItem(c.Name, c.Id.ToString()));
             ViewData["Cocktails"] = Cocktails.Select(c => new SelectListItem(c.Name, c.Id.ToString()));
             ViewData["CocktailsToRemove"] = CocktailsToRemove.Select(c => new SelectListItem(c.Name, c.Id.ToString()));
             barVM.Cocktails.Add(new CocktailBarView());
@@ -289,9 +279,9 @@ namespace BarCrawlers.Controllers
         }
 
         [HttpPost]
-        //[ValidateAntiForgeryToken]
-        //[Authorize(Roles = "Magician")]
-        public ActionResult RemoveCocktailFromBar([Bind("Cocktails")] BarViewModel barVM)//[Bind("Ingredients")] 
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Magician")]
+        public ActionResult RemoveCocktailFromBar([Bind("Cocktails")] BarViewModel barVM)
         {
             ViewData["CocktailsToRemove"] = CocktailsToRemove.Select(c => new SelectListItem(c.Name, c.Id.ToString()));
             ViewData["Cocktails"] = Cocktails.Select(c => new SelectListItem(c.Name, c.Id.ToString()));
@@ -300,7 +290,7 @@ namespace BarCrawlers.Controllers
         }
 
         [HttpPost]
-        //[ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]
         [Authorize(Roles = "Magician")]
         public async Task<IActionResult> Recover([Bind("Id")] Guid id)
         {

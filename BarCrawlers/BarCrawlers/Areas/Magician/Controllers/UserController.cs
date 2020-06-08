@@ -114,9 +114,9 @@ namespace BarCrawlers.Areas.Magician.Controllers
         // POST: Magician/User/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit([Bind("Id")] Guid id)
         {
             //if (id != user.Id)
             //{
@@ -139,7 +139,8 @@ namespace BarCrawlers.Areas.Magician.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Magician/User/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Unban(Guid id)
         {
             if (id == null)
