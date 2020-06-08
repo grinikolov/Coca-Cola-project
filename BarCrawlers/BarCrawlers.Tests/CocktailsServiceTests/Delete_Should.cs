@@ -47,6 +47,8 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
                     TimesRated = x.TimesRated,
                 });
 
+            var mockBarMapper = new Mock<IBarMapper>();
+
             using (var arrangeContext = new BCcontext(options))
             {
                 arrangeContext.Cocktails.Add(entity);
@@ -56,7 +58,7 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
             //Act & Assert
             using (var context = new BCcontext(options))
             {
-                var sut = new CocktailsService(context, mockMapper.Object);
+                var sut = new CocktailsService(context, mockMapper.Object, mockBarMapper.Object);
 
                 var result = await sut.DeleteAsync(Utils.MySampleGuid());
 
@@ -74,10 +76,12 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
             //var entity = new
             var mockMapper = new Mock<ICocktailMapper>();
 
+            var mockBarMapper = new Mock<IBarMapper>();
+
             //Act & Assert
             using (var context = new BCcontext(options))
             {
-                var sut = new CocktailsService(context, mockMapper.Object);
+                var sut = new CocktailsService(context, mockMapper.Object, mockBarMapper.Object);
 
                 var result = sut.DeleteAsync(Utils.MySampleGuid()).Result;
 

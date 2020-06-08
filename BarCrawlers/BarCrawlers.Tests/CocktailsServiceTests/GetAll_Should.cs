@@ -53,6 +53,8 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
                     Name = x.Name,
                 });
 
+            var mockBarMapper = new Mock<IBarMapper>();
+
 
             using (var arrangeContext = new BCcontext(options))
             {
@@ -63,7 +65,7 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
 
             using (var actContext = new BCcontext(options))
             {
-                var sut = new CocktailsService(actContext, mockMapper.Object);
+                var sut = new CocktailsService(actContext, mockMapper.Object, mockBarMapper.Object);
                 var cocktails = await sut.GetAllAsync("0", "12");
 
                 Assert.AreEqual(2, actContext.Cocktails.Count());
@@ -131,6 +133,8 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
             var options = Utils.GetOptions(nameof(ReturnNull_noSearch_whenNoCocktail));
 
             var mockMapper = new Mock<ICocktailMapper>();
+            var mockBarMapper = new Mock<IBarMapper>();
+
 
             using (var arrangeContext = new BCcontext(options))
             {
@@ -138,7 +142,7 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
 
             using (var actContext = new BCcontext(options))
             {
-                var sut = new CocktailsService(actContext, mockMapper.Object);
+                var sut = new CocktailsService(actContext, mockMapper.Object, mockBarMapper.Object);
                 var cocktail = await sut.GetAllAsync("0", "12");
 
                 Assert.IsNotNull(cocktail);
@@ -153,13 +157,15 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
 
             var mockMapper = new Mock<ICocktailMapper>();
 
+            var mockBarMapper = new Mock<IBarMapper>();
+
             using (var arrangeContext = new BCcontext(options))
             {
             }
 
             using (var actContext = new BCcontext(options))
             {
-                var sut = new CocktailsService(actContext, mockMapper.Object);
+                var sut = new CocktailsService(actContext, mockMapper.Object, mockBarMapper.Object);
                 var cocktail = await sut.GetAllAsync("0", "12","","", false);
 
                 Assert.IsNotNull(cocktail);
@@ -174,6 +180,8 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
 
             var mockMapper = new Mock<ICocktailMapper>();
 
+            var mockBarMapper = new Mock<IBarMapper>();
+
             using (var arrangeContext = new BCcontext(options))
             {
             }
@@ -181,7 +189,7 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
             using (var actContext = new BCcontext(options))
             {
                 string order = "asc";
-                var sut = new CocktailsService(actContext, mockMapper.Object);
+                var sut = new CocktailsService(actContext, mockMapper.Object, mockBarMapper.Object);
                 var cocktail = await sut.GetAllAsync("0", "12","searchString", order, true);
 
                 Assert.IsNotNull(cocktail);

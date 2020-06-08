@@ -77,7 +77,7 @@ namespace BarCrawlers.Models
                     IsDeleted = view.IsDeleted,
                     IsAlcoholic = view.IsAlcoholic,
 
-                    Ingredients = view.Ingredients.Select(i => new CocktailIngredientDTO()
+                    Ingredients = view.Ingredients?.Select(i => new CocktailIngredientDTO()
                     {
                         IngredientId = i.IngredientId,
                         IngredientName = i.IngredientName,
@@ -85,14 +85,14 @@ namespace BarCrawlers.Models
                         //CocktailName = i.CocktailName,
                         Parts = i.Parts
                     }).ToList(),
-                    Bars = view.Bars.Select(b => new CocktailBarDTO
+                    Bars = view.Bars?.Select(b => new CocktailBarDTO
                     {
                         BarId = b.BarId,
                         BarName = b.BarName,
                         CocktailId = b.CocktailId,
                         CocktailName = b.CocktailName,
                     }).ToList(),
-                    Comments = view.Comments.Select(c => new CocktailUserCommentDTO
+                    Comments = view.Comments?.Select(c => new CocktailUserCommentDTO
                     {
                         CocktailId = c.CocktailId,
                         CocktailName = c.CocktailName,
@@ -101,7 +101,7 @@ namespace BarCrawlers.Models
                         Text = c.Text,
                         IsFlagged = c.IsFlagged,
                     }).ToList(),
-                    CocktailRatings = view.CocktailRatings.Select(r => new UserCocktailRatingDTO
+                    CocktailRatings = view.CocktailRatings?.Select(r => new UserCocktailRatingDTO
                     {
                         CocktailId = r.CocktailId,
                         CocktailName = r.CocktailName,

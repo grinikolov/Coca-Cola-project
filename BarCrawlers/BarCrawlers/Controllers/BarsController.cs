@@ -98,6 +98,7 @@ namespace BarCrawlers.Controllers
         }
 
         // GET: Bars/Create
+        [Authorize(Roles = "Magician")]
         public IActionResult Create()
         {
             //ViewData["LocationId"] = new SelectList(_context.Locations, "Id", "Id");
@@ -109,6 +110,7 @@ namespace BarCrawlers.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Magician")]
         public async Task<IActionResult> Create([Bind("Id,Name,Rating,TimesRated,ImageSrc,Phone,Email,Address,District,Town,Country")] BarViewModel bar)
         {
             if (ModelState.IsValid)
@@ -130,6 +132,7 @@ namespace BarCrawlers.Controllers
         }
 
         // GET: Bars/Edit/5
+        [Authorize(Roles = "Magician")]
         public async Task<IActionResult> Edit(Guid id)
         {
             if (id == null)
@@ -155,6 +158,7 @@ namespace BarCrawlers.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Magician")]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Rating,TimesRated,ImageSrc,IsDeleted,Phone,Email,Address,District,Town,Country,LocationId,Cocktails")] BarViewModel bar)
         {
             if (id != bar.Id)
@@ -181,6 +185,7 @@ namespace BarCrawlers.Controllers
         }
 
         // GET: Bars/Delete/5
+        [Authorize(Roles = "Magician")]
         public async Task<IActionResult> Delete(Guid id)
         {
             if (id == null)
@@ -200,6 +205,7 @@ namespace BarCrawlers.Controllers
         // POST: Bars/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Magician")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var result = await _service.DeleteAsync(id);
@@ -239,7 +245,12 @@ namespace BarCrawlers.Controllers
 
             try
             {
-                var bars = await this._service.GetCocktailsAsync(id, page, itemsOnPage, searchString);
+                var access = false;
+                if (HttpContext.User.IsInRole("Magician"))
+                {
+                    access = true;
+                }
+                var bars = await this._service.GetCocktailsAsync(id, page, itemsOnPage, searchString, access);
 
                 ViewBag.Count = bars.Count();
                 ViewBag.CurrentPage = int.Parse(page);

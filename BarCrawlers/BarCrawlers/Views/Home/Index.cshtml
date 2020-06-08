@@ -1,4 +1,4 @@
-﻿@model IEnumerable<BarCrawlers.Models.BarViewModel>
+﻿@model HomeIndexViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -9,14 +9,25 @@
     @*<h1 class="display-4">Welcome</h1>
         <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>*@
 </div>
-@if (!Model.Any())
+@if (!Model.TopBars.Any())
 {
     <p>No bars yet.</p>
 }
 <div class="row">
-    @foreach (var bar in Model)
+    @foreach (var bar in Model.TopBars)
     {
         @*@Html.Partial("_BarPartial");*@
         <partial name="_BarPartial" model="@bar" />
+    }
+</div>
+
+@if (!Model.TopCocktails.Any())
+{
+    <p>No cocktails yet.</p>
+}
+<div class="row">
+    @foreach (var cocktail in Model.TopCocktails)
+    {
+        <partial name="_CocktailPartial" model="@cocktail" />
     }
 </div>

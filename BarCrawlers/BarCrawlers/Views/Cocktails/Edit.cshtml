@@ -1,4 +1,4 @@
-﻿@model CocktailCreateViewModel
+﻿@model CocktailViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -19,16 +19,16 @@
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Rating" class="control-label"></label>
-                <input asp-for="Rating" class="form-control" />
-                <span asp-validation-for="Rating" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TimesRated" class="control-label"></label>
-                <input asp-for="TimesRated" class="form-control" />
-                <span asp-validation-for="TimesRated" class="text-danger"></span>
-            </div>
+            @*<div class="form-group">
+                    <label asp-for="Rating" class="control-label"></label>
+                    <input asp-for="Rating" class="form-control" />
+                    <span asp-validation-for="Rating" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="TimesRated" class="control-label"></label>
+                    <input asp-for="TimesRated" class="form-control" />
+                    <span asp-validation-for="TimesRated" class="text-danger"></span>
+                </div>*@
             <div class="form-group">
                 <label asp-for="ImageSrc" class="control-label"></label>
                 <input asp-for="ImageSrc" class="form-control" />
@@ -49,6 +49,16 @@
                 <input asp-for="Instructions" class="form-control" />
                 <span asp-validation-for="Instructions" class="text-danger"></span>
             </div>
+
+            <div id="CocktailIngredientsContainer">
+                @Html.EditorFor(model => model.Ingredients)
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <input class="btn btn-primary" type="button" id="btnAdd" value="Add ingredient" />     @*onclick="@counter++" />*@
+                </div>
+
+            </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
@@ -62,4 +72,6 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script type="text/javascript" src="~/js/Cocktails/Create.js" asp-append-version="true">
+    </script>
 }

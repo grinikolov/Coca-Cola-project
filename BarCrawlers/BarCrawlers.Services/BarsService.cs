@@ -178,6 +178,7 @@ namespace BarCrawlers.Services
                                     .Include(b => b.BarRatings)
                                     .FirstOrDefaultAsync(b => b.Id == id);
 
+                bar.Rating = Math.Round(bar.Rating, 2);
                 var barDTO = _mapper.MapEntityToDTO(bar);
 
                 return barDTO;
@@ -310,7 +311,7 @@ namespace BarCrawlers.Services
         /// <param name="itemsOnPage">Number of cocktails to be shown</param>
         /// <param name="search">Additional search constraints</param>
         /// <returns>Collection of CocktailDTO</returns>
-        public async Task<IEnumerable<CocktailDTO>> GetCocktailsAsync(Guid id, string page, string itemsOnPage, string search)
+        public async Task<IEnumerable<CocktailDTO>> GetCocktailsAsync(Guid id, string page, string itemsOnPage, string search, bool access)
         {
             try
             {
@@ -324,10 +325,20 @@ namespace BarCrawlers.Services
                     .Include(c => c.Cocktail)
                         .ThenInclude(c => c.CocktailRatings)
                             .ThenInclude(r => r.User)
+                    .Include(c => c.Cocktail)
+                        .ThenInclude(c => c.Bars)
+                            .ThenInclude(c=> c.Bar)
                     .Include(c => c.Bar)
                         .ThenInclude(b => b.Location)
                     .Where(c => c.BarId == id)
+                    .Select(c=> c.Cocktail)
                     .ToListAsync();
+
+                if (!access)
+                {
+                    cocktails = cocktails
+                        .Where(b => b.IsDeleted == false).ToList();
+                };
 
                 var p = int.Parse(page);
                 var item = int.Parse(itemsOnPage);
