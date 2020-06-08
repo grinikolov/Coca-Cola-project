@@ -17,20 +17,20 @@ namespace BarCrawlers.Services
 {
     public class CocktailsService : ICocktailsService
     {
-        private readonly ILogger<CocktailsService> _logger;
+        //private readonly ILogger<CocktailsService> _logger;
         private readonly BCcontext _context;
         private readonly ICocktailMapper _mapper;
         private readonly IBarMapper _barMapper;
 
         public CocktailsService(BCcontext context,
             ICocktailMapper mapper,
-            IBarMapper barMapper,
-            ILogger<CocktailsService> logger)
+            IBarMapper barMapper
+           )
         {
             this._context = context ?? throw new ArgumentNullException(nameof(context));
             this._mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             this._barMapper = barMapper ?? throw new ArgumentNullException(nameof(barMapper));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            //this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace BarCrawlers.Services
             }
             catch (Exception e)
             {
-                this._logger.LogError(e.Message);
+                //this._logger.LogError(e.Message);
                 throw new ArgumentException("Failed to get list");
             }
         }
@@ -213,7 +213,6 @@ namespace BarCrawlers.Services
             }
             catch (Exception e)
             {
-                this._logger.LogError(e.Message);
                 throw new OperationCanceledException("Fail to create cocktail");
             }
         }
@@ -245,7 +244,6 @@ namespace BarCrawlers.Services
             }
             catch (Exception e)
             {
-                this._logger.LogError(e.Message);
                 return false;
             }
         }
@@ -313,7 +311,6 @@ namespace BarCrawlers.Services
             }
             catch (Exception e)
             {
-                this._logger.LogError(e.Message);
                 throw new ArgumentNullException();
             }
         }
@@ -337,16 +334,33 @@ namespace BarCrawlers.Services
 
         }
 
-
+        /// <summary>
+        /// Check if cocktail already exists
+        /// </summary>
+        /// <param name="id">Cocktail Id</param>
+        /// <returns>True if exists, False otherwise</returns>
         public bool CocktailExists(Guid id)
         {
             return _context.Cocktails.Any(e => e.Id == id);
         }
+        /// <summary>
+        /// Check if cocktail with the name already exists
+        /// </summary>
+        /// <param name="name">Name of cocktail</param>
+        /// <returns>True if exists, False otherwise</returns>
         public async Task<bool> CocktailExistsByNameAsync(string name)
         {
             return await _context.Cocktails.AnyAsync(e => e.Name.Equals(name));
         }
-
+        /// <summary>
+        /// Gets the list of bars serving the specified cocktail
+        /// </summary>
+        /// <param name="id">The specified cocktail Id</param>
+        /// <param name="page">Page number to be loaded</param>
+        /// <param name="itemsOnPage">Number of bars per page</param>
+        /// <param name="searchString">Search parameter for bars</param>
+        /// <param name="access">True for admin, to load unlisted bars</param>
+        /// <returns></returns>
         public async Task<IEnumerable<BarDTO>> GetBarsAsync(Guid id, string page, string itemsOnPage, string searchString, bool access)
         {
             try
@@ -376,11 +390,13 @@ namespace BarCrawlers.Services
             }
             catch (Exception e)
             {
-                this._logger.LogError(e.Message);
                 return new List<BarDTO>();
             }
         }
-
+        /// <summary>
+        /// Gets the three top-rated cocktails from the database
+        /// </summary>
+        /// <returns>The top-rated cocktails</returns>
         public async Task<IEnumerable<CocktailDTO>> GetBestCocktailsAsync()
         {
             try
@@ -396,7 +412,7 @@ namespace BarCrawlers.Services
                   .ThenInclude(b => b.Bar)
               .OrderBy(c => c.TimesRated)
               .ThenByDescending(c => c.Rating)
-              .Take(4).ToListAsync();
+              .Take(3).ToListAsync();
 
                 var cocktailsDTO = cocktails.Select(x => this._mapper.MapEntityToDTO(x));
 
@@ -404,7 +420,6 @@ namespace BarCrawlers.Services
             }
             catch (Exception e)
             {
-                this._logger.LogError(e.Message);
                 throw new ArgumentException("Failed to get list");
             }
         }

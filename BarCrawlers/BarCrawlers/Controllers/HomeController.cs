@@ -53,6 +53,10 @@ namespace BarCrawlers.Controllers
             }
 
         }
+        public IActionResult Missing()
+        {
+            return View();
+        }
 
         public IActionResult Privacy()
         {
