@@ -93,7 +93,7 @@ namespace BarCrawlers.Services
                 return false;
             }
             bar.IsDeleted = true;
-
+            _context.Update(bar);
             await this._context.SaveChangesAsync();
             return true;
         }
@@ -120,13 +120,14 @@ namespace BarCrawlers.Services
 
                 if (!string.IsNullOrEmpty(search))
                 {
-                    if (int.TryParse(search, out int searchNumber))
+                    if (double.TryParse(search, out double searchNumber))
                     {
                         bars = bars.Where(b => b.Name.Contains(search)
                                 || b.Address.Contains(search)
                                 || b.District.Contains(search)
                                 || b.Town.Contains(search) 
-                                || b.Rating == searchNumber);
+                                || b.Rating < searchNumber + 0.1
+                                || b.Rating > searchNumber - 0.1);
                     }
                     else
                     {
@@ -185,7 +186,7 @@ namespace BarCrawlers.Services
             }
             catch (Exception)
             {
-                throw new ArgumentException();
+                throw new ArgumentException("Fail to get item");
             }
         }
 
@@ -298,7 +299,7 @@ namespace BarCrawlers.Services
             }
             catch (Exception)
             {
-                throw new ArgumentException();
+                throw new ArgumentException("Fail to rate item");
             }
 
         }
@@ -384,7 +385,7 @@ namespace BarCrawlers.Services
             }
             catch (Exception)
             {
-                return new List<CocktailDTO>();
+                throw new ArgumentException("Failed to get cocktails");
             }
         }
 

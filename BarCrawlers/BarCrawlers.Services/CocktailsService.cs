@@ -331,7 +331,7 @@ namespace BarCrawlers.Services
                 return false;
             }
             cocktail.IsDeleted = true;
-
+            _context.Update(cocktail);
             await this._context.SaveChangesAsync();
             return true;
 
