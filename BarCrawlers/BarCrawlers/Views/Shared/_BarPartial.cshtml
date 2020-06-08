@@ -42,7 +42,7 @@
 
                 <a class="btn btn-primary" asp-controller="BarUserComments" asp-action="Index" asp-route-cocktailId="@Model.Id">Comments</a>
                 <a class="btn btn-primary" asp-controller="Bars" asp-action="LoadCocktails" asp-route-id="@Model.Id">Served Cocktails</a>
-                @if (User.IsInRole("Magician"))
+                @*@if (User.IsInRole("Magician"))
                 {
                     <a asp-controller="Bars" asp-action="Edit" asp-route-Id="@Model.Id" class="btn btn-primary">Edit</a>
 
@@ -54,7 +54,7 @@
                     {
                         <a asp-controller="Bars" asp-action="Create" class="btn btn-success" asp-route-Id="@Model.Id">Show</a>
                     }
-                }
+                }*@
             </div>
         </p>
     </div>

@@ -95,16 +95,27 @@
 
 </div>
 
-<div>
+<div class="col-sm-12">
     @if (User.Identity.IsAuthenticated)
     {
         @if (await UserManager.IsInRoleAsync(currentUser, "Magician"))
         {
             <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
-            <a class="btn btn-primary" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
+
+            @if (@Model.IsDeleted)
+            {
+                <form id="form_recover">
+                    <input type="hidden" asp-for="Id" value="@Model.Id">
+                    <input class="btn btn-primary" type="button" id="btnRecover" value="Recover" />
+                </form>
+            }
+            else
+            {
+                <a class="btn btn-primary" asp-action="Delete" asp-route-id="@Model.Id">Delete</a>
+            }
         }
-    }    
-  <a class="btn btn-primary" asp-action="Index">Back to List</a>
+    }
+    <a class="btn btn-primary" asp-action="Index">Back to List</a>
 </div>
 <br>
 <div>
@@ -121,10 +132,11 @@
                 data-userId="@currentUser.Id"
                 data-record="@Model.Rating"
                 data-url="/Bars/Rate"></script>
+        <script src="~/js/Bars/Recover.js"></script>
     }
     else
     {
         <script src="~/js/colorrating.js" id="vars"
-            data-record="@Model.Rating"></script>
+                data-record="@Model.Rating"></script>
     }
 }

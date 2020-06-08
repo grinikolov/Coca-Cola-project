@@ -52,6 +52,8 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
                     Name = x.Name,
                 });
 
+            var mockBarMapper = new Mock<IBarMapper>();
+
 
             var dto = new CocktailDTO()
             {
@@ -82,7 +84,7 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
 
             using (var actContext = new BCcontext(options))
             {
-                var sut = new CocktailsService(actContext, mockMapper.Object);
+                var sut = new CocktailsService(actContext, mockMapper.Object, mockBarMapper.Object);
                 var cocktail = sut.CreateAsync(dto);
                 await actContext.SaveChangesAsync();
 
@@ -128,6 +130,7 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
                     Name = x.Name,
                 });
 
+            var mockBarMapper = new Mock<IBarMapper>();
 
 
             using (var arrangeContext = new BCcontext(options))
@@ -139,7 +142,7 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
 
             using (var actContext = new BCcontext(options))
             {
-                var sut = new CocktailsService(actContext, mockMapper.Object);
+                var sut = new CocktailsService(actContext, mockMapper.Object, mockBarMapper.Object);
                 var cocktail = sut.CreateAsync(dto);
                 await actContext.SaveChangesAsync();
 
@@ -147,7 +150,7 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
 
             using (var assertContext = new BCcontext(options))
             {
-                var sut = new CocktailsService(assertContext, mockMapper.Object);
+                var sut = new CocktailsService(assertContext, mockMapper.Object, mockBarMapper.Object);
                 var cocktail = await sut.CreateAsync(dto);
                 Assert.AreEqual(1, assertContext.Cocktails.Count());
                 
@@ -170,13 +173,15 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
             var ingredientId = Utils.MySampleGuid2();
             var mockMapper = new Mock<ICocktailMapper>();
 
+            var mockBarMapper = new Mock<IBarMapper>();
+
             using (var arrangeContext = new BCcontext(options))
             {
             }
 
             using (var context = new BCcontext(options))
             {
-                var sut = new CocktailsService(context, mockMapper.Object);
+                var sut = new CocktailsService(context, mockMapper.Object, mockBarMapper.Object);
                 var result = await sut.AddIngredientsToCocktail(cocktail, ingredientId, 2);
 
                 Assert.IsTrue(result);
@@ -204,6 +209,8 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
             };
             var mockMapper = new Mock<ICocktailMapper>();
 
+            var mockBarMapper = new Mock<IBarMapper>();
+
             using (var arrangeContext = new BCcontext(options))
             {
                 await arrangeContext.Ingredients.AddAsync(ingredient);
@@ -213,7 +220,7 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
 
             using (var context = new BCcontext(options))
             {
-                var sut = new CocktailsService(context, mockMapper.Object);
+                var sut = new CocktailsService(context, mockMapper.Object,mockBarMapper.Object);
                 var result = await sut.AddIngredientsToCocktail(cocktail, ingredient.Id, 2);
 
                 Assert.IsFalse(result);

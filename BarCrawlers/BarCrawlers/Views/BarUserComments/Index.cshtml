@@ -10,7 +10,7 @@
     var currentUser = await _userManager.GetUserAsync(User);
 }
 
-<h1>Index</h1>
+<h1>Comments</h1>
 @*@var currentUser = await _userManager.FindByNameAsync(User.Identity.Name)*@
 @if (User.Identity.IsAuthenticated)
 {
@@ -83,3 +83,6 @@
            asp-route-barId=@ViewBag.CurrentBar>Next</a>
     }
 </div>
+<p>
+    <a class="btn btn-primary" asp-controller="Bars" asp-action="Details" asp-route-id="@ViewBag.CurrentBar">Back to bar</a>
+</p>

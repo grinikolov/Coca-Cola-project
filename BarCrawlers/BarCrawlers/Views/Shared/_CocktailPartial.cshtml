@@ -29,10 +29,10 @@
             <div class="container">
 
                 <a class="btn btn-primary" asp-controller="CocktailComments" asp-action="Index" asp-route-cocktailId="@Model.Id">Comments</a>
-                <a class="btn btn-primary" asp-controller="Cocktails" asp-action="LoadBars" asp-route-id="@Model.Id">Bars serving</a>
+                <a class="btn btn-primary" asp-controller="Cocktails" asp-action="LoadBars" asp-route-id="@Model.Id">Bars</a>
                 @if (User.IsInRole("Magician"))
                 {
-                    <a asp-controller="Cocktails" asp-action="Edit" asp-route-Id="@Model.Id" class="btn btn-primary">Edit</a>
+                    @*<a asp-controller="Cocktails" asp-action="Edit" asp-route-Id="@Model.Id" class="btn btn-primary">Edit</a>*@
 
                     @if (Model.IsDeleted == false)
                     {

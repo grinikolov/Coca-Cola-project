@@ -73,7 +73,7 @@ namespace BarCrawlers.Services.Mappers
                         Text = c.Text,
                         IsFlagged = c.IsFlagged,
                     }).ToList(),
-                    CocktailRatings = entity.CocktailRatings.Select(r => new UserCocktailRatingDTO
+                    CocktailRatings = entity.CocktailRatings?.Select(r => new UserCocktailRatingDTO
                     {
                         CocktailId = r.CocktailId,
                         CocktailName = r.Cocktail.Name,

@@ -47,6 +47,8 @@ namespace BarCrawlers.Services
                     {
                         theBar.IsDeleted = false;
                     }
+                    _context.Bars.Update(theBar);
+                    await _context.SaveChangesAsync();
                     return this._mapper.MapEntityToDTO(theBar);
                 }
                 else
@@ -118,7 +120,22 @@ namespace BarCrawlers.Services
 
                 if (!string.IsNullOrEmpty(search))
                 {
-                    bars = bars.Where(b => b.Name.Contains(search));
+                    if (int.TryParse(search, out int searchNumber))
+                    {
+                        bars = bars.Where(b => b.Name.Contains(search)
+                                || b.Address.Contains(search)
+                                || b.District.Contains(search)
+                                || b.Town.Contains(search) 
+                                || b.Rating == searchNumber);
+                    }
+                    else
+                    {
+                        bars = bars.Where(b => b.Name.Contains(search) 
+                                || b.Address.Contains(search) 
+                                || b.District.Contains(search) 
+                                || b.Town.Contains(search));
+                    }
+                    
                 }
 
                 if (order == "desc")
@@ -161,6 +178,7 @@ namespace BarCrawlers.Services
                                     .Include(b => b.BarRatings)
                                     .FirstOrDefaultAsync(b => b.Id == id);
 
+                bar.Rating = Math.Round(bar.Rating, 2);
                 var barDTO = _mapper.MapEntityToDTO(bar);
 
                 return barDTO;
@@ -280,7 +298,7 @@ namespace BarCrawlers.Services
             }
             catch (Exception)
             {
-                return new BarDTO();
+                throw new ArgumentException();
             }
 
         }
@@ -293,12 +311,10 @@ namespace BarCrawlers.Services
         /// <param name="itemsOnPage">Number of cocktails to be shown</param>
         /// <param name="search">Additional search constraints</param>
         /// <returns>Collection of CocktailDTO</returns>
-        public async Task<IEnumerable<CocktailDTO>> GetCocktailsAsync(Guid id, string page, string itemsOnPage, string search)
+        public async Task<IEnumerable<CocktailDTO>> GetCocktailsAsync(Guid id, string page, string itemsOnPage, string search, bool access)
         {
             try
             {
-                //var joined = await _context.CocktailBars.Where(j => j.BarId == id).ToListAsync();
-
                 var cocktails = await _context.CocktailBars
                     .Include(c => c.Cocktail)
                         .ThenInclude(c => c.Ingredients)
@@ -309,16 +325,32 @@ namespace BarCrawlers.Services
                     .Include(c => c.Cocktail)
                         .ThenInclude(c => c.CocktailRatings)
                             .ThenInclude(r => r.User)
+                    .Include(c => c.Cocktail)
+                        .ThenInclude(c => c.Bars)
+                            .ThenInclude(c=> c.Bar)
                     .Include(c => c.Bar)
                         .ThenInclude(b => b.Location)
                     .Where(c => c.BarId == id)
+                    .Select(c=> c.Cocktail)
                     .ToListAsync();
 
-                return cocktails.Select(x => this._cocktailMapper.MapEntityToDTO(x.Cocktail)).ToList();
+                if (!access)
+                {
+                    cocktails = cocktails
+                        .Where(b => b.IsDeleted == false).ToList();
+                };
+
+                var p = int.Parse(page);
+                var item = int.Parse(itemsOnPage);
+
+                var result = cocktails.Select(x => x.Cocktail).ToList();
+                result = result.Skip(p * item).Take(item).ToList();
+
+                return result.Select(x => this._cocktailMapper.MapEntityToDTO(x));
             }
             catch (Exception)
             {
-                return new List<CocktailDTO>();
+                throw new ArgumentException("Failed to get cocktails");
             }
         }
 
@@ -431,7 +463,7 @@ namespace BarCrawlers.Services
         }
 
         /// <summary>
-        /// Gets all bars from the database.
+        /// Gets Top 3 bars from the database.
         /// </summary>
         /// <returns>List of bars, DTOs</returns>
         public async Task<IEnumerable<BarDTO>> GetBestBarsAsync()
@@ -448,7 +480,7 @@ namespace BarCrawlers.Services
                                     .ThenByDescending(b => b.Rating)
                                     .Take(3).ToListAsync();
 
-                var barsDTO = bars.Select(b => _mapper.MapEntityToDTO(b));
+                var barsDTO = bars.Select(b => _mapper.MapEntityToDTO(b)).ToList();
 
                 return barsDTO;
             }
