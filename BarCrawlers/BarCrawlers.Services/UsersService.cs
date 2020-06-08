@@ -60,7 +60,7 @@ namespace BarCrawlers.Services
             }
             catch (Exception)
             {
-                throw new ArgumentException();
+                throw new ArgumentException("Fail to get list");
             }
 
 
@@ -88,7 +88,7 @@ namespace BarCrawlers.Services
             }
             catch (Exception)
             {
-                throw new ArgumentException();
+                throw new ArgumentException("Fail to get item");
             }
         }
 
@@ -112,7 +112,7 @@ namespace BarCrawlers.Services
             }
             catch (Exception)
             {
-                return new UserDTO();
+                throw new ArgumentNullException("Failed to update");
             }
         }
 
@@ -135,7 +135,7 @@ namespace BarCrawlers.Services
             }
             catch (Exception)
             {
-                return new UserDTO();
+                throw new ArgumentNullException("Failed to update");
             }
         }
 

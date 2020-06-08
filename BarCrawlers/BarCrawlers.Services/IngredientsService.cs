@@ -117,7 +117,7 @@ namespace BarCrawlers.Services
                 ingredient.Name = ingredientDTO.Name;
                 ingredient.IsAlcoholic = ingredientDTO.IsAlcoholic;
 
-
+                _context.Update(ingredient);
                 await this._context.SaveChangesAsync();
             }
             catch (Exception)
@@ -129,7 +129,7 @@ namespace BarCrawlers.Services
                 }
                 else
                 {
-                    throw;
+                    throw new ArgumentException();
                 }
             }
 
