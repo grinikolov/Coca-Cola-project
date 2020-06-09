@@ -13,7 +13,7 @@
 <h1>Comments:</h1>
 @*@var currentUser = await _userManager.FindByNameAsync(User.Identity.Name)*@
 
-@if (!Model.Any(b => b.UserName == User.Identity.Name))
+@if (!Model.Any(b => b.UserName == User.Identity.Name) && currentUser != null)
 {
     <p>
         <a asp-action="Create" asp-route-cocktailId=@ViewBag.CurrentCocktail asp-route-userId=@currentUser.Id>Leave Comment</a>
@@ -58,14 +58,14 @@
                         @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
                         @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
                     </td>*@
-                <td>
+                @*<td>
                     <a asp-controller="CocktailComments" asp-action="Details" asp-route-id="@item.CocktailId">Details</a>
                     @if (item.UserName == User.Identity.Name)
                     {
                         <a asp-controller="CocktailComments" asp-action="Edit" asp-route-cocktailId="@item.CocktailId" asp-route-userlId="@item.UserId">| Edit |</a>
                         <a asp-controller="CocktailComments" asp-action="Delete" asp-route-cocktailId="@item.CocktailId" asp-route-userlId="@item.UserId">Delete</a>
                     }
-                </td>
+                </td>*@
 
             </tr>
         }

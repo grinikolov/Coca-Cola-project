@@ -40,7 +40,7 @@
         <p>
             <div class="container">
 
-                <a class="btn btn-primary" asp-controller="BarUserComments" asp-action="Index" asp-route-cocktailId="@Model.Id">Comments</a>
+                <a class="btn btn-primary" asp-controller="BarUserComments" asp-action="Index" asp-route-barId="@Model.Id">Comments</a>
                 <a class="btn btn-primary" asp-controller="Bars" asp-action="LoadCocktails" asp-route-id="@Model.Id">Served Cocktails</a>
                 @*@if (User.IsInRole("Magician"))
                 {

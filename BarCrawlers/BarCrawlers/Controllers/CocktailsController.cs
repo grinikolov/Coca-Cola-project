@@ -139,7 +139,7 @@ namespace BarCrawlers.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Magician")]
-        public async Task<ActionResult> AddCocktailIngredient([Bind("Ingredients")] CocktailCreateViewModel cocktailVM)//[Bind("Ingredients")] 
+        public ActionResult AddCocktailIngredient([Bind("Ingredients")] CocktailCreateViewModel cocktailVM)//[Bind("Ingredients")] 
         {
             //var ingredients = await this._ingredientsService.GetAllAsync();
             ViewData["Ingredients"] = Ingredients.Select(x => new SelectListItem(x.Name, x.Id.ToString()));
@@ -191,7 +191,7 @@ namespace BarCrawlers.Controllers
 
             var cocktail = await this._service.UpdateAsync(id, this._mapper.MapViewToDTO(cocktailVM));
 
-            return View(this._mapper.MapDTOToView(cocktail));
+            return RedirectToAction("Details", "Cocktails" , new { id });
         }
 
         // GET: Cocktails/Delete/5
