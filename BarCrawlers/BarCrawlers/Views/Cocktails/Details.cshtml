@@ -145,7 +145,7 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     @if (User.Identity.IsAuthenticated)
     {
-        <script src="~/js/site.js" id="vars"
+        <script src="~/js/Cocktails/site.js" id="vars"
                 data-id="@Model.Id"
                 data-userId="@currentUser.Id"
                 data-record="@Model.Rating"

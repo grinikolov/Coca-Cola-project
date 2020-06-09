@@ -413,6 +413,7 @@ namespace BarCrawlers.Services
                   .ThenInclude(c => c.User)
               .Include(c => c.Bars)
                   .ThenInclude(b => b.Bar)
+              .Where(c=> c.IsDeleted == false)
               .OrderBy(c => c.TimesRated)
               .ThenByDescending(c => c.Rating)
               .Take(3).ToListAsync();

@@ -20,11 +20,22 @@
             </a>
         }
 
-        @*<div class="container">
-                @Model.Instructions
-            </div>*@
-        <h3>@Model.Rating </h3>
-        <h5>@Model.Rating / 5 (@Model.TimesRated rates)</h5>
+        <div class="rating-box">
+            <h3>Rating: @Model.Rating (@Model.TimesRated rates)</h3>
+            <div class="ratings" >
+                @for (int i = 0; i < Convert.ToInt32(@Model.Rating); i++)
+                {
+                    <span class="fa fa-star fa-2x"></span>
+                }
+                @for (int i = Convert.ToInt32(@Model.Rating); i < 5; i++)
+                {
+                    <span class="fa fa-star-o fa-2x"></span>
+                }
+            </div>
+            @*<input type="hidden" id="rating-value">*@
+        </div>
+        @*<h3>@Model.Rating </h3>
+        <h5>@Model.Rating / 5 (@Model.TimesRated rates)</h5>*@
         <p>
             <div class="container">
 
