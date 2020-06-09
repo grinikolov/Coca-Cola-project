@@ -126,8 +126,8 @@ namespace BarCrawlers.Services
                                 || b.Address.Contains(search)
                                 || b.District.Contains(search)
                                 || b.Town.Contains(search) 
-                                || b.Rating < searchNumber + 0.1
-                                || b.Rating > searchNumber - 0.1);
+                                || (b.Rating < searchNumber + 0.1
+                                && b.Rating > searchNumber - 0.1));
                     }
                     else
                     {
