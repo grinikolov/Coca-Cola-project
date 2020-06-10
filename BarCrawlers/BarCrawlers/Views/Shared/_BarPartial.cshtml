@@ -10,13 +10,13 @@
         @if (Model.ImageSrc != null)
         {
             <a asp-controller="Bars" asp-action="Details" asp-route-id="@Model.Id">
-                <h5 class="card-title">  <img class="card-img-top w-50" src="@Model.ImageSrc" alt="Card image cap"></h5>
+                <h5 class="card-title">  <img class="card-img-top w-75" src="@Model.ImageSrc" alt="Card image cap"></h5>
             </a>
         }
         else
         {
             <a asp-controller="Bars" asp-action="Details" asp-route-id="@Model.Id">
-                <img class="card-img-top  w-50" src="~/img/BarSiluet.jpg" alt="Card image cap">
+                <img class="card-img-top  w-75" src="~/img/BarSiluet.jpg" alt="Card image cap">
             </a>
         }
 
