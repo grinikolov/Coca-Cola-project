@@ -1,9 +1,7 @@
 ﻿using BarCrawlers.Models.Contracts;
 using BarCrawlers.Services.DTOs;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace BarCrawlers.Models
 {
@@ -79,7 +77,7 @@ namespace BarCrawlers.Models
                         CocktailId = c.CocktailId,
                         CocktailName = c.CocktailName,
                         Remove = c.Remove
-                        
+
                     }).ToList()
                 };
             }

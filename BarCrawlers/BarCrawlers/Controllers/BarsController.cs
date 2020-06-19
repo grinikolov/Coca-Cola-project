@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using BarCrawlers.Models;
+using BarCrawlers.Models.Contracts;
+using BarCrawlers.Services.Contracts;
+using BarCrawlers.Services.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using BarCrawlers.Data;
-using BarCrawlers.Data.DBModels;
-using BarCrawlers.Services.Contracts;
-using BarCrawlers.Models.Contracts;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using BarCrawlers.Models;
-using Microsoft.AspNetCore.Authorization;
-using BarCrawlers.Services.DTOs;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BarCrawlers.Controllers
 {
@@ -55,7 +52,7 @@ namespace BarCrawlers.Controllers
                 {
                     access = true;
                 }
-                var bars = await this._service.GetAllAsync(page, itemsOnPage, searchString, order, access);
+                var bars = await _service.GetAllAsync(page, itemsOnPage, searchString, order, access);
 
                 ViewBag.Count = bars.Count();
                 ViewBag.CurrentPage = int.Parse(page);
@@ -63,11 +60,11 @@ namespace BarCrawlers.Controllers
                 ViewBag.SearchString = searchString;
                 ViewBag.Order = order;
 
-                return View(bars.Select(b => this._mapper.MapDTOToView(b)));
+                return View(bars.Select(b => _mapper.MapDTOToView(b)));
             }
             catch (Exception)
             {
-                return RedirectToAction("Error"); 
+                return RedirectToAction("Error");
             }
         }
 
@@ -81,7 +78,7 @@ namespace BarCrawlers.Controllers
                     return NotFound();
                 }
 
-                var bar = await this._service.GetAsync(id);
+                var bar = await _service.GetAsync(id);
 
                 if (bar == null)
                 {
@@ -122,7 +119,7 @@ namespace BarCrawlers.Controllers
                     await _service.CreateAsync(dto);
                     return RedirectToAction(nameof(Index));
                 }
-                    catch (Exception)
+                catch (Exception)
                 {
                     return RedirectToAction("Error");
                 }
@@ -148,8 +145,8 @@ namespace BarCrawlers.Controllers
 
             CocktailsToRemove = await _service.GetCocktailsAsync(id);
             Cocktails = await _cocktailService.GetAllAsync();
-            
-            
+
+
             return View(_mapper.MapDTOToView(bar));
         }
 
@@ -251,7 +248,7 @@ namespace BarCrawlers.Controllers
                 {
                     access = true;
                 }
-                var bars = await this._service.GetCocktailsAsync(id, page, itemsOnPage, searchString, access);
+                var bars = await _service.GetCocktailsAsync(id, page, itemsOnPage, searchString, access);
 
                 ViewBag.Count = bars.Count();
                 ViewBag.CurrentPage = int.Parse(page);
@@ -259,7 +256,7 @@ namespace BarCrawlers.Controllers
                 ViewBag.SearchString = searchString;
                 ViewBag.CurrentBar = id;
 
-                return View(bars.Select(b => this._cocktailMapper.MapDTOToView(b)));
+                return View(bars.Select(b => _cocktailMapper.MapDTOToView(b)));
             }
             catch (Exception)
             {
@@ -270,7 +267,7 @@ namespace BarCrawlers.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Magician")]
-        public ActionResult AddCocktailToBar([Bind("Cocktails")] BarViewModel barVM) 
+        public ActionResult AddCocktailToBar([Bind("Cocktails")] BarViewModel barVM)
         {
             ViewData["Cocktails"] = Cocktails.Select(c => new SelectListItem(c.Name, c.Id.ToString()));
             ViewData["CocktailsToRemove"] = CocktailsToRemove.Select(c => new SelectListItem(c.Name, c.Id.ToString()));
@@ -285,7 +282,7 @@ namespace BarCrawlers.Controllers
         {
             ViewData["CocktailsToRemove"] = CocktailsToRemove.Select(c => new SelectListItem(c.Name, c.Id.ToString()));
             ViewData["Cocktails"] = Cocktails.Select(c => new SelectListItem(c.Name, c.Id.ToString()));
-            barVM.Cocktails.Add(new CocktailBarView() { Remove = true});
+            barVM.Cocktails.Add(new CocktailBarView() { Remove = true });
             return PartialView("BarCocktails", barVM);
         }
 

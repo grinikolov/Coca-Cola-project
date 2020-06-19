@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BarCrawlers.Tests.BarsServiceTests
@@ -103,15 +102,15 @@ namespace BarCrawlers.Tests.BarsServiceTests
                     .Include(c => c.Cocktail)
                     .Skip(8).Take(8)
                     .ToListAsync();
-                
+
                 var dbBar = await context.Bars.FirstOrDefaultAsync();
-                var result = await sut.GetCocktailsAsync(dbBar.Id, "1","8", null, true);
+                var result = await sut.GetCocktailsAsync(dbBar.Id, "1", "8", null, true);
 
                 Assert.AreEqual(result.Count(), dbResult.Count());
                 foreach (var item in dbResult)
                 {
                     Assert.IsNotNull(result.FirstOrDefault(r => r.Name == item.Cocktail.Name));
-                }    
+                }
             }
         }
 

@@ -1,16 +1,9 @@
 ﻿using BarCrawlers.Data;
 using BarCrawlers.Data.DBModels;
 using BarCrawlers.Services;
-using BarCrawlers.Services.Contracts;
-using BarCrawlers.Services.DTOs;
 using BarCrawlers.Services.Mappers.Contracts;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BarCrawlers.Tests.CocktailsServiceTests
@@ -24,7 +17,7 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
         {
             var options = Utils.GetOptions(nameof(CocktailExists_True_whenExisting));
             var testCocktailId = Utils.MySampleGuid();
-            var cocktail = new Cocktail() { Id=testCocktailId};
+            var cocktail = new Cocktail() { Id = testCocktailId };
 
             var mockMapper = new Mock<ICocktailMapper>();
 
@@ -104,7 +97,7 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
             //Act and Assert
             using (var context = new BCcontext(options))
             {
-                var sut = new CocktailsService(context, mockMapper.Object,mockBarMapper.Object);
+                var sut = new CocktailsService(context, mockMapper.Object, mockBarMapper.Object);
 
                 var result = await sut.CocktailExistsByNameAsync("TestName");
                 Assert.IsFalse(result);

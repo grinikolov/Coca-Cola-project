@@ -1,15 +1,11 @@
 ﻿using BarCrawlers.Data;
-using BarCrawlers.Data.DBModels;
 using BarCrawlers.Services.Contracts;
 using BarCrawlers.Services.DTOs;
 using BarCrawlers.Services.Mappers.Contracts;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BarCrawlers.Services
@@ -22,8 +18,8 @@ namespace BarCrawlers.Services
 
         public BarUserCommentsService(BCcontext context, IBarUserCommentMapper mapper)
         {
-            this._context = context ?? throw new ArgumentNullException(nameof(context));
-            this._mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             //this._clientFactory = httpClient ?? throw new ArgumentNullException(nameof(mapper));
         }
 
@@ -37,9 +33,9 @@ namespace BarCrawlers.Services
                 }
                 else
                 {
-                    var comment = this._mapper.MapDTOToEntity(commentDTO);
+                    var comment = _mapper.MapDTOToEntity(commentDTO);
 
-                    this._context.BarComments.Add(comment);
+                    _context.BarComments.Add(comment);
 
                     await _context.SaveChangesAsync();
 
@@ -62,9 +58,9 @@ namespace BarCrawlers.Services
         {
             try
             {
-                var comment = await this._context.BarComments.FirstOrDefaultAsync(c => c.BarId == barId && c.UserId == userId);
+                var comment = await _context.BarComments.FirstOrDefaultAsync(c => c.BarId == barId && c.UserId == userId);
 
-                this._context.BarComments.Remove(comment);
+                _context.BarComments.Remove(comment);
 
                 await _context.SaveChangesAsync();
 
@@ -73,7 +69,7 @@ namespace BarCrawlers.Services
             catch (Exception)
             {
                 return false;
-            } 
+            }
         }
 
         public async Task<IEnumerable<BarUserCommentDTO>> GetAllAsync(Guid barId, string page, string itemsOnPage)
@@ -82,7 +78,7 @@ namespace BarCrawlers.Services
             {
                 var p = int.Parse(page);
                 var item = int.Parse(itemsOnPage);
-                var comments =await this._context.BarComments
+                var comments = await _context.BarComments
                                             .Include(c => c.Bar)
                                             .Include(c => c.User)
                                             .Where(c => c.BarId == barId)
@@ -105,7 +101,7 @@ namespace BarCrawlers.Services
         {
             try
             {
-                var comment = await this._context.BarComments
+                var comment = await _context.BarComments
                             .Include(c => c.Bar)
                             .Include(c => c.User)
                             .FirstOrDefaultAsync(c => c.BarId == barId && c.UserId == userId);
@@ -127,7 +123,7 @@ namespace BarCrawlers.Services
         {
             try
             {
-                var comment = await this._context.BarComments
+                var comment = await _context.BarComments
                                             .Include(c => c.Bar)
                                             .Include(c => c.User)
                                             .FirstOrDefaultAsync(c => c.BarId == commentDTO.BarId && c.UserId == commentDTO.UserId);

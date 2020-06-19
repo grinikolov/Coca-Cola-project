@@ -5,9 +5,7 @@ using BarCrawlers.Services.DTOs;
 using BarCrawlers.Services.Mappers.Contracts;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BarCrawlers.Services
@@ -32,12 +30,12 @@ namespace BarCrawlers.Services
             , ICocktailMapper cocktailMapper
             )
         {
-            this._context = context ?? throw new ArgumentNullException(nameof(context));
-            this._userMapper = userMapper ?? throw new ArgumentNullException(nameof(userMapper));
-            this._cocktailCommentMapper = cocktailCommentMapper ?? throw new ArgumentNullException(nameof(cocktailCommentMapper));
-            this._usersService = usersService ?? throw new ArgumentNullException(nameof(usersService));
-            this._cocktailsService = cocktailsService ?? throw new ArgumentNullException(nameof(cocktailsService));
-            this._cocktailMapper = cocktailMapper ?? throw new ArgumentNullException(nameof(cocktailMapper));
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _userMapper = userMapper ?? throw new ArgumentNullException(nameof(userMapper));
+            _cocktailCommentMapper = cocktailCommentMapper ?? throw new ArgumentNullException(nameof(cocktailCommentMapper));
+            _usersService = usersService ?? throw new ArgumentNullException(nameof(usersService));
+            _cocktailsService = cocktailsService ?? throw new ArgumentNullException(nameof(cocktailsService));
+            _cocktailMapper = cocktailMapper ?? throw new ArgumentNullException(nameof(cocktailMapper));
             //this._barCommentMapper = barCommentMapper ?? throw new ArgumentNullException(nameof(barCommentMapper));
             //this._barMapper = barMapper ?? throw new ArgumentNullException(nameof(barMapper));
 
@@ -53,12 +51,12 @@ namespace BarCrawlers.Services
         /// <returns>The cocktail rated, DTO</returns>
         public async Task<CocktailDTO> RateCocktail(int theRating, Guid cocktailId, Guid userId)
         {
-            var user = await this._context.Users
+            var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.Id == userId);
-            var cocktail = await this._context.Cocktails
+            var cocktail = await _context.Cocktails
                 .FirstOrDefaultAsync(c => c.Id == cocktailId);
 
-            var existingRating = await this._context.CocktailRatings
+            var existingRating = await _context.CocktailRatings
                 .FirstOrDefaultAsync(r => r.UserId == userId && r.CocktailId == cocktailId);
 
             //bool isRated = this._context.CocktailRatings
@@ -68,7 +66,7 @@ namespace BarCrawlers.Services
             if (existingRating != null)
             {
                 existingRating.Rating = theRating;
-                this._context.CocktailRatings.Update(existingRating);
+                _context.CocktailRatings.Update(existingRating);
             }
             else
             {
@@ -81,13 +79,13 @@ namespace BarCrawlers.Services
                     Rating = theRating,
                 };
                 cocktail.TimesRated += 1;
-                this._context.CocktailRatings.Add(theNewRating);
+                _context.CocktailRatings.Add(theNewRating);
             }
 
             try
             {
                 //Saving before recalculating for it to be correct.
-                await this._context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
             }
             catch (Exception)
             {
@@ -98,14 +96,14 @@ namespace BarCrawlers.Services
 
             try
             {
-                this._context.Cocktails.Update(cocktail);
-                await this._context.SaveChangesAsync();
+                _context.Cocktails.Update(cocktail);
+                await _context.SaveChangesAsync();
             }
             catch (Exception)
             {
                 return null;
             }
-            return this._cocktailMapper.MapEntityToDTO(cocktail);
+            return _cocktailMapper.MapEntityToDTO(cocktail);
         }
 
         /// <summary>
@@ -115,7 +113,7 @@ namespace BarCrawlers.Services
         /// <returns>The new cocktail rating</returns>
         private async Task<double> RecalculateCocktailRatingAsync(Guid cocktailId)
         {
-            var recalculatedRating = await this._context.CocktailRatings
+            var recalculatedRating = await _context.CocktailRatings
                 .Where(r => r.CocktailId == cocktailId)
                 .Select(r => r.Rating).AverageAsync();
 
@@ -132,16 +130,16 @@ namespace BarCrawlers.Services
         /// <returns>The comment, DTO</returns>
         public async Task<CocktailUserCommentDTO> AddCocktailComment(CocktailUserCommentDTO commentDTO, Guid cocktailId, Guid userId)
         {
-            var cocktail = await this._context.Cocktails
+            var cocktail = await _context.Cocktails
                 .FirstOrDefaultAsync(x => x.Id == cocktailId);
 
             commentDTO.UserId = userId;
-            var comment = this._cocktailCommentMapper.MapDTOToEntity(commentDTO);
+            var comment = _cocktailCommentMapper.MapDTOToEntity(commentDTO);
 
-            await this._context.CocktailComments.AddAsync(comment);
-            await this._context.SaveChangesAsync();
+            await _context.CocktailComments.AddAsync(comment);
+            await _context.SaveChangesAsync();
 
-            return this._cocktailCommentMapper.MapEntityToDTO(comment);
+            return _cocktailCommentMapper.MapEntityToDTO(comment);
         }
 
 

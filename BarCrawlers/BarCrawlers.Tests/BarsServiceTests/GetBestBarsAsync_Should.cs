@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BarCrawlers.Tests.BarsServiceTests
@@ -206,7 +205,7 @@ namespace BarCrawlers.Tests.BarsServiceTests
             {
                 var sut = new BarsService(context, mockMapper.Object, http.Object, coctailMapper.Object);
 
-                await Assert.ThrowsExceptionAsync<ArgumentException> (async () =>  await sut.GetBestBarsAsync(), "Failed to get list");
+                await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await sut.GetBestBarsAsync(), "Failed to get list");
             }
         }
     }

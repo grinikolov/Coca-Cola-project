@@ -1,5 +1,3 @@
-using System;
-
 namespace BarCrawlers.Models
 {
     public class ErrorViewModel

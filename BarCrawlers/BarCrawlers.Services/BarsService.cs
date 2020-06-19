@@ -7,15 +7,13 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Net.Http;
 using System.Text.Json;
-using System.Diagnostics.Contracts;
+using System.Threading.Tasks;
 
 namespace BarCrawlers.Services
 {
-    public class BarsService:IBarsService
+    public class BarsService : IBarsService
     {
         private readonly BCcontext _context;
         private readonly IBarMapper _mapper;
@@ -24,10 +22,10 @@ namespace BarCrawlers.Services
 
         public BarsService(BCcontext context, IBarMapper mapper, IHttpClientFactory httpClient, ICocktailMapper cocktailMapper)
         {
-            this._context = context ?? throw new ArgumentNullException(nameof(context));
-            this._mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            this._clientFactory = httpClient ?? throw new ArgumentNullException(nameof(mapper));
-            this._cocktailMapper = cocktailMapper ?? throw new ArgumentNullException(nameof(mapper));
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _clientFactory = httpClient ?? throw new ArgumentNullException(nameof(mapper));
+            _cocktailMapper = cocktailMapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         /// <summary>
@@ -41,7 +39,7 @@ namespace BarCrawlers.Services
             {
                 if (await BarExistsByName(barDTO.Name))
                 {
-                    var theBar = await this._context.Bars
+                    var theBar = await _context.Bars
                         .FirstOrDefaultAsync(c => c.Name.Equals(barDTO.Name));
                     if (theBar.IsDeleted == true)
                     {
@@ -49,19 +47,19 @@ namespace BarCrawlers.Services
                     }
                     _context.Bars.Update(theBar);
                     await _context.SaveChangesAsync();
-                    return this._mapper.MapEntityToDTO(theBar);
+                    return _mapper.MapEntityToDTO(theBar);
                 }
                 else
                 {
-                    var bar = this._mapper.MapDTOToEntity(barDTO);
-                    
-                    this._context.Bars.Add(bar);
+                    var bar = _mapper.MapDTOToEntity(barDTO);
+
+                    _context.Bars.Add(bar);
 
                     await _context.SaveChangesAsync();
 
-                    bar = await this._context.Bars.FirstOrDefaultAsync(b => b.Name == barDTO.Name);
+                    bar = await _context.Bars.FirstOrDefaultAsync(b => b.Name == barDTO.Name);
 
-                    return this._mapper.MapEntityToDTO(bar);
+                    return _mapper.MapEntityToDTO(bar);
                 }
             }
             catch (Exception)
@@ -87,14 +85,14 @@ namespace BarCrawlers.Services
         /// <returns>True on success</returns>
         public async Task<bool> DeleteAsync(Guid id)
         {
-            var bar = await this._context.Bars.FindAsync(id);
+            var bar = await _context.Bars.FindAsync(id);
             if (bar == null)
             {
                 return false;
             }
             bar.IsDeleted = true;
             _context.Update(bar);
-            await this._context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
             return true;
         }
 
@@ -102,7 +100,7 @@ namespace BarCrawlers.Services
         /// Gets all bars from the database.
         /// </summary>
         /// <returns>List of bars, DTOs</returns>
-        public async Task<IEnumerable<BarDTO>> GetAllAsync(string page, string itemsOnPage, string search, string order , bool access)
+        public async Task<IEnumerable<BarDTO>> GetAllAsync(string page, string itemsOnPage, string search, string order, bool access)
         {
             try
             {
@@ -125,18 +123,18 @@ namespace BarCrawlers.Services
                         bars = bars.Where(b => b.Name.Contains(search)
                                 || b.Address.Contains(search)
                                 || b.District.Contains(search)
-                                || b.Town.Contains(search) 
+                                || b.Town.Contains(search)
                                 || (b.Rating < searchNumber + 0.1
                                 && b.Rating > searchNumber - 0.1));
                     }
                     else
                     {
-                        bars = bars.Where(b => b.Name.Contains(search) 
-                                || b.Address.Contains(search) 
-                                || b.District.Contains(search) 
+                        bars = bars.Where(b => b.Name.Contains(search)
+                                || b.Address.Contains(search)
+                                || b.District.Contains(search)
                                 || b.Town.Contains(search));
                     }
-                    
+
                 }
 
                 if (order == "desc")
@@ -172,7 +170,7 @@ namespace BarCrawlers.Services
         {
             try
             {
-                var bar = await  _context.Bars
+                var bar = await _context.Bars
                                     .Include(b => b.Cocktails)
                                     .Include(b => b.Comments)
                                     .Include(b => b.Location)
@@ -258,7 +256,7 @@ namespace BarCrawlers.Services
         /// <param name="userId">User Id making the rating</param>
         /// <param name="rating">Value of rating</param>
         /// <returns>BarDTO</returns>
-        public async Task<BarDTO> RateBarAsync(Guid barId, Guid userId,  int rating)
+        public async Task<BarDTO> RateBarAsync(Guid barId, Guid userId, int rating)
         {
             try
             {
@@ -328,11 +326,11 @@ namespace BarCrawlers.Services
                             .ThenInclude(r => r.User)
                     .Include(c => c.Cocktail)
                         .ThenInclude(c => c.Bars)
-                            .ThenInclude(c=> c.Bar)
+                            .ThenInclude(c => c.Bar)
                     .Include(c => c.Bar)
                         .ThenInclude(b => b.Location)
                     .Where(c => c.BarId == id)
-                    .Select(c=> c.Cocktail)
+                    .Select(c => c.Cocktail)
                     .ToListAsync();
 
                 if (!access)
@@ -346,7 +344,7 @@ namespace BarCrawlers.Services
 
                 cocktails = cocktails.Skip(p * item).Take(item).ToList();
 
-                return cocktails.Select(x => this._cocktailMapper.MapEntityToDTO(x));
+                return cocktails.Select(x => _cocktailMapper.MapEntityToDTO(x));
             }
             catch (Exception)
             {
@@ -381,7 +379,7 @@ namespace BarCrawlers.Services
                     .Where(c => c.BarId == id)
                     .ToListAsync();
 
-                return cocktails.Select(x => this._cocktailMapper.MapEntityToDTO(x.Cocktail)).ToList();
+                return cocktails.Select(x => _cocktailMapper.MapEntityToDTO(x.Cocktail)).ToList();
             }
             catch (Exception)
             {
@@ -406,7 +404,7 @@ namespace BarCrawlers.Services
         /// <returns>Double</returns>
         private async Task<double> CalculateRating(Guid id)
         {
-            return Math.Round( await _context.BarRatings.Where(b => b.BarId == id).AverageAsync(b => b.Rating), 2);
+            return Math.Round(await _context.BarRatings.Where(b => b.BarId == id).AverageAsync(b => b.Rating), 2);
         }
 
         /// <summary>

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 
 namespace BarCrawlers.Middlewares
 {
@@ -16,7 +13,7 @@ namespace BarCrawlers.Middlewares
 
         public async Task InvokeAsync(HttpContext httpContext)
         {
-            await this.next(httpContext);
+            await next(httpContext);
 
             if (httpContext.Response.StatusCode == 404)
             {

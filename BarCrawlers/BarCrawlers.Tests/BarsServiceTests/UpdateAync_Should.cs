@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BarCrawlers.Tests.BarsServiceTests
@@ -388,7 +387,7 @@ namespace BarCrawlers.Tests.BarsServiceTests
                 var conection1 = new CocktailBar()
                 {
                     Cocktail = await context.Cocktails.FirstOrDefaultAsync(c => c.Name == "SomeCocktail"),
-                    Bar =await context.Bars.FirstOrDefaultAsync(b => b.Name == "BestBar")
+                    Bar = await context.Bars.FirstOrDefaultAsync(b => b.Name == "BestBar")
                 };
                 var conection2 = new CocktailBar()
                 {

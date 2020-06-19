@@ -2,15 +2,10 @@
 using BarCrawlers.Data.DBModels;
 using BarCrawlers.Services;
 using BarCrawlers.Services.DTOs;
-using BarCrawlers.Services.Mappers;
 using BarCrawlers.Services.Mappers.Contracts;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace BarCrawlers.Tests.IngredientsServiceTests
 {
@@ -80,7 +75,7 @@ namespace BarCrawlers.Tests.IngredientsServiceTests
             {
                 var sut = new IngredientsService(context, mockMapper.Object);
 
-                var result =  sut.GetAllAsync().Result.ToList();
+                var result = sut.GetAllAsync().Result.ToList();
 
                 Assert.AreEqual(3, result.Count());
                 Assert.AreEqual(entity3.Name, result[2].Name);

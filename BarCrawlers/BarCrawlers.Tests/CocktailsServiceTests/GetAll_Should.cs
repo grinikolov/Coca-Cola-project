@@ -1,16 +1,11 @@
 ﻿using BarCrawlers.Data;
 using BarCrawlers.Data.DBModels;
 using BarCrawlers.Services;
-using BarCrawlers.Services.Contracts;
 using BarCrawlers.Services.DTOs;
 using BarCrawlers.Services.Mappers.Contracts;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BarCrawlers.Tests.CocktailsServiceTests
@@ -166,7 +161,7 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
             using (var actContext = new BCcontext(options))
             {
                 var sut = new CocktailsService(actContext, mockMapper.Object, mockBarMapper.Object);
-                var cocktail = await sut.GetAllAsync("0", "12","","", false);
+                var cocktail = await sut.GetAllAsync("0", "12", "", "", false);
 
                 Assert.IsNotNull(cocktail);
                 Assert.AreEqual(0, actContext.Cocktails.Count());
@@ -190,7 +185,7 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
             {
                 string order = "asc";
                 var sut = new CocktailsService(actContext, mockMapper.Object, mockBarMapper.Object);
-                var cocktail = await sut.GetAllAsync("0", "12","searchString", order, true);
+                var cocktail = await sut.GetAllAsync("0", "12", "searchString", order, true);
 
                 Assert.IsNotNull(cocktail);
                 Assert.AreEqual(0, actContext.Cocktails.Count());

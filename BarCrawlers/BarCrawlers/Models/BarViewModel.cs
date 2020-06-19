@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace BarCrawlers.Models
 {
@@ -9,7 +7,7 @@ namespace BarCrawlers.Models
     {
         public BarViewModel()
         {
-            this.Cocktails = new List<CocktailBarView>();
+            Cocktails = new List<CocktailBarView>();
         }
         public Guid Id { get; set; }
         public string Name { get; set; }

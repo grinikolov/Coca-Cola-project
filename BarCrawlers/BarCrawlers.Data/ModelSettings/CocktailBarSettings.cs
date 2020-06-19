@@ -1,9 +1,6 @@
 ﻿using BarCrawlers.Data.DBModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BarCrawlers.Data.ModelSettings
 {
@@ -11,7 +8,7 @@ namespace BarCrawlers.Data.ModelSettings
     {
         public void Configure(EntityTypeBuilder<CocktailBar> builder)
         {
-            builder.HasKey(c => new { c.BarId,c.CocktailId });
+            builder.HasKey(c => new { c.BarId, c.CocktailId });
         }
     }
 }

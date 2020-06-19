@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using BarCrawlers.Models;
+using BarCrawlers.Models.Contracts;
+using BarCrawlers.Services.Contracts;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using BarCrawlers.Models;
-using BarCrawlers.Services.Contracts;
-using BarCrawlers.Models.Contracts;
 
 namespace BarCrawlers.Controllers
 {
@@ -25,11 +24,11 @@ namespace BarCrawlers.Controllers
             , IBarViewMapper barMapper
             , ICocktailViewMapper cocktailMapper)
         {
-            this._logger = logger;
-            this._barsService = barsService;
-            this._cocktailsService = cocktailsService;
-            this._barMapper = barMapper;
-            this._cocktailMapper = cocktailMapper;
+            _logger = logger;
+            _barsService = barsService;
+            _cocktailsService = cocktailsService;
+            _barMapper = barMapper;
+            _cocktailMapper = cocktailMapper;
         }
 
         public async Task<IActionResult> Index()
@@ -38,17 +37,17 @@ namespace BarCrawlers.Controllers
             {
                 HomeIndexViewModel homeModel = new HomeIndexViewModel();
 
-                var bars = await this._barsService.GetBestBarsAsync();
-                homeModel.TopBars = bars.Select(b => this._barMapper.MapDTOToView(b));
+                var bars = await _barsService.GetBestBarsAsync();
+                homeModel.TopBars = bars.Select(b => _barMapper.MapDTOToView(b));
 
-                var cocktails = await this._cocktailsService.GetBestCocktailsAsync();
-                homeModel.TopCocktails = cocktails.Select(c => this._cocktailMapper.MapDTOToView(c));
+                var cocktails = await _cocktailsService.GetBestCocktailsAsync();
+                homeModel.TopCocktails = cocktails.Select(c => _cocktailMapper.MapDTOToView(c));
 
                 return View(homeModel);
             }
             catch (Exception e)
             {
-                this._logger.LogError(e.Message);
+                _logger.LogError(e.Message);
                 return RedirectToAction("Error");
             }
 

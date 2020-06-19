@@ -4,13 +4,9 @@ using BarCrawlers.Services.Contracts;
 using BarCrawlers.Services.DTOs;
 using BarCrawlers.Services.Mappers.Contracts;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace BarCrawlers.Services
@@ -27,9 +23,9 @@ namespace BarCrawlers.Services
             IBarMapper barMapper
            )
         {
-            this._context = context ?? throw new ArgumentNullException(nameof(context));
-            this._mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            this._barMapper = barMapper ?? throw new ArgumentNullException(nameof(barMapper));
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _barMapper = barMapper ?? throw new ArgumentNullException(nameof(barMapper));
             //this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -47,7 +43,7 @@ namespace BarCrawlers.Services
                 .Include(c => c.Bars)
                 .ToListAsync();
 
-            return cocktails.Select(x => this._mapper.MapEntityToDTO(x)).ToList();
+            return cocktails.Select(x => _mapper.MapEntityToDTO(x)).ToList();
         }
 
         public async Task<IEnumerable<CocktailDTO>> GetAllAsync()
@@ -63,7 +59,7 @@ namespace BarCrawlers.Services
                     .ThenInclude(b => b.Bar)
                 .ToListAsync();
 
-            return cocktails.Select(x => this._mapper.MapEntityToDTO(x)).ToList();
+            return cocktails.Select(x => _mapper.MapEntityToDTO(x)).ToList();
         }
 
         /// <summary>
@@ -112,7 +108,7 @@ namespace BarCrawlers.Services
 
                 var result = await cocktails.ToListAsync();
 
-                return result.Select(x => this._mapper.MapEntityToDTO(x)).ToList();
+                return result.Select(x => _mapper.MapEntityToDTO(x)).ToList();
             }
             catch (Exception e)
             {
@@ -151,7 +147,7 @@ namespace BarCrawlers.Services
 
             cocktail.Rating = Math.Round(cocktail.Rating, 2);
 
-            return this._mapper.MapEntityToDTO(cocktail);
+            return _mapper.MapEntityToDTO(cocktail);
         }
         /// <summary>
         /// Creates new cocktail in the database.
@@ -165,25 +161,25 @@ namespace BarCrawlers.Services
                 //TODO: Check if exists and recover
                 if (await CocktailExistsByNameAsync(cocktailDTO.Name))
                 {
-                    var theCocktail = await this._context.Cocktails
+                    var theCocktail = await _context.Cocktails
                         .FirstOrDefaultAsync(c => c.Name.Equals(cocktailDTO.Name));
                     if (theCocktail.IsDeleted == true)
                     {
                         theCocktail.IsDeleted = false;
                     }
-                     _context.Cocktails.Update(theCocktail);
+                    _context.Cocktails.Update(theCocktail);
                     await _context.SaveChangesAsync();
-                    return this._mapper.MapEntityToDTO(theCocktail);
+                    return _mapper.MapEntityToDTO(theCocktail);
 
                 }
                 else
                 {
-                    var cocktail = this._mapper.MapDTOToEntity(cocktailDTO);
-                    this._context.Cocktails.Add(cocktail);
+                    var cocktail = _mapper.MapDTOToEntity(cocktailDTO);
+                    _context.Cocktails.Add(cocktail);
 
                     await _context.SaveChangesAsync();
 
-                    cocktail = await this._context.Cocktails
+                    cocktail = await _context.Cocktails
                     .Include(c => c.Ingredients)
                     .FirstOrDefaultAsync(c => c.Name.Equals(cocktailDTO.Name));
                     foreach (var item in cocktailDTO.Ingredients)
@@ -206,12 +202,12 @@ namespace BarCrawlers.Services
                     {
                         cocktail.IsAlcoholic = false;
                     }
-                    this._context.Update(cocktail);
-                    await this._context.SaveChangesAsync();
+                    _context.Update(cocktail);
+                    await _context.SaveChangesAsync();
 
-                    cocktail = await this._context.Cocktails.FirstOrDefaultAsync(x => x.Name.ToLower() == cocktailDTO.Name.ToLower());
+                    cocktail = await _context.Cocktails.FirstOrDefaultAsync(x => x.Name.ToLower() == cocktailDTO.Name.ToLower());
 
-                    return this._mapper.MapEntityToDTO(cocktail);
+                    return _mapper.MapEntityToDTO(cocktail);
                 }
             }
             catch (Exception e)
@@ -231,7 +227,7 @@ namespace BarCrawlers.Services
         {
             try
             {
-                var ingredient = await this._context.Ingredients
+                var ingredient = await _context.Ingredients
                     .FirstOrDefaultAsync(i => i.Id == ingredientId);
                 var cocktailIngredient = new CocktailIngredient
                 {
@@ -241,8 +237,8 @@ namespace BarCrawlers.Services
                     Cocktail = cocktail,
                     Parts = parts,
                 };
-                this._context.CocktailIngredients.Add(cocktailIngredient);
-                await this._context.SaveChangesAsync();
+                _context.CocktailIngredients.Add(cocktailIngredient);
+                await _context.SaveChangesAsync();
                 return true;
             }
             catch (Exception e)
@@ -265,9 +261,9 @@ namespace BarCrawlers.Services
                 {
                     throw new ArgumentNullException("Cocktail DTO to update is null.");
                 }
-                var cocktail = await this._context.Cocktails.FindAsync(id);
+                var cocktail = await _context.Cocktails.FindAsync(id);
 
-                this._context.Entry(cocktail).State = EntityState.Modified;
+                _context.Entry(cocktail).State = EntityState.Modified;
 
                 //cocktail = this._mapper.MapDTOToEntity(cocktailDTO);
 
@@ -281,10 +277,10 @@ namespace BarCrawlers.Services
                 cocktail.Instructions = cocktailDTO.Instructions;
 
                 //remove ingredients
-                var previousIngredients = this._context.CocktailIngredients
+                var previousIngredients = _context.CocktailIngredients
                     .Where(i => i.CocktailId == cocktail.Id)
                     .AsQueryable();
-                this._context.CocktailIngredients.RemoveRange(previousIngredients);
+                _context.CocktailIngredients.RemoveRange(previousIngredients);
 
                 //add new ingredients
                 foreach (var item in cocktailDTO.Ingredients)
@@ -307,10 +303,10 @@ namespace BarCrawlers.Services
                 {
                     cocktail.IsAlcoholic = false;
                 }
-                this._context.Update(cocktail);
-                await this._context.SaveChangesAsync();
+                _context.Update(cocktail);
+                await _context.SaveChangesAsync();
 
-                return this._mapper.MapEntityToDTO(cocktail);
+                return _mapper.MapEntityToDTO(cocktail);
             }
             catch (Exception e)
             {
@@ -325,14 +321,14 @@ namespace BarCrawlers.Services
         /// <returns>True when successful, false otherwise</returns>
         public async Task<bool> DeleteAsync(Guid id)
         {
-            var cocktail = await this._context.Cocktails.FindAsync(id);
+            var cocktail = await _context.Cocktails.FindAsync(id);
             if (cocktail == null)
             {
                 return false;
             }
             cocktail.IsDeleted = true;
             _context.Update(cocktail);
-            await this._context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
             return true;
 
         }
@@ -368,7 +364,7 @@ namespace BarCrawlers.Services
         {
             try
             {
-                var bars = await this._context.CocktailBars
+                var bars = await _context.CocktailBars
                     .Include(c => c.Bar)
                         .ThenInclude(b => b.Comments)
                             .ThenInclude(c => c.User)
@@ -389,7 +385,7 @@ namespace BarCrawlers.Services
 
                 //var barsList = await bars.ToListAsync();
 
-                return bars.Select(x => this._barMapper.MapEntityToDTO(x)).ToList();
+                return bars.Select(x => _barMapper.MapEntityToDTO(x)).ToList();
             }
             catch (Exception e)
             {
@@ -413,12 +409,12 @@ namespace BarCrawlers.Services
                   .ThenInclude(c => c.User)
               .Include(c => c.Bars)
                   .ThenInclude(b => b.Bar)
-              .Where(c=> c.IsDeleted == false)
+              .Where(c => c.IsDeleted == false)
               .OrderBy(c => c.TimesRated)
               .ThenByDescending(c => c.Rating)
               .Take(3).ToListAsync();
 
-                var cocktailsDTO = cocktails.Select(x => this._mapper.MapEntityToDTO(x));
+                var cocktailsDTO = cocktails.Select(x => _mapper.MapEntityToDTO(x));
 
                 return cocktailsDTO;
             }

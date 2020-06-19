@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using BarCrawlers.Models;
+using BarCrawlers.Models.Contracts;
+using BarCrawlers.Services.Contracts;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using BarCrawlers.Data;
-using BarCrawlers.Data.DBModels;
-using BarCrawlers.Services.Contracts;
-using BarCrawlers.Models.Contracts;
-using BarCrawlers.Models;
-using System.Diagnostics;
 
 namespace BarCrawlers.Controllers
 {
@@ -32,14 +27,14 @@ namespace BarCrawlers.Controllers
         {
             try
             {
-                var comments = await this._service.GetAllAsync(barId, page, itemsOnPage);
+                var comments = await _service.GetAllAsync(barId, page, itemsOnPage);
 
                 ViewBag.Count = comments.Count();
                 ViewBag.CurrentPage = int.Parse(page);
                 ViewBag.ItemsOnPage = int.Parse(itemsOnPage);
                 ViewBag.CurrentBar = barId;
 
-                return View(comments.Select(b => this._mapper.MapDTOToView(b)));
+                return View(comments.Select(b => _mapper.MapDTOToView(b)));
             }
             catch (Exception)
             {
@@ -86,7 +81,7 @@ namespace BarCrawlers.Controllers
                 try
                 {
                     await _service.CreateAsync(_mapper.MapViewToDTO(barUserComment));
-                    return RedirectToAction(nameof(Index), new { barId = barUserComment.BarId});
+                    return RedirectToAction(nameof(Index), new { barId = barUserComment.BarId });
                 }
                 catch (Exception)
                 {
@@ -136,10 +131,10 @@ namespace BarCrawlers.Controllers
             {
                 //try
                 //{
-                    var commentDTO = _mapper.MapViewToDTO(barUserComment);
-                    var result = await _service.UpdateAsync(commentDTO);
-                    //_context.Update(barUserComment);
-                    //await _context.SaveChangesAsync();
+                var commentDTO = _mapper.MapViewToDTO(barUserComment);
+                var result = await _service.UpdateAsync(commentDTO);
+                //_context.Update(barUserComment);
+                //await _context.SaveChangesAsync();
                 //}
                 //catch (DbUpdateConcurrencyException)
                 //{
@@ -152,7 +147,7 @@ namespace BarCrawlers.Controllers
                 //        throw;
                 //    }
                 //}
-                return RedirectToAction(nameof(Index), new { barId = barUserComment.BarId});
+                return RedirectToAction(nameof(Index), new { barId = barUserComment.BarId });
             }
             //ViewData["BarId"] = new SelectList(_context.Bars, "Id", "Address", barUserComment.BarId);
             //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", barUserComment.UserId);
@@ -181,7 +176,7 @@ namespace BarCrawlers.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid barId, Guid userId)
         {
-            if (await _service.DeleteAsync(barId,userId))
+            if (await _service.DeleteAsync(barId, userId))
             {
                 return RedirectToAction(nameof(Index), new { barId });
             }
@@ -189,7 +184,7 @@ namespace BarCrawlers.Controllers
             {
                 return Error();
             }
-            
+
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

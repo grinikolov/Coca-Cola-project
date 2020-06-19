@@ -2,15 +2,10 @@
 using BarCrawlers.Data.DBModels;
 using BarCrawlers.Services;
 using BarCrawlers.Services.DTOs;
-using BarCrawlers.Services.Mappers;
 using BarCrawlers.Services.Mappers.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace BarCrawlers.Tests.IngredientsServiceTests
 {
@@ -39,8 +34,8 @@ namespace BarCrawlers.Tests.IngredientsServiceTests
                     Name = entity.Name,
                     IsAlcoholic = entity.IsAlcoholic,
                 });
-                
-            
+
+
             using (var arrangeContext = new BCcontext(options))
             {
                 arrangeContext.Ingredients.Add(entity);

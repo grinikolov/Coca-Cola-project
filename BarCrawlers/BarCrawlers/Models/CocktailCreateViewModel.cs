@@ -1,5 +1,4 @@
-﻿using BarCrawlers.Services.DTOs;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -9,7 +8,7 @@ namespace BarCrawlers.Models
     {
         public CocktailCreateViewModel()
         {
-            this.Ingredients = new List<CocktailIngredientViewModel>();
+            Ingredients = new List<CocktailIngredientViewModel>();
         }
         public Guid Id { get; set; }
         [Required]

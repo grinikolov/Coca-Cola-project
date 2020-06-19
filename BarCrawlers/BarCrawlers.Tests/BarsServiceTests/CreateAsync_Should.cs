@@ -3,15 +3,12 @@ using BarCrawlers.Data.DBModels;
 using BarCrawlers.Services;
 using BarCrawlers.Services.DTOs;
 using BarCrawlers.Services.Mappers.Contracts;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
 //using Microsoft.Extensions.DependencyModel;
 
 namespace BarCrawlers.Tests.BarsServiceTests

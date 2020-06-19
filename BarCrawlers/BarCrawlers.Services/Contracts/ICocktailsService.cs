@@ -1,5 +1,4 @@
-﻿using BarCrawlers.Data.DBModels;
-using BarCrawlers.Services.DTOs;
+﻿using BarCrawlers.Services.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

@@ -9,7 +9,7 @@ namespace BarCrawlers.Data
     public class BCcontext : IdentityDbContext<User, Role, Guid>
     {
         public BCcontext(DbContextOptions<BCcontext> options)
-    :       base(options)
+    : base(options)
         {
         }
 
@@ -38,7 +38,7 @@ namespace BarCrawlers.Data
             builder.ApplyConfiguration(new LocationSettings());
             builder.ApplyConfiguration(new UserBarRatingSettings());
             builder.ApplyConfiguration(new UserCocktailRatingSettings());
-            
+
 
             base.OnModelCreating(builder);
 

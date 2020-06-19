@@ -2,8 +2,6 @@
 using BarCrawlers.Services.DTOs;
 using BarCrawlers.Services.Mappers.Contracts;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BarCrawlers.Services.Mappers
 {
@@ -28,7 +26,7 @@ namespace BarCrawlers.Services.Mappers
                     PhoneNumber = entity.PhoneNumber,
                     PhoneNumberConfirmed = entity.PhoneNumberConfirmed,
                     LockoutEnd = entity.LockoutEnd,
-                    LockoutEnabled = entity.LockoutEnabled,   
+                    LockoutEnabled = entity.LockoutEnabled,
                 };
 
                 return dto;

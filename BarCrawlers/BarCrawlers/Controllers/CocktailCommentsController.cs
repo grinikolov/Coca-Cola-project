@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using BarCrawlers.Models;
+using BarCrawlers.Models.Contracts;
+using BarCrawlers.Services.Contracts;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using BarCrawlers.Data;
-using BarCrawlers.Data.DBModels;
-using BarCrawlers.Services.Contracts;
-using BarCrawlers.Models.Contracts;
-using BarCrawlers.Models;
-using System.Diagnostics;
-using Microsoft.AspNetCore.Authorization;
 
 namespace BarCrawlers.Controllers
 {
@@ -23,8 +18,8 @@ namespace BarCrawlers.Controllers
         public CocktailCommentsController(ICocktailCommentsService service,
             ICocktailUserCommentViewMapper mapper)
         {
-            this._service = service ?? throw new ArgumentNullException(nameof(service));
-            this._mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _service = service ?? throw new ArgumentNullException(nameof(service));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         // GET: CocktailComments
@@ -32,14 +27,14 @@ namespace BarCrawlers.Controllers
         {
             try
             {
-                var comments = await this._service.GetAllAsync(cocktailId, page, itemsOnPage);
+                var comments = await _service.GetAllAsync(cocktailId, page, itemsOnPage);
 
                 ViewBag.Count = comments.Count();
                 ViewBag.CurrentPage = int.Parse(page);
                 ViewBag.ItemsOnPage = int.Parse(itemsOnPage);
                 ViewBag.CurrentCocktail = cocktailId;
 
-                return View(comments.Select(b => this._mapper.MapDTOToView(b)));
+                return View(comments.Select(b => _mapper.MapDTOToView(b)));
             }
             catch (Exception)
             {
@@ -87,7 +82,7 @@ namespace BarCrawlers.Controllers
             {
                 try
                 {
-                    var commentDTO = this._mapper.MapViewToDTO(cocktailUserCommentVM);
+                    var commentDTO = _mapper.MapViewToDTO(cocktailUserCommentVM);
                     await _service.CreateAsync(commentDTO);
                     return RedirectToAction(nameof(Index), new { cocktailId = cocktailUserCommentVM.CocktailId });
                 }

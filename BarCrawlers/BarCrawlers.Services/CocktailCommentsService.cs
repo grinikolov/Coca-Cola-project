@@ -1,15 +1,11 @@
 ﻿using BarCrawlers.Data;
-using BarCrawlers.Data.DBModels;
 using BarCrawlers.Services.Contracts;
 using BarCrawlers.Services.DTOs;
 using BarCrawlers.Services.Mappers.Contracts;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BarCrawlers.Services
@@ -22,8 +18,8 @@ namespace BarCrawlers.Services
 
         public CocktailCommentsService(BCcontext context, ICocktailCommentMapper mapper)
         {
-            this._context = context ?? throw new ArgumentNullException(nameof(context));
-            this._mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         public async Task<CocktailUserCommentDTO> CreateAsync(CocktailUserCommentDTO commentDTO)
@@ -36,9 +32,9 @@ namespace BarCrawlers.Services
                 }
                 else
                 {
-                    var comment = this._mapper.MapDTOToEntity(commentDTO);
+                    var comment = _mapper.MapDTOToEntity(commentDTO);
 
-                    this._context.CocktailComments.Add(comment);
+                    _context.CocktailComments.Add(comment);
 
                     await _context.SaveChangesAsync();
 
@@ -60,10 +56,10 @@ namespace BarCrawlers.Services
         {
             try
             {
-                var comment = await this._context.CocktailComments
+                var comment = await _context.CocktailComments
                     .FirstOrDefaultAsync(c => c.CocktailId == cocktailId && c.UserId == userId);
 
-                this._context.CocktailComments.Remove(comment);
+                _context.CocktailComments.Remove(comment);
 
                 await _context.SaveChangesAsync();
 
@@ -81,7 +77,7 @@ namespace BarCrawlers.Services
             {
                 var p = int.Parse(page);
                 var item = int.Parse(itemsOnPage);
-                var comments = await this._context.CocktailComments
+                var comments = await _context.CocktailComments
                                             .Include(c => c.Cocktail)
                                             .Include(c => c.User)
                                             .Where(c => c.CocktailId == cocktailId)
@@ -104,7 +100,7 @@ namespace BarCrawlers.Services
         {
             try
             {
-                var comment = await this._context.CocktailComments
+                var comment = await _context.CocktailComments
                             .Include(c => c.Cocktail)
                             .Include(c => c.User)
                             .FirstOrDefaultAsync(c => c.CocktailId == cocktailId && c.UserId == userId);
@@ -126,7 +122,7 @@ namespace BarCrawlers.Services
         {
             try
             {
-                var comment = await this._context.CocktailComments
+                var comment = await _context.CocktailComments
                                             .Include(c => c.Cocktail)
                                             .Include(c => c.User)
                                             .FirstOrDefaultAsync(c => c.CocktailId == commentDTO.CocktailId && c.UserId == commentDTO.UserId);

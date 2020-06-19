@@ -1,14 +1,10 @@
 ﻿using BarCrawlers.Data;
 using BarCrawlers.Data.DBModels;
 using BarCrawlers.Services;
-using BarCrawlers.Services.DTOs;
 using BarCrawlers.Services.Mappers.Contracts;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BarCrawlers.Tests.BarsServiceTests
@@ -52,7 +48,7 @@ namespace BarCrawlers.Tests.BarsServiceTests
             using (var context = new BCcontext(options))
             {
                 var sut = new BarsService(context, mockMapper.Object, http.Object, coctailMapper.Object);
-                var result =  await sut.BarExistsByName("BestBar");
+                var result = await sut.BarExistsByName("BestBar");
 
                 Assert.AreEqual(result, true);
             }

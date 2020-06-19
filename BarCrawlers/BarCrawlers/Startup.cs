@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using BarCrawlers.Areas.Magician.Models;
 using BarCrawlers.Areas.Magician.Models.Contrtacts;
 using BarCrawlers.Data;
@@ -17,12 +13,12 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace BarCrawlers
 {
@@ -140,7 +136,7 @@ namespace BarCrawlers
             app.UseCookiePolicy();
 
             app.UseMiddleware<MissingMiddleware>();
-                       
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

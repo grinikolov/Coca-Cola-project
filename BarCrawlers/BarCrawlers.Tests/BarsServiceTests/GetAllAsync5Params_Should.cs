@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BarCrawlers.Tests.BarsServiceTests
@@ -42,7 +41,7 @@ namespace BarCrawlers.Tests.BarsServiceTests
                     LocationId = null,
                 };
 
-                if (i%2 == 0)
+                if (i % 2 == 0)
                 {
                     bar.IsDeleted = true;
                 }

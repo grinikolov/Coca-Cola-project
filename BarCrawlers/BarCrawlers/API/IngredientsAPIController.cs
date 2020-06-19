@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using BarCrawlers.Services.Contracts;
+﻿using BarCrawlers.Services.Contracts;
 using BarCrawlers.Services.DTOs;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BarCrawlers.API
 {
@@ -18,14 +15,14 @@ namespace BarCrawlers.API
 
         public IngredientsAPIController(IIngredientsService service)
         {
-            this._service = service;
+            _service = service;
         }
 
         // GET: api/Ingredients
         [HttpGet]
         public async Task<ActionResult<IEnumerable<IngredientDTO>>> GetIngredients()
         {
-            var ingredients = await this._service.GetAllAsync();
+            var ingredients = await _service.GetAllAsync();
             return Ok(ingredients);
         }
 
@@ -33,7 +30,7 @@ namespace BarCrawlers.API
         [HttpGet("{id}")]
         public async Task<ActionResult<IngredientDTO>> GetIngredient(Guid id)
         {
-            var ingredient = await this._service.GetAsync(id);
+            var ingredient = await _service.GetAsync(id);
 
             if (ingredient == null)
             {
@@ -53,7 +50,7 @@ namespace BarCrawlers.API
             {
                 return BadRequest();
             }
-            var ingredientDTO = await this._service.UpdateAsync(id, ingredient);
+            var ingredientDTO = await _service.UpdateAsync(id, ingredient);
             return Ok(ingredientDTO);
         }
 
@@ -67,7 +64,7 @@ namespace BarCrawlers.API
             {
                 return BadRequest();
             }
-            var ingredientDTO = await this._service.CreateAsync(ingredient);
+            var ingredientDTO = await _service.CreateAsync(ingredient);
 
             return Created("Post", ingredientDTO);
         }
@@ -76,7 +73,7 @@ namespace BarCrawlers.API
         [HttpDelete("{id}")]
         public async Task<ActionResult<bool>> DeleteIngredient(Guid id)
         {
-            return await this._service.DeleteAsync(id);
+            return await _service.DeleteAsync(id);
         }
 
     }

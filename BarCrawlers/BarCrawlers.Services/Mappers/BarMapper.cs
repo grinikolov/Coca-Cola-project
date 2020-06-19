@@ -2,8 +2,6 @@
 using BarCrawlers.Services.DTOs;
 using BarCrawlers.Services.Mappers.Contracts;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BarCrawlers.Services.Mappers
 {
@@ -64,7 +62,7 @@ namespace BarCrawlers.Services.Mappers
                         Lon = entity.Location.Longtitude,
                     };
                 }
-                    return dto;
+                return dto;
             }
             catch (Exception)
             {

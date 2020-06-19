@@ -6,11 +6,9 @@ using BarCrawlers.Services.Mappers.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BarCrawlers.Tests.BarsServiceTests
@@ -102,7 +100,7 @@ namespace BarCrawlers.Tests.BarsServiceTests
                 var dbResult = await context.CocktailBars
                     .Include(c => c.Cocktail)
                     .ToListAsync();
-                
+
                 var dbBar = await context.Bars.FirstOrDefaultAsync();
                 var result = await sut.GetCocktailsAsync(dbBar.Id);
 
@@ -110,7 +108,7 @@ namespace BarCrawlers.Tests.BarsServiceTests
                 foreach (var item in dbResult)
                 {
                     Assert.IsNotNull(result.FirstOrDefault(r => r.Name == item.Cocktail.Name));
-                }    
+                }
             }
         }
     }

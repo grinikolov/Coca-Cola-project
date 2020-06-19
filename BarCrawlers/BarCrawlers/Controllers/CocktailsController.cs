@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using BarCrawlers.Models;
+using BarCrawlers.Models.Contracts;
+using BarCrawlers.Services.Contracts;
+using BarCrawlers.Services.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using BarCrawlers.Data;
-using BarCrawlers.Services.Contracts;
-using BarCrawlers.Models.Contracts;
-using BarCrawlers.Models;
-using Microsoft.AspNetCore.Identity.UI.V4.Pages.Internal;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
-using BarCrawlers.Services.DTOs;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BarCrawlers.Controllers
 {
@@ -31,11 +27,11 @@ namespace BarCrawlers.Controllers
              IUserInteractionsService userInteractionsService,
              IBarViewMapper barMapper)
         {
-            this._service = service ?? throw new ArgumentNullException(nameof(service));
-            this._mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            this._ingredientsService = ingredientsService ?? throw new ArgumentNullException(nameof(ingredientsService));
-            this._userInteractionsService = userInteractionsService ?? throw new ArgumentNullException(nameof(userInteractionsService));
-            this._barMapper = barMapper ?? throw new ArgumentNullException(nameof(_barMapper));
+            _service = service ?? throw new ArgumentNullException(nameof(service));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _ingredientsService = ingredientsService ?? throw new ArgumentNullException(nameof(ingredientsService));
+            _userInteractionsService = userInteractionsService ?? throw new ArgumentNullException(nameof(userInteractionsService));
+            _barMapper = barMapper ?? throw new ArgumentNullException(nameof(_barMapper));
         }
         public IEnumerable<IngredientDTO> Ingredients
         {
@@ -55,13 +51,13 @@ namespace BarCrawlers.Controllers
                     access = true;
                 }
 
-                var cocktails = await this._service.GetAllAsync(page, itemsOnPage, searchString, order, access);
+                var cocktails = await _service.GetAllAsync(page, itemsOnPage, searchString, order, access);
                 ViewBag.Count = cocktails.Count();
                 ViewBag.CurrentPage = int.Parse(page);
                 ViewBag.ItemsOnPage = int.Parse(itemsOnPage);
                 ViewBag.SearchString = searchString;
 
-                return View(cocktails.Select(c => this._mapper.MapDTOToView(c)));
+                return View(cocktails.Select(c => _mapper.MapDTOToView(c)));
             }
             catch (Exception)
             {
@@ -79,7 +75,7 @@ namespace BarCrawlers.Controllers
                     return NotFound();
                 }
 
-                var cocktail = await this._service.GetAsync(id);
+                var cocktail = await _service.GetAsync(id);
 
                 if (cocktail == null)
                 {
@@ -87,7 +83,7 @@ namespace BarCrawlers.Controllers
                 }
 
                 //TODO: Map to ViewModel
-                return View(this._mapper.MapDTOToView(cocktail));
+                return View(_mapper.MapDTOToView(cocktail));
 
             }
             catch (Exception)
@@ -102,7 +98,7 @@ namespace BarCrawlers.Controllers
         {
             //ViewData["Ingredient"] = new SelectList( await this._ingredientsService.GetAllAsync(), "ID", "Name");
 
-            Ingredients = await this._ingredientsService.GetAllAsync();
+            Ingredients = await _ingredientsService.GetAllAsync();
             ViewData["Ingredients"] = Ingredients.Select(x => new SelectListItem(x.Name, x.Id.ToString()));
 
             return View();
@@ -122,8 +118,8 @@ namespace BarCrawlers.Controllers
 
                 //if (ModelState.IsValid)
                 //{
-                var cocktailDTO = this._mapper.MapViewToDTO(cocktailView);
-                var cocktail = await this._service.CreateAsync(cocktailDTO);
+                var cocktailDTO = _mapper.MapViewToDTO(cocktailView);
+                var cocktail = await _service.CreateAsync(cocktailDTO);
 
 
                 return RedirectToAction("Index");
@@ -160,15 +156,15 @@ namespace BarCrawlers.Controllers
                     return NotFound();
                 }
 
-                var cocktail = await this._service.GetAsync(id);
+                var cocktail = await _service.GetAsync(id);
                 if (cocktail == null)
                 {
                     return NotFound();
                 }
-                Ingredients= Ingredients ?? await this._ingredientsService.GetAllAsync();
+                Ingredients = Ingredients ?? await _ingredientsService.GetAllAsync();
                 ViewData["Ingredients"] = Ingredients.Select(x => new SelectListItem(x.Name, x.Id.ToString()));
 
-                return View(this._mapper.MapDTOToView(cocktail));
+                return View(_mapper.MapDTOToView(cocktail));
             }
             catch (Exception)
             {
@@ -189,9 +185,9 @@ namespace BarCrawlers.Controllers
                 return NotFound();
             }
 
-            var cocktail = await this._service.UpdateAsync(id, this._mapper.MapViewToDTO(cocktailVM));
+            var cocktail = await _service.UpdateAsync(id, _mapper.MapViewToDTO(cocktailVM));
 
-            return RedirectToAction("Details", "Cocktails" , new { id });
+            return RedirectToAction("Details", "Cocktails", new { id });
         }
 
         // GET: Cocktails/Delete/5
@@ -205,13 +201,13 @@ namespace BarCrawlers.Controllers
                     return NotFound();
                 }
 
-                var cocktail = await this._service.GetAsync(id);
+                var cocktail = await _service.GetAsync(id);
                 if (cocktail == null)
                 {
                     return NotFound();
                 }
 
-                return View(this._mapper.MapDTOToView(cocktail));
+                return View(_mapper.MapDTOToView(cocktail));
             }
             catch (Exception)
             {
@@ -225,7 +221,7 @@ namespace BarCrawlers.Controllers
         [Authorize(Roles = "Magician")]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var result = await this._service.DeleteAsync(id);
+            var result = await _service.DeleteAsync(id);
             if (result == true)
             {
                 return RedirectToAction(nameof(Index));
@@ -239,7 +235,7 @@ namespace BarCrawlers.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Rate( Guid id, Guid userId, int rating)
+        public async Task<IActionResult> Rate(Guid id, Guid userId, int rating)
         {
             if (rating <= 0 || id == default || userId == default)
             {
@@ -248,7 +244,7 @@ namespace BarCrawlers.Controllers
 
             try
             {
-                var model = await this._userInteractionsService.RateCocktail(rating, id, userId);
+                var model = await _userInteractionsService.RateCocktail(rating, id, userId);
                 return RedirectToAction("Details", "Cocktails", new { id = id });
             }
             catch (Exception e)
@@ -270,7 +266,7 @@ namespace BarCrawlers.Controllers
                 {
                     access = true;
                 }
-                var bars = await this._service.GetBarsAsync(id, page, itemsOnPage, searchString, access);
+                var bars = await _service.GetBarsAsync(id, page, itemsOnPage, searchString, access);
 
                 ViewBag.Count = bars.Count();
                 ViewBag.CurrentPage = int.Parse(page);
@@ -278,7 +274,7 @@ namespace BarCrawlers.Controllers
                 ViewBag.SearchString = searchString;
                 ViewBag.CurrentCocktail = id;
 
-                return View(bars.Select(b => this._barMapper.MapDTOToView(b)));
+                return View(bars.Select(b => _barMapper.MapDTOToView(b)));
             }
             catch (Exception)
             {

@@ -1,16 +1,13 @@
 ﻿using BarCrawlers.Data;
 using BarCrawlers.Data.DBModels;
 using BarCrawlers.Services;
-using BarCrawlers.Services.Contracts;
 using BarCrawlers.Services.DTOs;
 using BarCrawlers.Services.Mappers.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BarCrawlers.Tests.CocktailsServiceTests
@@ -153,7 +150,7 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
                 var sut = new CocktailsService(assertContext, mockMapper.Object, mockBarMapper.Object);
                 var cocktail = await sut.CreateAsync(dto);
                 Assert.AreEqual(1, assertContext.Cocktails.Count());
-                
+
                 Assert.IsNotNull(cocktail);
                 Assert.AreEqual(testCocktailName, testCocktailName);
                 Assert.IsFalse(cocktail.IsDeleted);
@@ -220,7 +217,7 @@ namespace BarCrawlers.Tests.CocktailsServiceTests
 
             using (var context = new BCcontext(options))
             {
-                var sut = new CocktailsService(context, mockMapper.Object,mockBarMapper.Object);
+                var sut = new CocktailsService(context, mockMapper.Object, mockBarMapper.Object);
                 var result = await sut.AddIngredientsToCocktail(cocktail, ingredient.Id, 2);
 
                 Assert.IsFalse(result);

@@ -3,7 +3,7 @@ using BarCrawlers.Services.DTOs;
 
 namespace BarCrawlers.Services.Mappers.Contracts
 {
-    public interface IIngredientMapper 
+    public interface IIngredientMapper
     {
         Ingredient MapDTOToEntity(IngredientDTO dto);
         IngredientDTO MapEntityToDTO(Ingredient entity);

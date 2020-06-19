@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using BarCrawlers.Models;
+using BarCrawlers.Services.Contracts;
+using BarCrawlers.Services.DTOs;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using BarCrawlers.Data;
-using BarCrawlers.Data.DBModels;
-using BarCrawlers.Services.Contracts;
-using Microsoft.AspNetCore.Authorization;
-using BarCrawlers.Services.DTOs;
-using BarCrawlers.Models;
-using System.Diagnostics;
 
 namespace BarCrawlers.Areas.Magician.Controllers
 {
@@ -22,24 +17,24 @@ namespace BarCrawlers.Areas.Magician.Controllers
 
         public IngredientsController(IIngredientsService service)
         {
-            this._service = service ?? throw new ArgumentNullException(nameof(service));
+            _service = service ?? throw new ArgumentNullException(nameof(service));
         }
 
         // GET: Magician/Ingredients
         public async Task<IActionResult> Index(string page = "0", string itemsOnPage = "12", string searchString = null)
         {
-            var ingredients = await this._service.GetAllAsync(page, itemsOnPage, searchString);
+            var ingredients = await _service.GetAllAsync(page, itemsOnPage, searchString);
             ViewBag.Count = ingredients.Count();
             ViewBag.CurrentPage = int.Parse(page);
             ViewBag.ItemsOnPage = int.Parse(itemsOnPage);
-            ViewBag.SearchString = searchString; 
+            ViewBag.SearchString = searchString;
             return View(ingredients);
         }
 
         // GET: Magician/Ingredients/Details/5
         public async Task<IActionResult> Details(Guid id)
         {
-            var ingredient = await this._service.GetAsync(id);
+            var ingredient = await _service.GetAsync(id);
             return View(ingredient);
         }
 
@@ -63,7 +58,7 @@ namespace BarCrawlers.Areas.Magician.Controllers
             //{
             //    return View(ingredientDTO);
             //}
-            await this._service.CreateAsync(ingredientDTO);
+            await _service.CreateAsync(ingredientDTO);
             return RedirectToAction("Index", "Ingredients");
         }
 
@@ -77,7 +72,7 @@ namespace BarCrawlers.Areas.Magician.Controllers
                 {
                     return NotFound();
                 }
-                var ingredient = await this._service.GetAsync(id);
+                var ingredient = await _service.GetAsync(id);
                 if (ingredient == null)
                 {
                     return NotFound();
@@ -107,7 +102,7 @@ namespace BarCrawlers.Areas.Magician.Controllers
             {
                 try
                 {
-                    var ingredient = await this._service.UpdateAsync(id, ingredientDTO);
+                    var ingredient = await _service.UpdateAsync(id, ingredientDTO);
 
                 }
                 catch (Exception)
@@ -124,7 +119,7 @@ namespace BarCrawlers.Areas.Magician.Controllers
 
         public async Task<IActionResult> Delete(Guid id)
         {
-            var ingredient = await this._service.GetAsync(id);
+            var ingredient = await _service.GetAsync(id);
 
             return View(ingredient);
         }
@@ -137,7 +132,7 @@ namespace BarCrawlers.Areas.Magician.Controllers
         {
             try
             {
-                var isDeleted = await this._service.DeleteAsync(id);
+                var isDeleted = await _service.DeleteAsync(id);
                 if (isDeleted)
                 {
                     return RedirectToAction(nameof(Index));

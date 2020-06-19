@@ -1,23 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using BarCrawlers.Data;
+﻿using BarCrawlers.Areas.Magician.Models.Contrtacts;
 using BarCrawlers.Data.DBModels;
 using BarCrawlers.Services.Contracts;
-using BarCrawlers.Areas.Magician.Models;
-using Microsoft.AspNetCore.Identity;
 using BarCrawlers.Services.DTOs;
-using BarCrawlers.Areas.Magician.Models.Contrtacts;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BarCrawlers.Areas.Magician.Controllers
 {
     [Area("Magician")]
-    [Authorize(Roles ="Magician")]
+    [Authorize(Roles = "Magician")]
     public class UserController : Controller
     {
         private readonly IUsersService _service;
@@ -26,9 +21,9 @@ namespace BarCrawlers.Areas.Magician.Controllers
 
         public UserController(IUsersService service, IUserViewMapper mapper, UserManager<User> userManager)
         {
-            this._service = service ?? throw new ArgumentNullException("User service not found");
-            this._mapper = mapper ?? throw new ArgumentNullException("User mapper not found");
-            this._userManager = userManager ?? throw new ArgumentNullException("User manager not found");
+            _service = service ?? throw new ArgumentNullException("User service not found");
+            _mapper = mapper ?? throw new ArgumentNullException("User mapper not found");
+            _userManager = userManager ?? throw new ArgumentNullException("User manager not found");
         }
 
         // GET: Magician/User
@@ -127,7 +122,7 @@ namespace BarCrawlers.Areas.Magician.Controllers
             {
                 try
                 {
-                    var userDTO = new UserDTO() { Id = id,LockoutEnd = DateTime.UtcNow.AddDays(7)};
+                    var userDTO = new UserDTO() { Id = id, LockoutEnd = DateTime.UtcNow.AddDays(7) };
                     await _service.UpdateAsync(id, userDTO, _userManager);
                 }
                 catch (Exception)

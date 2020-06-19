@@ -1,9 +1,6 @@
 ﻿using BarCrawlers.Data.DBModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace BarCrawlers.Data.ModelSettings
 {
@@ -22,7 +19,7 @@ namespace BarCrawlers.Data.ModelSettings
             builder.Property(c => c.Country).IsRequired();
             builder.Property(c => c.Phone).IsRequired();
             builder.Property(c => c.Email).IsRequired();
-            
+
         }
     }
 }

@@ -3,7 +3,6 @@ using BarCrawlers.Services.DTOs;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BarCrawlers.Services.Contracts

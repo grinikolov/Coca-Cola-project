@@ -2,9 +2,7 @@
 using BarCrawlers.Services.DTOs;
 using BarCrawlers.Services.Mappers.Contracts;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace BarCrawlers.Services.Mappers
 {
