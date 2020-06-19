@@ -336,3 +336,6 @@ ASALocalRun/
 
 # Local History for Visual Studio
 .localhistory/
+
+# appsettings.json Connection string
+BarCrawlers/BarCrawlers/appsettings.json
