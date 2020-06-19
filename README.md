@@ -3,10 +3,11 @@
 ### by Grigor Nikolov & Ivan Ivanov 
 ### -- A18 Team Carlsberg --
 
-### Access the [Trello board here](https://trello.com/b/7qJ5V83k/coca-cola-project "Trello board").
-  
+![alt text](Slides.gif "Slides")
 
-### Api Documentation
+[//]: # (### Access the [Trello board here](https://trello.com/b/7qJ5V83k/coca-cola-project "Trello board").)
+
+### Documentation:
     Data
         DBModels - The folder contains the classes representing the database entities.  
             Bar - All properties are public.   
@@ -22,7 +23,7 @@
                 Phone - Represents a contact phone information.
                 Email - Represents a contact e-mail information.
                 Address - Represents the address of this bar.
-                Districr - Represents the district part of address.
+                District - Represents the district part of address.
                 Town - Represents the town part of address.
                 Country - Represents the country part of address.
                 LocationId - Represents the unique database asigned index of the address.
